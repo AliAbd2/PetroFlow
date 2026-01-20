@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="PetroFlow/PetroFlow_PresentationLayer.csproj" />
+  <Project Path="PetroFlow_BusinessLayer/PetroFlow_BusinessLayer.csproj" />
+  <Project Path="test/test.csproj" />
+</Solution>
