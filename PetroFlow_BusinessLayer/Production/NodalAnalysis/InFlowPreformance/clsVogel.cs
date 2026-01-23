@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Transactions;
 
 namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance
 {
@@ -16,38 +17,95 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance
      * 
      */
 
-    public static class clsVogel
+    public class clsVogel
     {
-        /// <summary>
-        /// Generates inflow performance relationship (IPR) data for a saturated reservoir using Vogel's method.
-        /// </summary>
-        /// <remarks>This method applies Vogel's empirical IPR equation to estimate the deliverability of
-        /// a saturated oil reservoir. The returned list contains one entry for each integer pressure value from zero to
-        /// the specified reservoir pressure. Ensure that all input parameters use consistent units.</remarks>
-        /// <param name="reservoirPressure">The reservoir pressure, in the same units as testFlowingPressure. Must be greater than zero.</param>
-        /// <param name="testFlowRate">The measured flow rate at the test flowing pressure, in consistent units (e.g., STB/day or m³/day). Must be
-        /// greater than or equal to zero.</param>
-        /// <param name="testFlowingPressure">The flowing bottomhole pressure at which the test flow rate was measured, in the same units as
-        /// reservoirPressure. Must be greater than or equal to zero and less than or equal to reservoirPressure.</param>
-        /// <returns>A list of inflow data rows representing calculated flow rates at various bottomhole pressures from zero up
-        /// to the reservoir pressure.</returns>
-        static List<clsInFlowDataRow> GenerateIPR_SaturatedReservoir(double reservoirPressure,
-            double testFlowRate, double testFlowingPressure)
+
+        private double ReservoirPressure;
+
+        private double? BubblePointPressure;
+
+        private double TestBottomHolePressure;
+
+        private double TestFlowRate;
+
+        private double MaxFlowRate;
+
+        private double ProductivityIndex;
+
+        // Indicates whether the reservoir is saturated (i.e., Pr ≤ Pb).
+        // If the bubble point pressure is not provided, the reservoir is treated as saturated.
+        private bool IsSaturated
+        {
+            get
+            {
+
+                if (BubblePointPressure == null)
+                    return true;
+
+                return ReservoirPressure <= BubblePointPressure;
+
+            }
+        }
+
+        public clsVogel(double reservoirPressure, double testBottomHolePressure, double testFlowRate,
+            double? bubblePointPressure)
         {
 
-            // A function to generate the IPR data for an saturated reservoir using vogel's method.
+            ReservoirPressure = reservoirPressure;
+            BubblePointPressure = bubblePointPressure;
+            TestBottomHolePressure = testBottomHolePressure;
+            TestFlowRate = testFlowRate;
+
+
+        }
+
+        private void CalculateMaxFlowRate()
+        {
+            
+            // A method to calcualte the max flow rate.
+
+            double x = TestBottomHolePressure / ReservoirPressure; // a variable to store the pwf/ pr.
+            MaxFlowRate = TestFlowRate / (1 - 0.2 * (x) - 0.8 * Math.Pow(x, 2)); // calculate the maximum flow rate qo(max) or AOF.
+
+        }
+
+        private void CalculateProductivityIndex()
+        {
+
+            // A method to calculate the productivity index.
+
+            if (TestBottomHolePressure >= BubblePointPressure)
+                // calculating J using linear productivity index equation: J = qo / (Pr - Pwf).
+                ProductivityIndex =  clsIPRGeneralFunctions.ProductivityIndex(TestFlowRate, ReservoirPressure, TestBottomHolePressure);
+            else
+            {
+                // calculating J using J = qo / (pr - pb + pb / 1.8 [ 1 - 0.2(pwf / pb) - 0.8(pwf / pb)^2 ]).
+                double x = TestBottomHolePressure / (double)BubblePointPressure; // pwf / pb
+                double y = ReservoirPressure - (double)BubblePointPressure +
+                    ((double)BubblePointPressure / 1.8) * (1 - 0.2 * x - 0.8 * Math.Pow(x, 2)); // (pr - pb + pb / 1.8 [ 1 - 0.2(pwf / pb) - 0.8(pwf / pb)^2 ])
+
+                ProductivityIndex = TestFlowRate / y;
+
+            }
+
+        }
+
+        private List<clsInFlowDataRow> GenerateIPR_SaturatedReservoir()
+        {
+
+            // A method to generate the IPR data for a saturated reservoir using vogel's method.
 
             List<clsInFlowDataRow> dataRows = new List<clsInFlowDataRow>(); // a list to store the IPR data.
 
-            double x = testFlowingPressure / reservoirPressure; // a variable to store the pwf/ pr.
-            double AOF = testFlowRate / (1 - 0.2 * (x) - 0.8 * Math.Pow(x, 2)); // calculate the maximum flow rate qo(max) or AOF.
+            // Calculate max flow rate:
+            CalculateMaxFlowRate();
 
-            for (int pressure = 0; pressure <= reservoirPressure; pressure++)
+            for (int pressure = 0; pressure <= ReservoirPressure; pressure++)
             {
 
-                double y = pressure / reservoirPressure; // a variable to store the pwf/ pr.
+                double y = pressure / ReservoirPressure; // a variable to store the pwf/ pr.
 
-                double FlowRate = AOF * (1 - 0.2 * (y) - 0.8 * Math.Pow(y, 2));
+                double FlowRate = MaxFlowRate * (1 - 0.2 * (y) - 0.8 * Math.Pow(y, 2));
 
                 dataRows.Add(new clsInFlowDataRow(pressure, FlowRate));
 
@@ -59,68 +117,36 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance
 
         }
 
-        /// <summary>
-        /// Generates inflow performance relationship (IPR) data for an undersaturated oil reservoir using Vogel's
-        /// method.
-        /// </summary>
-        /// <remarks>This method applies Vogel's IPR correlation for undersaturated reservoirs, using the
-        /// provided test data to estimate the productivity index and generate the full IPR curve. The calculation
-        /// assumes single-phase oil flow and does not account for gas breakthrough or multiphase effects. All input
-        /// parameters should use consistent units.</remarks>
-        /// <param name="reservoirPressure">The reservoir pressure, in the same units as the flowing and bubble point pressures. Must be greater than
-        /// zero.</param>
-        /// <param name="bubblePointPressure">The bubble point pressure of the reservoir fluid, in the same units as the reservoir pressure. Must be less
-        /// than or equal to the reservoir pressure.</param>
-        /// <param name="testFlowRate">The measured oil flow rate at the test flowing pressure, in consistent volumetric units. Must be greater
-        /// than or equal to zero.</param>
-        /// <param name="testFlowingPressure">The flowing bottomhole pressure at which the test flow rate was measured, in the same units as the reservoir
-        /// and bubble point pressures. Must be greater than or equal to zero.</param>
-        /// <returns>A list of inflow data rows, each containing a flowing bottomhole pressure and the corresponding calculated
-        /// flow rate, representing the IPR curve for the specified reservoir conditions.</returns>
-        static List<clsInFlowDataRow> GenerateIPR_UnderSaturatedReservoir(double reservoirPressure,
-            double bubblePointPressure, double testFlowRate, double testFlowingPressure)
+        private List<clsInFlowDataRow> GenerateIPR_UnderSaturatedReservoir()
         {
 
-            // A fuction to generate the IPR data for saturated reservoir using vogel's method.
+            // A fuction to generate the IPR data for an undersaturated reservoir using vogel's method.
 
             List<clsInFlowDataRow> data = new List<clsInFlowDataRow>();
 
-            double J;
-
-            if (testFlowingPressure >= bubblePointPressure)
-                // calculating J using linear productivity index equation: J = qo / (Pr - Pwf).
-                J = clsIPRGeneralFunctions.ProductivityIndex(testFlowRate, reservoirPressure, testFlowingPressure);
-            else
-            {
-                // calculating J using J = qo / (pr - pb + pb / 1.8 [ 1 - 0.2(pwf / pb) - 0.8(pwf / pb)^2 ]).
-                double x = testFlowingPressure / bubblePointPressure; // pwf / pb
-                double y = reservoirPressure - bubblePointPressure +
-                    (bubblePointPressure / 1.8) * (1 - 0.2 * x - 0.8 * Math.Pow(x, 2)); // (pr - pb + pb / 1.8 [ 1 - 0.2(pwf / pb) - 0.8(pwf / pb)^2 ])
-
-                J = testFlowRate / y;
-
-            }
+            // Calculte Productivity Index:
+            CalculateProductivityIndex();
 
             // Calcuating the bubble point flowrate by using the bubble point pressure as flowing pressure.
-            double BubblePointFlowRate = clsIPRGeneralFunctions.LinearFlowRate(J, reservoirPressure, bubblePointPressure);
+            double BubblePointFlowRate = clsIPRGeneralFunctions.LinearFlowRate(ProductivityIndex, ReservoirPressure, (double)BubblePointPressure);
 
             // Generating the IPR data:
-            for (int pressure = 0; pressure <= reservoirPressure; pressure++)
+            for (int pressure = 0; pressure <= ReservoirPressure; pressure++)
             {
 
                 double flowrate;
 
-                if (pressure > bubblePointPressure)
+                if (pressure > BubblePointPressure)
                     // calculate the flowrate using qo = j(pr - pwf).
-                    flowrate = clsIPRGeneralFunctions.LinearFlowRate(J, reservoirPressure, pressure);
+                    flowrate = clsIPRGeneralFunctions.LinearFlowRate(ProductivityIndex, ReservoirPressure, pressure);
                 else
                 {
                     // calculate the flowrate using qo = qb + (J * pb / 1.8) [ 1 - 0.2(pwf / pb) - 0.8(pwf / pb)^2 ]
 
-                    double x = pressure / bubblePointPressure;// pwf / pb
+                    double x = pressure / (double)BubblePointPressure;// pwf / pb
                     double y = 1 - 0.2 * x - 0.8 * Math.Pow(x, 2); // [ 1 - 0.2(pwf / pb) - 0.8(pwf / pb)^2 ]
 
-                    flowrate = BubblePointFlowRate + (J * bubblePointPressure / 1.8) * y;
+                    flowrate = BubblePointFlowRate + (ProductivityIndex * (double)BubblePointPressure / 1.8) * y;
 
 
                 }
@@ -134,16 +160,13 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance
 
         }
 
-
-        public static List<clsInFlowDataRow> GeneratIPR(double reservoirPressure, 
-            double testFlowRate, double testFlowingPressure, double? bubblePointPressure = null)
+        public List<clsInFlowDataRow> GenerateIPR()
         {
 
-            if (bubblePointPressure == null || bubblePointPressure >= reservoirPressure)
-                return GenerateIPR_SaturatedReservoir(reservoirPressure, testFlowRate, testFlowingPressure);
+            if (IsSaturated)
+                return GenerateIPR_SaturatedReservoir();
             else
-                return GenerateIPR_UnderSaturatedReservoir(reservoirPressure, (double)bubblePointPressure,
-                    testFlowRate, testFlowingPressure);
+                return GenerateIPR_UnderSaturatedReservoir();
 
         }
 

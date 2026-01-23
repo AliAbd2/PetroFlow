@@ -8,14 +8,16 @@ class Program
     static void Main(string[] args)
     {
 
-        List<clsInFlowDataRow> data =  clsStanding.GenerateIPR_SaturatedReservoir(2085, 0.7, 202, 1765, 1.3);
+        clsStanding standing = new clsStanding(4000, 1200, 378, 0.7, 2000);
+
+        List<clsInFlowDataRow> data = standing.GenerateIPR();
 
         Console.WriteLine("Pwf      Qo");
 
         foreach (clsInFlowDataRow dataRow in data)
         {
 
-            Console.WriteLine(dataRow.FlowingPressure + "   " + dataRow.FlowRate);
+            Console.WriteLine(dataRow.BottomHolePressure + "   " + dataRow.FlowRate);
 
         }
 

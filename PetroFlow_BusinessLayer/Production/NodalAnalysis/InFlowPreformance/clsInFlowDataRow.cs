@@ -10,28 +10,19 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance
     public class clsInFlowDataRow
     {
 
-        public double FlowingPressure { get; set; }
-        public double FlowRate { get; set; }
+        public double BottomHolePressure;
 
-        public double FlowEfficiency { get; set; }
+        public double FlowRate;
 
-
-        public clsInFlowDataRow(double flowingPressure, double flowRate)
+        public clsInFlowDataRow(double bottomHolePressure, double flowRate)
         {
 
-            FlowingPressure = flowingPressure;
+            BottomHolePressure = bottomHolePressure;
             FlowRate = flowRate;
 
         }
 
-        public clsInFlowDataRow(double flowingPressure, double flowRate, double flowEfficiency)
-        {
 
-            FlowingPressure = flowingPressure;
-            FlowRate = flowRate;
-            FlowEfficiency = flowEfficiency; 
-
-        }
 
     }
 }
