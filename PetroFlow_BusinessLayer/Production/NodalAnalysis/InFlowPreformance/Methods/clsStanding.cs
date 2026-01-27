@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance
+namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Methods
 {
 
     // A class that represents Standing's method for IPR.

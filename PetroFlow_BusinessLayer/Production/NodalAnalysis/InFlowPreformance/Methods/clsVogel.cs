@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Transactions;
 
-namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance
+namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Methods
 {
 
     // A class to store Vogel's equations to solve the IPR using Vogel's method.
@@ -24,9 +24,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance
 
         private double? BubblePointPressure;
 
-        private double TestBottomHolePressure;
-
-        private double TestFlowRate;
+        private clsInFlowDataRow TestDataPoint;
 
         private double MaxFlowRate;
 
@@ -47,14 +45,13 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance
             }
         }
 
-        public clsVogel(double reservoirPressure, double testBottomHolePressure, double testFlowRate,
+        public clsVogel(double reservoirPressure, clsInFlowDataRow testDataPoint,
             double? bubblePointPressure)
         {
 
             ReservoirPressure = reservoirPressure;
             BubblePointPressure = bubblePointPressure;
-            TestBottomHolePressure = testBottomHolePressure;
-            TestFlowRate = testFlowRate;
+            TestDataPoint = testDataPoint;
 
 
         }
@@ -64,8 +61,8 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance
             
             // A method to calcualte the max flow rate.
 
-            double x = TestBottomHolePressure / ReservoirPressure; // a variable to store the pwf/ pr.
-            MaxFlowRate = TestFlowRate / (1 - 0.2 * (x) - 0.8 * Math.Pow(x, 2)); // calculate the maximum flow rate qo(max) or AOF.
+            double x = TestDataPoint.BottomHolePressure / ReservoirPressure; // a variable to store the pwf/ pr.
+            MaxFlowRate = TestDataPoint.FlowRate / (1 - 0.2 * (x) - 0.8 * Math.Pow(x, 2)); // calculate the maximum flow rate qo(max) or AOF.
 
         }
 
@@ -74,17 +71,17 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance
 
             // A method to calculate the productivity index.
 
-            if (TestBottomHolePressure >= BubblePointPressure)
+            if (TestDataPoint.BottomHolePressure >= BubblePointPressure)
                 // calculating J using linear productivity index equation: J = qo / (Pr - Pwf).
-                ProductivityIndex =  clsIPRGeneralFunctions.ProductivityIndex(TestFlowRate, ReservoirPressure, TestBottomHolePressure);
+                ProductivityIndex =  clsIPRGeneralFunctions.ProductivityIndex(TestDataPoint.FlowRate, ReservoirPressure, TestDataPoint.BottomHolePressure);
             else
             {
                 // calculating J using J = qo / (pr - pb + pb / 1.8 [ 1 - 0.2(pwf / pb) - 0.8(pwf / pb)^2 ]).
-                double x = TestBottomHolePressure / (double)BubblePointPressure; // pwf / pb
+                double x = TestDataPoint.BottomHolePressure / (double)BubblePointPressure; // pwf / pb
                 double y = ReservoirPressure - (double)BubblePointPressure +
                     ((double)BubblePointPressure / 1.8) * (1 - 0.2 * x - 0.8 * Math.Pow(x, 2)); // (pr - pb + pb / 1.8 [ 1 - 0.2(pwf / pb) - 0.8(pwf / pb)^2 ])
 
-                ProductivityIndex = TestFlowRate / y;
+                ProductivityIndex = TestDataPoint.FlowRate / y;
 
             }
 

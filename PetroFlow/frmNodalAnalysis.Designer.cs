@@ -28,13 +28,22 @@
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
             pnlPlot = new Panel();
-            formsPlot1 = new ScottPlot.WinForms.FormsPlot();
+            pltNodalAnalysis = new ScottPlot.WinForms.FormsPlot();
             btnFomatPlot = new Button();
             pnlFormatPlot = new Panel();
+            label10 = new Label();
+            numericUpDown1 = new NumericUpDown();
+            txtylabel = new TextBox();
+            txtXlabel = new TextBox();
+            label9 = new Label();
+            label8 = new Label();
+            txtPlotTitle = new TextBox();
+            label7 = new Label();
+            panel1 = new Panel();
+            label6 = new Label();
             panel2 = new Panel();
-            vScrollBar1 = new VScrollBar();
+            vsbNodalAnalysisData = new VScrollBar();
             panel3 = new Panel();
             groupBox2 = new GroupBox();
             groupBox1 = new GroupBox();
@@ -49,20 +58,18 @@
             label5 = new Label();
             txtTestFlowingPressure = new TextBox();
             label3 = new Label();
-            cmsNodalPlot = new ContextMenuStrip(components);
-            saveAsToolStripMenuItem = new ToolStripMenuItem();
-            toolStripSeparator1 = new ToolStripSeparator();
-            fromatPlotToolStripMenuItem = new ToolStripMenuItem();
             pnlPlot.SuspendLayout();
+            pnlFormatPlot.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
+            panel1.SuspendLayout();
             panel2.SuspendLayout();
             groupBox1.SuspendLayout();
             grpTestData.SuspendLayout();
-            cmsNodalPlot.SuspendLayout();
             SuspendLayout();
             // 
             // pnlPlot
             // 
-            pnlPlot.Controls.Add(formsPlot1);
+            pnlPlot.Controls.Add(pltNodalAnalysis);
             pnlPlot.Controls.Add(btnFomatPlot);
             pnlPlot.Controls.Add(pnlFormatPlot);
             pnlPlot.Dock = DockStyle.Right;
@@ -71,15 +78,16 @@
             pnlPlot.Size = new Size(700, 661);
             pnlPlot.TabIndex = 0;
             // 
-            // formsPlot1
+            // pltNodalAnalysis
             // 
-            formsPlot1.BorderStyle = BorderStyle.FixedSingle;
-            formsPlot1.DisplayScale = 1F;
-            formsPlot1.Dock = DockStyle.Fill;
-            formsPlot1.Location = new Point(0, 0);
-            formsPlot1.Name = "formsPlot1";
-            formsPlot1.Size = new Size(410, 661);
-            formsPlot1.TabIndex = 2;
+            pltNodalAnalysis.BackColor = Color.Transparent;
+            pltNodalAnalysis.BorderStyle = BorderStyle.FixedSingle;
+            pltNodalAnalysis.DisplayScale = 1F;
+            pltNodalAnalysis.Dock = DockStyle.Fill;
+            pltNodalAnalysis.Location = new Point(0, 0);
+            pltNodalAnalysis.Name = "pltNodalAnalysis";
+            pltNodalAnalysis.Size = new Size(410, 661);
+            pltNodalAnalysis.TabIndex = 2;
             // 
             // btnFomatPlot
             // 
@@ -95,8 +103,17 @@
             // 
             // pnlFormatPlot
             // 
-            pnlFormatPlot.BackColor = SystemColors.ActiveCaptionText;
+            pnlFormatPlot.BackColor = Color.Transparent;
             pnlFormatPlot.BorderStyle = BorderStyle.FixedSingle;
+            pnlFormatPlot.Controls.Add(label10);
+            pnlFormatPlot.Controls.Add(numericUpDown1);
+            pnlFormatPlot.Controls.Add(txtylabel);
+            pnlFormatPlot.Controls.Add(txtXlabel);
+            pnlFormatPlot.Controls.Add(label9);
+            pnlFormatPlot.Controls.Add(label8);
+            pnlFormatPlot.Controls.Add(txtPlotTitle);
+            pnlFormatPlot.Controls.Add(label7);
+            pnlFormatPlot.Controls.Add(panel1);
             pnlFormatPlot.Dock = DockStyle.Right;
             pnlFormatPlot.Location = new Point(415, 0);
             pnlFormatPlot.Name = "pnlFormatPlot";
@@ -104,10 +121,107 @@
             pnlFormatPlot.TabIndex = 0;
             pnlFormatPlot.Visible = false;
             // 
+            // label10
+            // 
+            label10.AutoSize = true;
+            label10.Font = new Font("Segoe UI", 9.75F);
+            label10.Location = new Point(5, 176);
+            label10.Name = "label10";
+            label10.Size = new Size(69, 17);
+            label10.TabIndex = 14;
+            label10.Text = "lIne Width:";
+            // 
+            // numericUpDown1
+            // 
+            numericUpDown1.Location = new Point(92, 173);
+            numericUpDown1.Name = "numericUpDown1";
+            numericUpDown1.Size = new Size(173, 23);
+            numericUpDown1.TabIndex = 13;
+            // 
+            // txtylabel
+            // 
+            txtylabel.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtylabel.Location = new Point(92, 143);
+            txtylabel.Name = "txtylabel";
+            txtylabel.Size = new Size(173, 22);
+            txtylabel.TabIndex = 12;
+            txtylabel.Text = "Pressure";
+            // 
+            // txtXlabel
+            // 
+            txtXlabel.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtXlabel.Location = new Point(92, 115);
+            txtXlabel.Name = "txtXlabel";
+            txtXlabel.Size = new Size(173, 22);
+            txtXlabel.TabIndex = 11;
+            txtXlabel.Text = "Flow Rate";
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.Font = new Font("Segoe UI", 9.75F);
+            label9.Location = new Point(5, 146);
+            label9.Name = "label9";
+            label9.Size = new Size(80, 17);
+            label9.TabIndex = 10;
+            label9.Text = "Y-axis Label:";
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Font = new Font("Segoe UI", 9.75F);
+            label8.Location = new Point(5, 118);
+            label8.Name = "label8";
+            label8.Size = new Size(81, 17);
+            label8.TabIndex = 9;
+            label8.Text = "X-axis Label:";
+            // 
+            // txtPlotTitle
+            // 
+            txtPlotTitle.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtPlotTitle.Location = new Point(92, 87);
+            txtPlotTitle.Name = "txtPlotTitle";
+            txtPlotTitle.Size = new Size(173, 22);
+            txtPlotTitle.TabIndex = 8;
+            txtPlotTitle.Text = "Oil Well Preformace";
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Font = new Font("Segoe UI", 9.75F);
+            label7.Location = new Point(5, 90);
+            label7.Name = "label7";
+            label7.Size = new Size(62, 17);
+            label7.TabIndex = 7;
+            label7.Text = "Title Text:";
+            // 
+            // panel1
+            // 
+            panel1.BackColor = Color.Gray;
+            panel1.BorderStyle = BorderStyle.FixedSingle;
+            panel1.Controls.Add(label6);
+            panel1.Dock = DockStyle.Top;
+            panel1.Location = new Point(0, 0);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(283, 73);
+            panel1.TabIndex = 0;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Font = new Font("Segoe UI", 21.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label6.ForeColor = SystemColors.ButtonHighlight;
+            label6.Location = new Point(52, 16);
+            label6.Name = "label6";
+            label6.Size = new Size(179, 40);
+            label6.TabIndex = 0;
+            label6.Text = "Format Plot";
+            // 
             // panel2
             // 
+            panel2.BackColor = Color.Transparent;
             panel2.BorderStyle = BorderStyle.FixedSingle;
-            panel2.Controls.Add(vScrollBar1);
+            panel2.Controls.Add(vsbNodalAnalysisData);
             panel2.Controls.Add(panel3);
             panel2.Controls.Add(groupBox2);
             panel2.Controls.Add(groupBox1);
@@ -118,13 +232,13 @@
             panel2.Size = new Size(684, 661);
             panel2.TabIndex = 1;
             // 
-            // vScrollBar1
+            // vsbNodalAnalysisData
             // 
-            vScrollBar1.Dock = DockStyle.Right;
-            vScrollBar1.Location = new Point(663, 0);
-            vScrollBar1.Name = "vScrollBar1";
-            vScrollBar1.Size = new Size(19, 607);
-            vScrollBar1.TabIndex = 13;
+            vsbNodalAnalysisData.Dock = DockStyle.Right;
+            vsbNodalAnalysisData.Location = new Point(663, 0);
+            vsbNodalAnalysisData.Name = "vsbNodalAnalysisData";
+            vsbNodalAnalysisData.Size = new Size(19, 607);
+            vsbNodalAnalysisData.TabIndex = 13;
             // 
             // panel3
             // 
@@ -264,29 +378,6 @@
             label3.TabIndex = 0;
             label3.Text = "Test Flowing Pressure:";
             // 
-            // cmsNodalPlot
-            // 
-            cmsNodalPlot.Items.AddRange(new ToolStripItem[] { saveAsToolStripMenuItem, toolStripSeparator1, fromatPlotToolStripMenuItem });
-            cmsNodalPlot.Name = "cmsNodalPlot";
-            cmsNodalPlot.Size = new Size(137, 54);
-            // 
-            // saveAsToolStripMenuItem
-            // 
-            saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            saveAsToolStripMenuItem.Size = new Size(136, 22);
-            saveAsToolStripMenuItem.Text = "Save As...";
-            // 
-            // toolStripSeparator1
-            // 
-            toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(133, 6);
-            // 
-            // fromatPlotToolStripMenuItem
-            // 
-            fromatPlotToolStripMenuItem.Name = "fromatPlotToolStripMenuItem";
-            fromatPlotToolStripMenuItem.Size = new Size(136, 22);
-            fromatPlotToolStripMenuItem.Text = "Fromat Plot";
-            // 
             // frmNodalAnalysis
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -303,12 +394,16 @@
             Text = "Nodal Analysis";
             Load += frmNodalAnalysis_Load;
             pnlPlot.ResumeLayout(false);
+            pnlFormatPlot.ResumeLayout(false);
+            pnlFormatPlot.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
             panel2.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             grpTestData.ResumeLayout(false);
             grpTestData.PerformLayout();
-            cmsNodalPlot.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -330,13 +425,19 @@
         private Label label1;
         private GroupBox groupBox2;
         private Panel panel3;
-        private VScrollBar vScrollBar1;
-        private ContextMenuStrip cmsNodalPlot;
-        private ToolStripMenuItem saveAsToolStripMenuItem;
-        private ToolStripSeparator toolStripSeparator1;
-        private ToolStripMenuItem fromatPlotToolStripMenuItem;
+        private VScrollBar vsbNodalAnalysisData;
         private Button btnFomatPlot;
+        private ScottPlot.WinForms.FormsPlot pltNodalAnalysis;
         private Panel pnlFormatPlot;
-        private ScottPlot.WinForms.FormsPlot formsPlot1;
+        private TextBox txtPlotTitle;
+        private Label label7;
+        private Panel panel1;
+        private Label label6;
+        private Label label9;
+        private Label label8;
+        private TextBox txtylabel;
+        private TextBox txtXlabel;
+        private Label label10;
+        private NumericUpDown numericUpDown1;
     }
 }
