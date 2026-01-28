@@ -10,12 +10,15 @@ class Program
     {
 
         List<clsInFlowDataRow> testsData = new List<clsInFlowDataRow>();
-        testsData.Add(new clsInFlowDataRow(1780, 282));
+        testsData.Add(new clsInFlowDataRow(3170, 263));
+        testsData.Add(new clsInFlowDataRow(2897, 383));
+        testsData.Add(new clsInFlowDataRow(2440, 497));
+        testsData.Add(new clsInFlowDataRow(2150, 640));
 
 
-        clsFetkovich fetkovich = new clsFetkovich(2100 , testsData);
+        clsJonesBlountGlaze jonesBlountGlaze = new clsJonesBlountGlaze(3600, testsData);
 
-        List<clsInFlowDataRow> data = fetkovich.GenerateIPR();
+        List<clsInFlowDataRow> data = jonesBlountGlaze.GenerateIPR();
 
         Console.WriteLine("Pwf      Qo");
 

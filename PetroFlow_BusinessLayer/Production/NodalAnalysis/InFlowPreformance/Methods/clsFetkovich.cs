@@ -141,8 +141,6 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             // slope = (n * sum(x*y) - sum(x) * sum(y)) / (n * sum(x^2) - sum(x)^2)
             // where n is the number of records.
 
-
-
             List<double> logX = TestsData.Select(x => Math.Log10(
                 pr2 - x.BottomHolePressure * x.BottomHolePressure)).ToList();
             List<double> logY = TestsData.Select(y => Math.Log10(y.FlowRate)).ToList();
