@@ -117,13 +117,30 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="colorDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <metadata name="dgvcBottomHolePressure.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="dgvcFlowRate.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="btnClose.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
+        vAAADrwBlbxySQAAAnBJREFUWEftlztrVUEQx38aCRgfwWdEg73BwkLBJkQRJMbKIFioXfJBVIIgCn4B
+        CwUFv0es8kAUERMfqJW2qdRE5R9mYJi75+ace26ZHyy52Zmd2d2Znd0D29RnJ3ABeAi8An4C69Z+WN8j
+        4KLp9o0BYAb4CPyr2aQ7a2NbMQYsBcPfgAfAJDAKDFo7AVwG7gNfgr7GykZPXAXWguNbwK6sVEDbfwP4
+        bGNlQ7YaoQG/zcBLYH9WqMEe4JnZkK3ak9CW+cofAzuyQkMUFt+JLcOhpFkMK2/r3HlqNmW7a2Iq26X4
+        vcdtr0Lh+GS25aOIkseP2u0sNJT5Q7kzoEmfyZ3G9XBEi3VCRcZXX8p2Of8FvAGOZKH1vTUbZ7PQnK6a
+        XL46UIWTUH9LaOVyLh05Ohpk0fkH4GCQRe518zFvwqksCERH+qv/Y9974HgeFPBdlq8OVM8lPJkFiTwJ
+        //0OOJaVExorXfnq4I8Jd2dBgTgJn8hIViqgY71hvjpoMoHDIR/6NoG6ITgEvO4xBJp4ZQg8Ca9kQeAA
+        sBwcatVNknDC9IpJ6MdQ120JHcOF4CiuNh9DrbTEHdMpHkM/Il8r6vXp4KC0yjiJ8Sy0+K+YvFiIYim+
+        mYXGuS5FRgwD53Oncc1sV5Zi4ZeRdmFfFrZA4fMyXHkZiXgdv+jjdfzEbG55HYv4IFGytJ2E13/ZPJWF
+        VcQn2XNgb1aogbbdV97oSebER6leunpoViZPQDrTIeY9PUodhcNzQk0v3TngkhUhOVPT1awPkrvBsVqr
+        Z7njHybRsLe/1nJ/3z5MIvHTTKVU9VyXipp+q08y6dQJ1Tab/AfSENT1jvu3EgAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <metadata name="openFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
-  </metadata>
-  <metadata name="dgvcTestFlowRate.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="dgvcTestBottomHolePressure.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
   </metadata>
 </root>

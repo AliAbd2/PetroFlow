@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance
+namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Methods
 {
 
     // A class to sotre the functions that are used in different IPR methods.

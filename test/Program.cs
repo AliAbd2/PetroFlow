@@ -1,6 +1,6 @@
 ﻿using System;
 using PetroFlow_BusinessLayer;
-using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Methods;
 
 class Program
@@ -8,14 +8,19 @@ class Program
 
     static void Main(string[] args)
     {
+        List<clsInFlowDataRow> inputData = new List<clsInFlowDataRow>();
 
-        List<clsInFlowDataRow> testsData = new List<clsInFlowDataRow>();
-        testsData.Add(new clsInFlowDataRow(1780, 282));
+        inputData.Add(new clsInFlowDataRow(3170, 263));
+        inputData.Add(new clsInFlowDataRow(2897, 383));
+        inputData.Add(new clsInFlowDataRow(2150, 640));
 
+        clsFetkovich fetkovich = new clsFetkovich(3600, inputData);
 
-        clsFetkovich fetkovich = new clsFetkovich(2100 , testsData);
+        List<clsInFlowDataRow> data = new List<clsInFlowDataRow>();
 
-        List<clsInFlowDataRow> data = fetkovich.GenerateIPR();
+        fetkovich.GenerateIPR();
+
+        data = fetkovich.GeneratedData;
 
         Console.WriteLine("Pwf      Qo");
 
