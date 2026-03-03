@@ -43,21 +43,21 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         public bool IsInputValid { get; set; }
 
-        private double TestFlowEfficiency;
+        public double TestFlowEfficiency;
 
-        private double TestPresentMaxFlowRate;
+        public double TestPresentMaxFlowRate;
 
-        private double PressureStepSize;
+        public double PressureStepSize;
 
-        private double MinimumPressure;
+        public double MinimumPressure;
 
-        private double ProductivityIndex;
+        public double ProductivityIndex;
 
-        private double? PresentOilRelativePermeability;
+        public double? PresentOilRelativePermeability;
 
-        private double? PresentOilViscosity;
+        public double? PresentOilViscosity;
 
-        private double? PresentOilFomationVoilumeFactor;
+        public double? PresentOilFomationVoilumeFactor;
 
         // Indicates whether the reservoir is saturated (i.e., Pr ≤ Pb).
         // If the bubble point pressure is not provided, the reservoir is treated as saturated.
@@ -76,7 +76,9 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         public clsStanding()
         {
-
+            Name = "";
+            TestsData = new();
+            GeneratedData = new();
             CurvePlotSetting = new clsCurvePlotSettings();
 
         }
@@ -123,6 +125,12 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             if (rows.Any(x => x.BottomHolePressure <= 0))
                 throw new exInvalidIPRParameterException(
                     "Invalid test data: One or more bottom hole pressures are zero or negative.");
+
+            //===============================
+            // --- Test Flow Efficiency ---
+            //===============================
+
+
 
             //================================
             // --- Bubble Point Pressure ---

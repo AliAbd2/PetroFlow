@@ -27,7 +27,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         public string Name { get; set; }
 
-        public enIPRMethodType MethodType { get { return enIPRMethodType.Vogel; } }
+        public enIPRMethodType MethodType { get; }
 
         public double ReservoirPressure { get; set; }
 
@@ -41,9 +41,9 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         public bool IsInputValid { get; set; }
 
-        private double MaxFlowRate;
+        public double MaxFlowRate;
 
-        private double ProductivityIndex;
+        public double ProductivityIndex;
 
         // Indicates whether the reservoir is saturated (i.e., Pr ≤ Pb).
         // If the bubble point pressure is not provided, the reservoir is treated as saturated.
@@ -62,8 +62,11 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         public clsVogel()
         {
-
-            CurvePlotSetting = new clsCurvePlotSettings();
+            Name = "";
+            MethodType = enIPRMethodType.Vogel;
+            TestsData = new();
+            GeneratedData = new();
+            CurvePlotSetting = new();
 
         }
 

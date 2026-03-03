@@ -14,6 +14,7 @@ using ScottPlot.Plottables;
 using ScottPlot.TickGenerators.Financial;
 using ScottPlot.Triangulation;
 using System.Security.Policy;
+using System.Windows.Controls;
 using System.Windows.Media;
 using static System.Net.WebRequestMethods;
 
@@ -70,6 +71,8 @@ namespace PetroFlow
             cbLinePattern.DataSource = _linePatternStrings;
             cbMarkerShape.DataSource = _markerShapStrings;
 
+            SetTestDataGridViewProperties();
+
             ResetMenu();
 
 
@@ -86,8 +89,6 @@ namespace PetroFlow
             GenerateIPR(CurveName);
 
             PlotCurves();
-
-            pltNodalAnalysis.PerformAutoScale();
 
         }
 
@@ -183,7 +184,7 @@ namespace PetroFlow
 
         }
 
-        private bool ReadDuoble(TextBox textBox, string dataType, out double result)
+        private bool ReadDuoble(System.Windows.Forms.TextBox textBox, string dataType, out double result)
         {
 
             result = 0;
@@ -204,7 +205,7 @@ namespace PetroFlow
 
             List<clsInFlowDataRow> data = new();
 
-            if (dgvTestData.Rows.Count <= 0)
+            if (dgvTestData.Rows.Count <= 1)
             {
 
                 MessageBox.Show("No test data has been provided: Test data is rquaired to generate IPR.", "Data Reading Erorr",
@@ -216,6 +217,9 @@ namespace PetroFlow
 
             foreach (DataGridViewRow row in dgvTestData.Rows)
             {
+
+                if (row.Cells[0] is DataGridViewComboBoxCell)
+                    continue;
 
                 if (string.IsNullOrWhiteSpace(row.Cells[0].Value?.ToString()))
                     continue;
@@ -272,6 +276,21 @@ namespace PetroFlow
 
             if (!(testData == null))
                 data[enIPRData.TestData] = testData;
+            else
+                return null;
+
+            if (ReadDuoble(txtOilRelativePermeability, "Oil Relative Permeabilty", out result))
+                data[enIPRData.OilRelativePermeability] = result;
+
+            if (ReadDuoble(txtOilViscosity, "Oil Viscosity", out result))
+                data[enIPRData.OilViscosity] = result;
+
+            if (ReadDuoble(txtOilFormationVolumeFactor, "Oil Formation Volume Factor", out result))
+                data[enIPRData.FutureOilFromationVolumeFactor] = result;
+
+            if (ReadDuoble(txtTestFlowEfficiency, "Test Flow Efficiency", out result))
+                data[enIPRData.TestFlowEfficiency] = result;
+
 
 
             return data;
@@ -291,6 +310,10 @@ namespace PetroFlow
         {
             IIPRMethod method;
             Dictionary<enIPRData, object> data = ReadData();
+
+            if (data == null)
+                return false;
+
             clsValidationResult validationResult = new();
 
             if (rdoStandingMethod.Checked)
@@ -330,8 +353,6 @@ namespace PetroFlow
         private void GenerateIPR(string curveName)
         {
 
-
-
             var curve = _iPRRepository.Get(curveName);
 
 
@@ -364,9 +385,9 @@ namespace PetroFlow
             pltNodalAnalysis.Plot.XLabel(txtXlabel.Text);
             pltNodalAnalysis.Plot.YLabel(txtylabel.Text);
 
-            pltNodalAnalysis.Refresh();
+            pltNodalAnalysis.Plot.Axes.AutoScale();
 
-            pltNodalAnalysis.PerformAutoScale();
+            pltNodalAnalysis.Refresh();
 
         }
 
@@ -437,9 +458,7 @@ namespace PetroFlow
         private void ShowAvailbleMthods(object sender, EventArgs e)
         {
 
-            rdoVogelMethod.Enabled = rdoVogelMethod.Checked = !rdoFutureIPR.Checked && !rdoGasWell.Checked;
-            rdoStandingMethod.Enabled = rdoStandingMethod.Checked = !rdoGasWell.Checked;
-            rdoFetkovich.Enabled = rdoFetkovich.Checked = !rdoGasWell.Checked;
+
 
         }
 
@@ -521,18 +540,13 @@ namespace PetroFlow
             // Restricts the TextBox input to numeric characters and a single decimal point,
             // while allowing control keys such as Backspace.
 
-            TextBox textBox = sender as TextBox;
+            System.Windows.Forms.TextBox textBox = sender as System.Windows.Forms.TextBox;
 
             bool isDigit = char.IsDigit(e.KeyChar);
             bool isControl = char.IsControl(e.KeyChar);
             bool isDecimalPoint = e.KeyChar == '.' && !textBox.Text.Contains(".");
 
             e.Handled = !(isDigit || isControl || isDecimalPoint);
-        }
-
-        private void frmNodalAnalysis_Load(object sender, EventArgs e)
-        {
-
         }
 
         private void cbSelectCurve_DropDownClosed(object sender, EventArgs e)
@@ -564,31 +578,58 @@ namespace PetroFlow
             txtReservoirPressure.Text = curve.ReservoirPressure.ToString();
             txtBubblePointPressure.Text = curve.BubblePointPressure.ToString();
 
-            if (curve.MethodType == enIPRMethodType.Standing)
-            txtOilRelativePermeability.Text = 
-            txtOilViscosity.Text = "";
-            txtOilFormationVolumeFactor.Text = "";
-            txtFutureReservoirPressure.Text = "";
-            txtFutureOilRelativePermeability.Text = "";
-            txtFutureOilFormationVolumeFactor.Text = "";
-            txtFutureOilViscosity.Text = "";
 
-            cbSelectCurve.Items.Add("Add Curve");
-            cbSelectCurve.SelectedIndex = 0;
 
-            txtPlotTitle.Text = "Nodal Analysis";
-            txtylabel.Text = "Pressure";
-            txtXlabel.Text = "Flowrate";
 
-            pltNodalAnalysis.Plot.Title(txtPlotTitle.Text);
-            pltNodalAnalysis.Plot.XLabel(txtXlabel.Text);
-            pltNodalAnalysis.Plot.YLabel(txtylabel.Text);
-
-            nudLineWidth.Value = 1;
-            nudMarkerSize.Value = 0;
-            cbLinePattern.SelectedIndex = 0;
-            cbMarkerShape.SelectedIndex = 0;
         }
 
+        private void SetTestDataGridViewProperties()
+        {
+
+            DataGridViewColumn flowRate = new DataGridViewColumn();
+            flowRate.HeaderText = "Flow Rate";
+            flowRate.Width = 100;
+            flowRate.CellTemplate = new DataGridViewTextBoxCell();
+
+            DataGridViewColumn bottomHolePressure = new DataGridViewColumn();
+            bottomHolePressure.HeaderText = "Pwf";
+            bottomHolePressure.CellTemplate = new DataGridViewTextBoxCell();
+
+            dgvTestData.Columns.Add(flowRate);
+            dgvTestData.Columns.Add(bottomHolePressure);
+
+            DataGridViewCell cell = new DataGridViewComboBoxCell();
+            DataGridViewCell cell1 = new DataGridViewComboBoxCell();
+
+            dgvTestData.Rows.Add(new DataGridViewRow());
+
+            dgvTestData.Rows[0].Cells[0] = cell;
+            dgvTestData.Rows[0].Cells[1] = cell1;
+
+        }
+
+        private void AddTestDataRow(object sender, EventArgs e)
+        {
+
+            dgvTestData.Rows.Add(new DataGridViewRow());
+
+        }
+
+        private void btnDeleteCurve_Click(object sender, EventArgs e)
+        {
+
+            if (cbSelectCurve.SelectedItem == "Add Curve")
+                return;
+
+            _iPRRepository.Remove(cbSelectCurve.SelectedItem.ToString());
+
+            if (_iPRRepository.GetAll().Count > 0)
+                PlotCurves();
+            else
+                pltNodalAnalysis.Plot.Clear();
+
+            pltNodalAnalysis.Refresh();
+
+        }
     }
 }

@@ -1,5 +1,15 @@
 <Solution>
-  <Project Path="PetroFlow/PetroFlow_PresentationLayer.csproj" />
-  <Project Path="PetroFlow_BusinessLayer/PetroFlow_BusinessLayer.csproj" />
-  <Project Path="test/test.csproj" />
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="PetroFlow/PetroFlow_PresentationLayer.csproj">
+    <Platform Solution="*|x86" Project="x86" />
+  </Project>
+  <Project Path="PetroFlow_BusinessLayer/PetroFlow_BusinessLayer.csproj">
+    <Platform Solution="*|x86" Project="x86" />
+  </Project>
+  <Project Path="test/test.csproj">
+    <Platform Solution="*|x86" Project="x86" />
+  </Project>
 </Solution>
