@@ -41,9 +41,11 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         public bool IsInputValid { get; set; }
 
-        public double MaxFlowRate;
+        public clsIPRGenerationSettings GenerationSettings { get; set; }
 
-        public double ProductivityIndex;
+        double MaxFlowRate;
+
+        double ProductivityIndex;
 
         // Indicates whether the reservoir is saturated (i.e., Pr ≤ Pb).
         // If the bubble point pressure is not provided, the reservoir is treated as saturated.
@@ -70,76 +72,76 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         }
 
-        public clsValidationResult SetInputData(Dictionary<enIPRData, object> inputData)
+        public clsValidationResult SetInputData(clsPresentIPRDataInput inputData)
         {
             clsValidationResult validationResult = new();
 
             //=============================
             // --- Reservoir Pressure ---
             //=============================
-            if (!inputData.TryGetValue(enIPRData.ReservoirPressure, out var pressureObj))
+            if (inputData.ReservoirPressure == null)
                 throw new exMissingRequiredInputException(
                     "Cannot generate IPR: Reservoir pressure has not been provided.");
 
-            if (pressureObj is not double reservoirPressure)
-                throw new exInvalidIPRParameterException(
-                    "Invalid reservoir pressure: Expected a numeric value.");
-
-            if (reservoirPressure <= 0)
+            if (inputData.ReservoirPressure <= 0)
                 throw new exInvalidIPRParameterException(
                     "Invalid reservoir pressure: A positive value greater than zero is required.");
 
             //=====================
             // --- Test Data ---
             //=====================
-
-            if (!inputData.TryGetValue(enIPRData.TestData, out var testDataObj))
+            if (inputData.TestsData == null)
                 throw new exMissingRequiredInputException(
                     "Cannot generate IPR: Test data has not been provided.");
 
-            if (testDataObj is not List<clsInFlowDataRow> rows)
-                throw new exInvalidIPRParameterException(
-                    "Invalid test data: Expected a list of InFlow data rows.");
-
-            if (rows.Count == 0)
+            if (inputData.TestsData.Count < 1)
                 throw new exInvalidIPRParameterException(
                     "Invalid test data: At least one test data row is required.");
 
-            if (rows.Any(x => x.FlowRate <= 0))
+            if (inputData.TestsData.Any(x => x.FlowRate <= 0))
                 throw new exInvalidIPRParameterException(
                     "Invalid test data: One or more flow rates are zero or negative.");
 
-            if (rows.Any(x => x.BottomHolePressure <= 0))
+            if (inputData.TestsData.Any(x => x.BottomHolePressure <= 0))
                 throw new exInvalidIPRParameterException(
                     "Invalid test data: One or more bottom hole pressures are zero or negative.");
+
+            if (inputData.TestsData.Any(x => x.BottomHolePressure >= inputData.ReservoirPressure))
+                throw new exInvalidIPRParameterException(
+                    "Invalid test data: One or more bottom hole pressures are greater than reservoir pressure.");
+
+            if (inputData.TestsData.Count > 1)
+                validationResult.Warnings.Add(
+                    "Multiple test data rows were provided. Only the first row will be used.");
 
             //================================
             // --- Bubble Point Pressure ---
             //================================
-
-            double? bubblePointPressure = null;
-
-            if (!inputData.TryGetValue(enIPRData.BubblePointPressure, out var bubbleObj) || bubbleObj == null)
+            if (inputData.BubblePointPressure == null)
             {
                 validationResult.Warnings.Add(
                     "Bubble point pressure was not provided. Reservoir will be assumed saturated.");
             }
             else
             {
-                if (bubbleObj is not double bp)
-                    throw new exInvalidIPRParameterException(
-                        "Invalid bubble point pressure: Expected a numeric value.");
 
-                if (bp <= 0)
+                if (inputData.BubblePointPressure <= 0)
                     throw new exInvalidIPRParameterException(
                         "Invalid bubble point pressure: A positive value greater than zero is required.");
 
-                bubblePointPressure = bp;
+                if (inputData.BubblePointPressure.Value > inputData.ReservoirPressure.Value)
+                {
+                    validationResult.Warnings.Add(
+                        "Bubble point pressure is greater than reservoir pressure. Reservoir will behave as saturated.");
+                }
+
             }
 
-            ReservoirPressure = reservoirPressure;
-            TestsData = rows;
-            BubblePointPressure = bubblePointPressure;
+
+
+            ReservoirPressure = inputData.ReservoirPressure.Value;
+            TestsData = inputData.TestsData;
+            BubblePointPressure = inputData.BubblePointPressure;
 
             IsInputValid = true;
 
@@ -187,7 +189,8 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             // Calculate max flow rate:
             CalculateMaxFlowRate();
 
-            for (int pressure = 0; pressure <= ReservoirPressure; pressure++)
+            for (double pressure = GenerationSettings.MinimumPressure; pressure <= ReservoirPressure; 
+                pressure += GenerationSettings.PressureStepSize)
             {
 
                 double y = pressure / ReservoirPressure; // a variable to store the pwf/ pr.
@@ -218,7 +221,8 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             double BubblePointFlowRate = clsIPRGeneralFunctions.LinearFlowRate(ProductivityIndex, ReservoirPressure, (double)BubblePointPressure);
 
             // Generating the IPR data:
-            for (int pressure = 0; pressure <= ReservoirPressure; pressure++)
+            for (double pressure = GenerationSettings.MinimumPressure; pressure <= ReservoirPressure;
+                pressure += GenerationSettings.PressureStepSize)
             {
 
                 double flowrate;
@@ -254,6 +258,9 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
                 throw new InvalidOperationException("Invalid operation: " +
                     "Calculation method was called before input data was set. Call SetInputData() first.");
 
+            if (GenerationSettings.MinimumPressure > ReservoirPressure)
+                throw new exInvalidIPRParameterException("Minimum pressure must be less than the reservoir pressure.");
+
             if (IsSaturated)
                 GeneratedData = GenerateIPR_SaturatedReservoir();
             else
@@ -261,6 +268,15 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         }
 
+        public double GetMaxFlowRate()
+        {
+            return MaxFlowRate;
+        }
+
+        public double GetProductivityIndex()
+        {
+            return ProductivityIndex;
+        }
 
     }
 

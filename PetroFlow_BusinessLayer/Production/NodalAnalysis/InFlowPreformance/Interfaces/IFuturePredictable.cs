@@ -1,4 +1,5 @@
-﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
+﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Exceptions_and_Validation;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,8 +9,9 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Int
     public interface IFuturePredictable
     {
 
-        void GenerateFutureIPR(double futureReservoirPressure,
-            double futureOilRelativePermeability, double futureOilFormationVolumeFactor, double FutureOilViscosity);
+        clsValidationResult ValidateFutureInput(clsFutureIPRDataInput futureDataInput);
+
+        void GenerateFutureIPR(clsFutureIPRDataInput futureDataInput);
 
     }
 }

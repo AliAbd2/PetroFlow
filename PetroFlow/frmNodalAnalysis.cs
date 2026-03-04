@@ -1,6 +1,4 @@
-using Microsoft.VisualBasic.ApplicationServices;
-using OpenTK.Graphics.OpenGL;
-using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance;
+ using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Exceptions_and_Validation;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Interfaces;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
@@ -8,15 +6,6 @@ using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Methods
 using PetroFlow_PresentationLayer;
 using PetroFlow_PresentationLayer.Properties;
 using ScottPlot;
-using ScottPlot.Colormaps;
-using ScottPlot.Hatches;
-using ScottPlot.Plottables;
-using ScottPlot.TickGenerators.Financial;
-using ScottPlot.Triangulation;
-using System.Security.Policy;
-using System.Windows.Controls;
-using System.Windows.Media;
-using static System.Net.WebRequestMethods;
 
 
 namespace PetroFlow
@@ -86,7 +75,8 @@ namespace PetroFlow
             if (!AddCurve(ref CurveName))
                 return;
 
-            GenerateIPR(CurveName);
+            if (!GenerateIPR(CurveName))
+                return;
 
             PlotCurves();
 
@@ -184,13 +174,15 @@ namespace PetroFlow
 
         }
 
-        private bool ReadDuoble(System.Windows.Forms.TextBox textBox, string dataType, out double result)
+        private bool ReadDouble(TextBox textBox, string dataType, out double result)
         {
 
             result = 0;
 
             if (string.IsNullOrWhiteSpace(textBox.Text))
                 return false;
+
+
 
             if (double.TryParse(textBox.Text, out result))
                 return true;
@@ -204,16 +196,6 @@ namespace PetroFlow
         {
 
             List<clsInFlowDataRow> data = new();
-
-            if (dgvTestData.Rows.Count <= 1)
-            {
-
-                MessageBox.Show("No test data has been provided: Test data is rquaired to generate IPR.", "Data Reading Erorr",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-                return null;
-
-            }
 
             foreach (DataGridViewRow row in dgvTestData.Rows)
             {
@@ -237,7 +219,7 @@ namespace PetroFlow
                 }
 
 
-                if (!double.TryParse(row.Cells[0].Value?.ToString(), out double bottomHolePressure))
+                if (!double.TryParse(row.Cells[1].Value?.ToString(), out double bottomHolePressure))
                 {
 
                     MessageBox.Show("One or more test bottom hole pressure is not numberic: test bottom hole pressure musd be numric.",
@@ -261,42 +243,78 @@ namespace PetroFlow
 
         }
 
-        private Dictionary<enIPRData, object> ReadData()
+        private clsPresentIPRDataInput ReadPresentIPRDataInput()
         {
 
-            Dictionary<enIPRData, object> data = new();
+            double? reservoirPressure = null;
+            double? bubblePointPressure = null;
+            List<clsInFlowDataRow>? testData = null;
+            double? testFlowEfficiency = null;
+            double? wellExponent = null;
 
-            if (ReadDuoble(txtReservoirPressure, "Reservoir Pressure", out double result))
-                data[enIPRData.ReservoirPressure] = result;
+            if (ReadDouble(txtReservoirPressure, "Reservoir Pressure", out double ReservoirPressure))
+                reservoirPressure = ReservoirPressure;
 
-            if (ReadDuoble(txtBubblePointPressure, "Bubble Point Pressure", out result))
-                data[enIPRData.BubblePointPressure] = result;
+            if (ReadDouble(txtBubblePointPressure, "Bubble Point Pressure", out double BubblePointPressure))
+                bubblePointPressure = BubblePointPressure;
 
-            List<clsInFlowDataRow> testData = ReadTestData();
+            testData = ReadTestData();
 
-            if (!(testData == null))
-                data[enIPRData.TestData] = testData;
-            else
-                return null;
+            if (ReadDouble(txtTestFlowEfficiency, "Test Flow Efficiency", out double TestFlowEfficiency))
+                testFlowEfficiency = TestFlowEfficiency;
 
-            if (ReadDuoble(txtOilRelativePermeability, "Oil Relative Permeabilty", out result))
-                data[enIPRData.OilRelativePermeability] = result;
-
-            if (ReadDuoble(txtOilViscosity, "Oil Viscosity", out result))
-                data[enIPRData.OilViscosity] = result;
-
-            if (ReadDuoble(txtOilFormationVolumeFactor, "Oil Formation Volume Factor", out result))
-                data[enIPRData.FutureOilFromationVolumeFactor] = result;
-
-            if (ReadDuoble(txtTestFlowEfficiency, "Test Flow Efficiency", out result))
-                data[enIPRData.TestFlowEfficiency] = result;
+            if (ReadDouble(txtWellExponent, "Well Exponent", out double WellExponent))
+                wellExponent = WellExponent;
 
 
+            clsPresentIPRDataInput inputData = new clsPresentIPRDataInput(reservoirPressure,
+                bubblePointPressure, testData, testFlowEfficiency, wellExponent);
 
-            return data;
+            return inputData;
+
 
         }
 
+        private clsFutureIPRDataInput ReadFuturteIPRDataInput()
+        {
+
+            double? PresentOilRelativePermeability = null;
+            double? PresentOilViscosity = null;
+            double? PresentOilFormationVolumeFactor = null;
+            double? FutureReservoirPressure = null;
+            double? FutureOilRelativePermeability = null;
+            double? FutureOilViscosity = null;
+            double? FutureOilFormationVolumeFactor = null;
+
+            if (ReadDouble(txtOilRelativePermeability, "Present Oil Relative Permeability", out double presentOilRelativePermeability))
+                PresentOilRelativePermeability = presentOilRelativePermeability;
+
+            if (ReadDouble(txtOilViscosity, "Present Oil Viscosity", out double presentOilViscosity))
+                PresentOilViscosity = presentOilViscosity;
+
+            if (ReadDouble(txtOilFormationVolumeFactor, "Present Oil Formation Volume Factor", out double presentOilFormationVolumeFactor))
+                PresentOilFormationVolumeFactor = presentOilFormationVolumeFactor;
+
+            if (ReadDouble(txtFutureReservoirPressure, "Future Reservoir Pressure", out double futureReservoirPressure))
+                FutureReservoirPressure = futureReservoirPressure;
+
+            if (ReadDouble(txtFutureOilRelativePermeability, "Future Oil Relative Permeability", out double futureOilRelativePermeability))
+                FutureOilRelativePermeability = futureOilRelativePermeability;
+
+            if (ReadDouble(txtFutureOilViscosity, "Future Oil Viscosity", out double futureOilViscosity))
+                FutureOilViscosity = futureOilViscosity;
+
+            if (ReadDouble(txtFutureOilFormationVolumeFactor, "Future Oil Formation Volume Factor", out double futureOilFormationVolumeFactor))
+                FutureOilFormationVolumeFactor = futureOilFormationVolumeFactor;
+
+            clsFutureIPRDataInput futureIPRDataInput = new(FutureReservoirPressure,
+                PresentOilRelativePermeability, PresentOilViscosity, PresentOilFormationVolumeFactor,
+                FutureOilRelativePermeability, FutureOilViscosity, FutureOilFormationVolumeFactor);
+
+            return futureIPRDataInput;
+
+        }
+         
         private void SetWarnings(clsValidationResult result)
         {
 
@@ -306,12 +324,32 @@ namespace PetroFlow
 
         }
 
+        private clsIPRGenerationSettings SetGenerationSettings()
+        {
+
+            double MinimumPressure = (double)nudMinimumPressure.Value;
+            double PressueStepSize = (double)nudPressureStepSize.Value;
+
+
+            clsIPRGenerationSettings generationSettings = new(PressueStepSize, MinimumPressure);
+
+            return generationSettings;
+
+        }
+
         private bool AddCurve(ref string curveName)
         {
             IIPRMethod method;
-            Dictionary<enIPRData, object> data = ReadData();
+            clsPresentIPRDataInput inputData = ReadPresentIPRDataInput();
+            clsIPRGenerationSettings generationSettings = SetGenerationSettings();
 
-            if (data == null)
+            if (rdoFutureIPR.Checked)
+            {
+                clsFutureIPRDataInput futureInputData = ReadFuturteIPRDataInput();
+            }
+
+
+            if (inputData == null)
                 return false;
 
             clsValidationResult validationResult = new();
@@ -328,8 +366,9 @@ namespace PetroFlow
             try
             {
 
-                validationResult = method.SetInputData(data);
+                validationResult = method.SetInputData(inputData);
                 method.CurvePlotSetting = GetPlotsetting(curveName);
+                method.GenerationSettings = generationSettings;
                 _iPRRepository.Add(method, ref curveName);
 
                 SetWarnings(validationResult);
@@ -350,18 +389,53 @@ namespace PetroFlow
 
         }
 
-        private void GenerateIPR(string curveName)
+        private bool GenerateIPR(string curveName)
         {
 
             var curve = _iPRRepository.Get(curveName);
 
 
             if (rdoCurrentIPR.Checked)
+            {
+
                 curve.GenerateIPR();
+                return true;
+            }
+                
 
-            if (rdoFutureIPR.Checked && curve is IFuturePredictable future) ;
+            if (rdoFutureIPR.Checked && curve is IFuturePredictable future)
+            {
+
+                try
+                {
+                    future.GenerateFutureIPR(ReadFuturteIPRDataInput());
+                    return true;
+                }
+                catch (Exception ex)
+                {
+
+                    MessageBox.Show(ex.Message, "Data Reading Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                    return false;
 
 
+                }
+
+            }
+            else
+            {
+
+                MessageBox.Show(
+                    "The selected method is not compatible with the selected scenario.",
+                    "Method Selection Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+
+            }
+
+
+            return false;
         }
 
         private void PlotCurves()
@@ -428,6 +502,8 @@ namespace PetroFlow
 
             _iPRRepository = new();
 
+            SetDataGridViewRows();
+
         }
 
         private void UpdatePlot(object sender, EventArgs e)
@@ -458,7 +534,13 @@ namespace PetroFlow
         private void ShowAvailbleMthods(object sender, EventArgs e)
         {
 
+            bool IsGasWell = rdoGasWell.Checked;
+            bool IsFuture = rdoFutureIPR.Checked;
 
+            rdoVogelMethod.Enabled = !IsGasWell && !IsFuture;
+            rdoStandingMethod.Enabled = !IsGasWell;
+            rdoFetkovich.Enabled = !IsGasWell;
+            rdoJones.Enabled = !IsGasWell && !IsFuture;
 
         }
 
@@ -598,6 +680,14 @@ namespace PetroFlow
             dgvTestData.Columns.Add(flowRate);
             dgvTestData.Columns.Add(bottomHolePressure);
 
+
+        }
+
+        private void SetDataGridViewRows()
+        {
+
+            dgvTestData.Rows.Clear();
+
             DataGridViewCell cell = new DataGridViewComboBoxCell();
             DataGridViewCell cell1 = new DataGridViewComboBoxCell();
 
@@ -605,6 +695,18 @@ namespace PetroFlow
 
             dgvTestData.Rows[0].Cells[0] = cell;
             dgvTestData.Rows[0].Cells[1] = cell1;
+
+            if (rdoVogelMethod.Checked || rdoStandingMethod.Checked)
+                dgvTestData.Rows.Add(new DataGridViewRow());
+
+            if (rdoFetkovich.Checked)
+                for (int i = 0; i < 3; i++)
+                    dgvTestData.Rows.Add(new DataGridViewRow());
+
+            if (rdoJones.Checked)
+                for (int i = 0; i < 2; i++)
+                    dgvTestData.Rows.Add(new DataGridViewRow());
+
 
         }
 
@@ -631,5 +733,56 @@ namespace PetroFlow
             pltNodalAnalysis.Refresh();
 
         }
+
+        private void SetMenu(object sender, EventArgs e)
+        {
+
+            bool IsFuture = rdoFutureIPR.Checked;
+            bool IsVogel = rdoVogelMethod.Checked;
+            bool IsStanding = rdoStandingMethod.Checked;
+            bool IsFetkovich = rdoFetkovich.Checked;
+            bool IsJounes = rdoJones.Checked;
+
+            txtBubblePointPressure.Visible = lblBubblePointPressure.Visible =
+                cbBubblePointPressureUnit.Visible = !IsJounes;
+
+            txtOilRelativePermeability.Visible =
+                lblOilRelativePermeability.Visible = cbOilRelativePermeabilityUnit.Visible = IsStanding;
+
+            txtOilViscosity.Visible =
+                lblOilViscosity.Visible = cbOilViscosityUnit.Visible = IsStanding;
+
+            txtOilFormationVolumeFactor.Visible =
+                lblOilFormationVolumeFactor.Visible = cbOilFormationVolumeFactorUnit.Visible = IsStanding;
+
+
+            txtTestFlowEfficiency.Visible = lblTestFlowEfficiency.Visible
+                = cbTestFlowEfficiencyUnit.Visible = IsStanding;
+
+            txtNewFlowEfficiency.Visible = lblNewFlowEfficiency.Visible =
+                cbNewFlowEfficiencyUnit.Visible = IsStanding;
+
+            txtWellExponent.Visible =
+                lblWellExponent.Visible = IsFetkovich;
+
+            txtFutureReservoirPressure.Visible =
+                lblFutureReservoirPressure.Visible = cbFutureReservoiPressureUnit.Visible = IsStanding || IsFetkovich;
+
+            txtFutureOilRelativePermeability.Visible =
+                lblFutureOilRelativePermeability.Visible = cbFutureOilRelativePermeabilityUnit.Visible = IsStanding;
+
+            txtFutureOilViscosity.Visible =
+                lblFutureOilViscosity.Visible = cbFutureOilViscosityUnit.Visible = IsStanding;
+
+            txtFutureOilFormationVolumeFactor.Visible =
+                lblFutureOilFormationVolumeFactor.Visible = cbFutureOilFormationVolumeFactorUnit.Visible = IsStanding;
+
+            btnAddTestDataRow.Visible = IsFetkovich || IsJounes;
+
+            SetDataGridViewRows();
+
+        }
+
+
     }
 }

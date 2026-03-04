@@ -1,5 +1,6 @@
 ﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Exceptions_and_Validation;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Methods;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -31,7 +32,9 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Int
 
         bool IsInputValid { get; set; }
 
-        clsValidationResult SetInputData(Dictionary<enIPRData, object> inputData);
+        clsIPRGenerationSettings GenerationSettings { get; set; } 
+
+        clsValidationResult SetInputData(clsPresentIPRDataInput dataInput);
 
         void GenerateIPR();
 

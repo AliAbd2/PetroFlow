@@ -53,13 +53,11 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         public bool IsInputValid { get; set; }
 
+        public clsIPRGenerationSettings GenerationSettings { get; set; }
+
         private double Slope;
 
         private double Intercept;
-
-        private double PressureStepSize;
-
-        private double MimiumBottomHolePressure;
 
         public clsJonesBlountGlaze()
         {
@@ -68,57 +66,50 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         }
 
-        public clsValidationResult SetInputData(Dictionary<enIPRData, object> inputData)
+        public clsValidationResult SetInputData(clsPresentIPRDataInput inputData)
         {
             clsValidationResult validationResult = new();
 
             //=============================
             // --- Reservoir Pressure ---
             //=============================
-            if (!inputData.TryGetValue(enIPRData.ReservoirPressure, out var pressureObj))
+            if (inputData.ReservoirPressure == null)
                 throw new exMissingRequiredInputException(
                     "Cannot generate IPR: Reservoir pressure has not been provided.");
 
-            if (pressureObj is not double reservoirPressure)
-                throw new exInvalidIPRParameterException(
-                    "Invalid reservoir pressure: Expected a numeric value.");
-
-            if (reservoirPressure <= 0)
+            if (inputData.ReservoirPressure <= 0)
                 throw new exInvalidIPRParameterException(
                     "Invalid reservoir pressure: A positive value greater than zero is required.");
+
 
             //=====================
             // --- Test Data ---
             //=====================
-
-            if (!inputData.TryGetValue(enIPRData.TestData, out var testDataObj))
+            if (inputData.TestsData == null)
                 throw new exMissingRequiredInputException(
                     "Cannot generate IPR: Test data has not been provided.");
 
-            if (testDataObj is not List<clsInFlowDataRow> rows)
+            if (inputData.TestsData.Count < 2)
                 throw new exInvalidIPRParameterException(
-                    "Invalid test data: Expected a list of InFlow data rows.");
+                    "Invalid test data: At least two test data rows is required.");
 
-            if (rows.Count < 2)
-                throw new exInvalidIPRParameterException(
-                    "Invalid test data: At least Two test data rows are required.");
-
-            if (rows.Count == 2)
-                validationResult.Warnings.Add(
-                    "Only two test data rows were provided. The result may be less accurate.");
-
-            if (rows.Any(x => x.FlowRate <= 0))
+            if (inputData.TestsData.Any(x => x.FlowRate <= 0))
                 throw new exInvalidIPRParameterException(
                     "Invalid test data: One or more flow rates are zero or negative.");
 
-            if (rows.Any(x => x.BottomHolePressure <= 0))
+            if (inputData.TestsData.Any(x => x.BottomHolePressure <= 0))
                 throw new exInvalidIPRParameterException(
                     "Invalid test data: One or more bottom hole pressures are zero or negative.");
 
+            if (inputData.TestsData.Any(x => x.BottomHolePressure >= inputData.ReservoirPressure))
+                throw new exInvalidIPRParameterException(
+                    "Bottom-hole pressure must be less than reservoir pressure.");
 
-            ReservoirPressure = reservoirPressure;
-            TestsData = rows;
 
+            ReservoirPressure = inputData.ReservoirPressure.Value;
+            TestsData = inputData.TestsData;
+
+            IsInputValid = true;
             return validationResult;
         }
 
@@ -130,18 +121,6 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             // slope = (n * sum(x*y) - sum(x) * sum(y)) / (n * sum(x^2) - sum(x)^2)
             // Intercept = (sum(y) - Slope * sum(x)) / n
             // where n is the number of records.
-
-            if (TestsData.Count < 2)
-                throw new Exception("Invalid number of tests.");
-
-
-            if (TestsData.Any(t =>
-                t.FlowRate <= 0 ||
-                t.BottomHolePressure >= ReservoirPressure || t.BottomHolePressure < 0))
-            {
-                throw new InvalidOperationException(
-                    "Invalid test data: check flow rates and bottom-hole pressures.");
-            }
 
             int n = TestsData.Count;
             List<double> q = TestsData.Select(x => x.FlowRate).ToList();
@@ -166,6 +145,13 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
             // A method to generate the IPR using Jones, Blount, and Glaze method.
 
+            if (!IsInputValid)
+                throw new InvalidOperationException("Invalid operation: " +
+                    "Calculation method was called before input data was set. Call SetInputData() first.");
+
+            if (GenerationSettings.MinimumPressure > ReservoirPressure)
+                throw new exInvalidIPRParameterException("Minimum pressure must be less than the reservoir pressure.");
+
             DetermineSlopeIntercept();
 
             // This method will assume Bottom-Hole Flowing Pressure and calcualte Flow Rate Using:
@@ -182,8 +168,8 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
             double flowRate = 0;
 
-            for (double Pressure = MimiumBottomHolePressure; Pressure <= ReservoirPressure;
-                Pressure += PressureStepSize)
+            for (double Pressure = GenerationSettings.MinimumPressure; Pressure <= ReservoirPressure;
+                Pressure += GenerationSettings.PressureStepSize)
             {
 
                 double x = -Intercept + 

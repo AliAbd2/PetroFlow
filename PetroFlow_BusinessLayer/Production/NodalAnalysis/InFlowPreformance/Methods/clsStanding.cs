@@ -2,11 +2,8 @@
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Exceptions_and_Validation;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Interfaces;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.ComponentModel.DataAnnotations;
+
 
 namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Methods
 {
@@ -43,21 +40,19 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         public bool IsInputValid { get; set; }
 
-        public double TestFlowEfficiency;
+        public clsIPRGenerationSettings GenerationSettings { get; set; }
 
-        public double TestPresentMaxFlowRate;
+        private double TestFlowEfficiency;
 
-        public double PressureStepSize;
+        private double TestPresentMaxFlowRate;
 
-        public double MinimumPressure;
+        private double ProductivityIndex;
 
-        public double ProductivityIndex;
+        private double PresentOilRelativePermeability;
 
-        public double? PresentOilRelativePermeability;
+        private double PresentOilViscosity;
 
-        public double? PresentOilViscosity;
-
-        public double? PresentOilFomationVoilumeFactor;
+        private double PresentOilFomationVoilumeFactor;
 
         // Indicates whether the reservoir is saturated (i.e., Pr ≤ Pb).
         // If the bubble point pressure is not provided, the reservoir is treated as saturated.
@@ -83,114 +78,115 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         }
 
-        public clsValidationResult SetInputData(Dictionary<enIPRData, object> inputData)
+        public clsValidationResult SetInputData(clsPresentIPRDataInput inputData)
         {
             clsValidationResult validationResult = new();
 
             //=============================
             // --- Reservoir Pressure ---
             //=============================
-            if (!inputData.TryGetValue(enIPRData.ReservoirPressure, out var pressureObj))
+            if (inputData.ReservoirPressure == null)
                 throw new exMissingRequiredInputException(
                     "Cannot generate IPR: Reservoir pressure has not been provided.");
 
-            if (pressureObj is not double reservoirPressure)
-                throw new exInvalidIPRParameterException(
-                    "Invalid reservoir pressure: Expected a numeric value.");
-
-            if (reservoirPressure <= 0)
+            if (inputData.ReservoirPressure <= 0)
                 throw new exInvalidIPRParameterException(
                     "Invalid reservoir pressure: A positive value greater than zero is required.");
+
 
             //=====================
             // --- Test Data ---
             //=====================
-
-            if (!inputData.TryGetValue(enIPRData.TestData, out var testDataObj))
+            if (inputData.TestsData == null)
                 throw new exMissingRequiredInputException(
                     "Cannot generate IPR: Test data has not been provided.");
 
-            if (testDataObj is not List<clsInFlowDataRow> rows)
-                throw new exInvalidIPRParameterException(
-                    "Invalid test data: Expected a list of InFlow data rows.");
-
-            if (rows.Count == 0)
+            if (inputData.TestsData.Count < 1)
                 throw new exInvalidIPRParameterException(
                     "Invalid test data: At least one test data row is required.");
 
-            if (rows.Any(x => x.FlowRate <= 0))
+            if (inputData.TestsData.Any(x => x.FlowRate <= 0))
                 throw new exInvalidIPRParameterException(
                     "Invalid test data: One or more flow rates are zero or negative.");
 
-            if (rows.Any(x => x.BottomHolePressure <= 0))
+            if (inputData.TestsData.Any(x => x.BottomHolePressure <= 0))
                 throw new exInvalidIPRParameterException(
                     "Invalid test data: One or more bottom hole pressures are zero or negative.");
+
+            if (inputData.TestsData.Any(x => x.BottomHolePressure >= inputData.ReservoirPressure))
+                throw new exInvalidIPRParameterException(
+                    "Invalid test data: One or more bottom hole pressures are greater than reservoir pressure.");
+
+            if (inputData.TestsData.Count > 1)
+                validationResult.Warnings.Add(
+                    "Multiple test data rows were provided. Only the first row will be used.");
+
 
             //===============================
             // --- Test Flow Efficiency ---
             //===============================
+            if (inputData.TestFlowEfficiency == null)
+                throw new exMissingRequiredInputException(
+                    "Cannot generate IPR: Test Flow Efficiency has not been provided.");
 
+            if (inputData.TestFlowEfficiency <= 0)
+                throw new exInvalidIPRParameterException(
+                    "Invalid Test Flow Efficiency: A positive value greater than zero is required.");
+
+            if (inputData.TestFlowEfficiency > 1)
+                validationResult.Warnings.Add("Flow efficiency is greater than 1. " +
+                    "The Standing method is limited in this range;" +
+                    " the maximum flow rate will be estimated using an approximate relationship.");
 
 
             //================================
             // --- Bubble Point Pressure ---
             //================================
-
-            double? bubblePointPressure = null;
-
-            if (!inputData.TryGetValue(enIPRData.BubblePointPressure, out var bubbleObj) || bubbleObj == null)
+            if (inputData.BubblePointPressure == null)
             {
                 validationResult.Warnings.Add(
                     "Bubble point pressure was not provided. Reservoir will be assumed saturated.");
             }
             else
             {
-                if (bubbleObj is not double bp)
-                    throw new exInvalidIPRParameterException(
-                        "Invalid bubble point pressure: Expected a numeric value.");
 
-                if (bp <= 0)
+                if (inputData.BubblePointPressure <= 0)
                     throw new exInvalidIPRParameterException(
                         "Invalid bubble point pressure: A positive value greater than zero is required.");
 
-                bubblePointPressure = bp;
+                if (inputData.BubblePointPressure.Value > inputData.ReservoirPressure.Value)
+                {
+                    validationResult.Warnings.Add(
+                        "Bubble point pressure is greater than reservoir pressure. Reservoir will behave as saturated.");
+                }
+
             }
 
-            ReservoirPressure = reservoirPressure;
-            TestsData = rows;
-            BubblePointPressure = bubblePointPressure;
+            ReservoirPressure = inputData.ReservoirPressure.Value;
+            TestsData = inputData.TestsData;
+            BubblePointPressure = inputData.BubblePointPressure;
+            TestFlowEfficiency = inputData.TestFlowEfficiency.Value;
+
+            IsInputValid = true;
 
             return validationResult;
         }
 
-        private void CalcualteTestPresentMaxFlowRate()
+        private void CalculateTestPresentMaxFlowRate(double flowEfficiency)
         {
 
             // Calculate the maximum flowrate at FE = 1(e.g. zero skin factor) using the following equation:
             // qo(max)(FE = 1) = qo / [ 1.8 * FE * (1 - (pwf / pr)) - 0.8 * (FE^2) * (1 - (pwf / pr))^2 ]
 
-            if (TestFlowEfficiency > 0)
-            {
+            double x = 1 - TestsData[0].BottomHolePressure / ReservoirPressure; // 1 - pwf / pr
+            double y = 1.8 * flowEfficiency * (x) - 0.8 * Math.Pow(flowEfficiency, 2) * Math.Pow(x, 2);
 
-                double x = 1 - TestsData[0].BottomHolePressure / ReservoirPressure; // 1 - pwf / pr
-                double y = 1.8 * TestFlowEfficiency * (x) - 0.8 * Math.Pow(TestFlowEfficiency, 2) * Math.Pow(x, 2);
-
-                TestPresentMaxFlowRate = TestsData[0].FlowRate / y;
-            }
-            else
-            {
-
-                double x = TestsData[0].BottomHolePressure / ReservoirPressure;
-                double y = 1 - 0.2 * x - 0.8 * x * x;
-
-                TestPresentMaxFlowRate = TestsData[0].FlowRate / y;
-            }
-
+            TestPresentMaxFlowRate = TestsData[0].FlowRate / y;
 
 
         }
 
-        private void CalcualateProductivityIndex()
+        private void CalculateProductivityIndex()
         {
 
             // Calculate the productivity index:
@@ -199,40 +195,42 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             // Calculate the productivity index using: J = qo / (Pr - Pwf),
             // otherwise: J = qo / {(pr - pb) + pb/1.8 * [1.8 * (1 - pwf / pb) - 0.8 * (FE) * (1 - (pwf / pb))^2]}.
 
+            if (BubblePointPressure == null)
+                throw new exInvalidIPRParameterException("Bubble Point Pressure is not provided.");
+
             if (TestsData[0].BottomHolePressure >= BubblePointPressure)
                 ProductivityIndex = clsIPRGeneralFunctions.ProductivityIndex(TestsData[0].FlowRate,
                     ReservoirPressure, TestsData[0].BottomHolePressure);
             else
             {
 
-                double x = 1 - TestsData[0].BottomHolePressure / (double)BubblePointPressure;// (1 - pwf / pb)
+                double x = 1 - TestsData[0].BottomHolePressure / BubblePointPressure.Value;// (1 - pwf / pb)
                 double y = 1.8 * x - 0.8 * (TestFlowEfficiency) * Math.Pow(x, 2);
                 ProductivityIndex =  TestsData[0].FlowRate /
-                    ((ReservoirPressure - (double)BubblePointPressure) + ((double)BubblePointPressure / 1.8 * y));
+                    ((ReservoirPressure - BubblePointPressure.Value) + (BubblePointPressure.Value / 1.8 * y));
             }
 
         }
 
-        private List<clsInFlowDataRow> GenerateIPR_SaturatedReservoir()
+        private List<clsInFlowDataRow> GenerateIPR_SaturatedReservoir(double flowEfficiency)
         {
 
             // A method to Generate the IPR for a saturated reservoir.
 
             List<clsInFlowDataRow> data = new List<clsInFlowDataRow>(); // A list to store the data.
 
-            CalcualteTestPresentMaxFlowRate();
+            CalculateTestPresentMaxFlowRate(flowEfficiency);
 
             // Standing's equation to generate the IPR has a limit and only valid if:
             // pwf >= pr(1 - (1 / FE )) so we need to add a minimum value of pwf
-            int minimumBottomHolePressure = 0;
             // and since the minimum bottom hole pressure will shift from 0 we need to calculate the qo (max) using:
             // qo(max) = qo(max)(from test) * (0.624 + 0.376 * FE)
-            if (TestFlowEfficiency > 1)
+            if (flowEfficiency > 1)
             {
 
-                minimumBottomHolePressure = (int)Math.Floor(ReservoirPressure * (1 - (1 / TestFlowEfficiency))) + 1;
+                GenerationSettings.MinimumPressure = Math.Floor(ReservoirPressure * (1 - (1 / flowEfficiency))) + 1;
 
-                double maxFlowRate = TestPresentMaxFlowRate * (0.624 + 0.376 * TestFlowEfficiency);
+                double maxFlowRate = TestPresentMaxFlowRate * (0.624 + 0.376 * flowEfficiency);
 
                 // adding the qo max to the data.
                 data.Add(new clsInFlowDataRow(0, maxFlowRate));
@@ -240,12 +238,13 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             }
 
             // Generating the IPR:
-            for (int pressure = minimumBottomHolePressure; pressure <= ReservoirPressure; pressure++)
+            for (double pressure = GenerationSettings.MinimumPressure; pressure <= ReservoirPressure; 
+                pressure += GenerationSettings.PressureStepSize)
             {
 
                 // the equation is: qo = qo(max) * [ 1.8 * (FE) * (1 - (pwf/pr)) - 0.8 * (FE)^2 * (1-(pwf/pr))^2 ]
                 double x = 1 - pressure / ReservoirPressure;// (1 - (pwf/pr))
-                double y = 1.8 * (TestFlowEfficiency) * x - 0.8 * Math.Pow(TestFlowEfficiency, 2) * Math.Pow(x, 2);
+                double y = 1.8 * (flowEfficiency) * x - 0.8 * Math.Pow(flowEfficiency, 2) * Math.Pow(x, 2);
                 double flowrate = TestPresentMaxFlowRate * y;
 
                 data.Add(new clsInFlowDataRow(pressure, flowrate));
@@ -257,51 +256,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         }
 
-        private List<clsInFlowDataRow> ChangeFlowEfficiency_SaturatedReservoir(double newFlowEfficiency)
-        {
-
-            // A method to generate the IPR for flow Efficiency different from the test flow Efficiency.
-
-
-            List<clsInFlowDataRow> data = new List<clsInFlowDataRow>(); // A list to store the data.
-
-            CalcualteTestPresentMaxFlowRate();
-
-            // Standing's equation to generate the IPR has a limit and only valid if:
-            // pwf >= pr(1 - (1 / FE )) so we need to add a minimum value of pwf
-            int minimumBottomHolePressure = 0;
-            // and since the minimum bottom hole pressure will shift from 0 we need to calculate the qo (max) using:
-            // qo(max) = qo(max)(from test) * (0.624 + 0.376 * FE)
-            if (newFlowEfficiency > 1)
-            {
-
-                minimumBottomHolePressure = (int)Math.Floor(ReservoirPressure * (1 - (1 / newFlowEfficiency))) + 1;
-
-                double maxFlowRate = TestPresentMaxFlowRate * (0.624 + 0.376 * newFlowEfficiency);
-
-                // adding the qo max to the data.
-                data.Add(new clsInFlowDataRow(0, maxFlowRate));
-
-            }
-
-            // Generating the IPR:
-            for (int pressure = minimumBottomHolePressure; pressure <= ReservoirPressure; pressure++)
-            {
-
-                // the equation is: qo = qo(max) * [ 1.8 * (FE) * (1 - (pwf/pr)) - 0.8 * (FE)^2 * (1-(pwf/pr))^2 ]
-                double x = 1 - pressure / ReservoirPressure;// (1 - (pwf/pr))
-                double y = 1.8 * (newFlowEfficiency) * x - 0.8 * Math.Pow(newFlowEfficiency, 2) * Math.Pow(x, 2);
-                double flowrate = TestPresentMaxFlowRate * y;
-
-                data.Add(new clsInFlowDataRow(pressure, flowrate));
-
-            }
-
-            return data;
-
-        }
-
-        private List<clsInFlowDataRow> GenerateIPR_UnderSaturatedReservoir()
+        private List<clsInFlowDataRow> GenerateIPR_UnderSaturatedReservoir(double flowEfficiency)
         {
 
             // A method to generate the IPR data for an undersaturated reservoir.
@@ -316,10 +271,11 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
             List<clsInFlowDataRow> data = new List<clsInFlowDataRow>();
 
-            CalcualateProductivityIndex();
+            CalculateProductivityIndex();
 
             // Generate the IPR:
-            for (int pressure = 0; pressure <= ReservoirPressure; pressure++)
+            for (double pressure = GenerationSettings.MinimumPressure; pressure <= ReservoirPressure; 
+                pressure += GenerationSettings.PressureStepSize)
             {
 
                 double qo = 0;
@@ -329,48 +285,11 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
                 else
                 {
                     // qo = J * (pr - pb) + ( J * Pb / 1.8) * [1.8 * (1 - pwf / pb) - 0.8 * (FE) * (1 - (pwf / pb))^2].
-                    double x = 1 - pressure / (double)BubblePointPressure; // (1 - pwf / pb)
-                    double y = 1.8 * x - 0.8 * (TestFlowEfficiency) * Math.Pow(x, 2); // [1.8 * (1 - pwf / pb) - 0.8 * (FE) * (1 - (pwf / pb))^2]
-                    double z = ProductivityIndex * (ReservoirPressure - (double)BubblePointPressure); // J * (pr - pb)
+                    double x = 1 - pressure / BubblePointPressure.Value; // (1 - pwf / pb)
+                    double y = 1.8 * x - 0.8 * (flowEfficiency) * Math.Pow(x, 2); // [1.8 * (1 - pwf / pb) - 0.8 * (FE) * (1 - (pwf / pb))^2]
+                    double z = ProductivityIndex * (ReservoirPressure - BubblePointPressure.Value); // J * (pr - pb)
 
                     qo = z + (ProductivityIndex * (double)BubblePointPressure / 1.8) * y;
-
-                }
-
-                    data.Add(new clsInFlowDataRow(pressure, qo));
-
-            }
-
-            return data;
-
-        }
-
-        private List<clsInFlowDataRow> ChangeFlowEfficiency_UnderSaturatedReservoir(double newFlowEfficiency)
-        {
-
-            List<clsInFlowDataRow> data = new List<clsInFlowDataRow>();
-
-            CalcualateProductivityIndex();
-
-            double newProductivityIndex = ProductivityIndex * newFlowEfficiency / TestFlowEfficiency;
-
-
-            // Generate the IPR:
-            for (int pressure = 0; pressure <= ReservoirPressure; pressure++)
-            {
-
-                double qo = 0;
-
-                if (pressure >= BubblePointPressure)
-                    qo = newProductivityIndex * (ReservoirPressure - pressure);
-                else
-                {
-                    // qo = J * (pr - pb) + ( J * Pb / 1.8) * [1.8 * (1 - pwf / pb) - 0.8 * (FE) * (1 - (pwf / pb))^2].
-                    double x = 1 - pressure / (double)BubblePointPressure; // (1 - pwf / pb)
-                    double y = 1.8 * x - 0.8 * (newFlowEfficiency) * Math.Pow(x, 2); // [1.8 * (1 - pwf / pb) - 0.8 * (FE) * (1 - (pwf / pb))^2]
-                    double z = newProductivityIndex * (ReservoirPressure - (double)BubblePointPressure); // J * (pr - pb)
-
-                    qo = z + (newProductivityIndex * (double)BubblePointPressure / 1.8) * y;
 
                 }
 
@@ -379,7 +298,6 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             }
 
             return data;
-
 
         }
 
@@ -394,10 +312,17 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
         public void GenerateIPR()
         {
 
+            if (!IsInputValid)
+                throw new InvalidOperationException("Invalid operation: " +
+                    "Calculation method was called before input data was set. Call SetInputData() first.");
+
+            if (GenerationSettings.MinimumPressure > ReservoirPressure)
+                throw new exInvalidIPRParameterException("Minimum pressure must be less than the reservoir pressure.");
+
             if (IsSaturated)
-                GeneratedData = GenerateIPR_SaturatedReservoir();
+                GeneratedData = GenerateIPR_SaturatedReservoir(TestFlowEfficiency);
             else
-                GeneratedData = GenerateIPR_UnderSaturatedReservoir();
+                GeneratedData = GenerateIPR_UnderSaturatedReservoir(TestFlowEfficiency);
 
         }
 
@@ -407,19 +332,122 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
         /// <param name="newFlowEfficiency">The new flow efficiency value to apply to the reservoir. Must be a positive number.</param>
         /// <returns>A list of <see cref="clsInFlowDataRow"/> objects representing the inflow data after the flow efficiency
         /// change.</returns>
-        public void GenerateWithEfficiency(double newFlowEfficiency)
+        public (List<clsInFlowDataRow>, clsValidationResult) GenerateWithEfficiency(double newFlowEfficiency)
         {
 
+            clsValidationResult validationResult = new();
+
+            if (!IsInputValid)
+                throw new InvalidOperationException("Invalid operation: " +
+                    "Calculation method was called before input data was set. Call SetInputData() first.");
+
+            if (GenerationSettings.MinimumPressure > ReservoirPressure)
+                throw new exInvalidIPRParameterException("Minimum pressure must be less than the reservoir pressure.");
+
+            if (newFlowEfficiency <= 0)
+                throw new exInvalidIPRParameterException(
+                    "Invalid Test Flow Efficiency: A positive value greater than zero is required.");
+
+            if (newFlowEfficiency > 1)
+                validationResult.Warnings.Add("Flow efficiency is greater than 1. " +
+                    "The Standing method is limited in this range;" +
+                    " the maximum flow rate will be estimated using an approximate relationship.");
+
             if (IsSaturated)
-                GeneratedData = ChangeFlowEfficiency_SaturatedReservoir(newFlowEfficiency);
+                return (GenerateIPR_SaturatedReservoir(newFlowEfficiency), validationResult);
             else
-                GeneratedData = ChangeFlowEfficiency_UnderSaturatedReservoir(newFlowEfficiency);
+                return (GenerateIPR_UnderSaturatedReservoir(newFlowEfficiency), validationResult);
 
         }
 
-        private double CalcualtFutureMaxFlowrate(double FutureReservoirPressure, 
-            double FutureOilReleativePremeability, double FutureOilViscosity,
-            double FutureOilRelativePermeability)
+        public clsValidationResult ValidateFutureInput(clsFutureIPRDataInput futureDataInput)
+        {
+
+            clsValidationResult validationResult = new();
+
+            //=====================================
+            // --- Future Reservoir Pressure ---
+            //=====================================
+            if (futureDataInput.FutureReservoirPressure == null)
+                throw new exMissingRequiredInputException(
+                    "Cannot generate Future IPR: Future Reservoir pressure has not been provided.");
+
+            if (futureDataInput.FutureReservoirPressure <= 0)
+                throw new exInvalidIPRParameterException(
+                    "Invalid future reservoir pressure: A positive value greater than zero is required.");
+
+            if (futureDataInput.FutureReservoirPressure > ReservoirPressure)
+                throw new exInvalidIPRParameterException(
+                    "Invalid future reservoir pressure: future reservoir pressure must be less than present reservoir pressure.");
+
+            //=====================================
+            // --- Oil Relative Permeability ---
+            //=====================================
+            if (futureDataInput.PresentOilRelativePermeability == null)
+                throw new exMissingRequiredInputException(
+                    "Cannot generate Future IPR: Present oil relative permeability has not been provided.");
+
+            if (futureDataInput.PresentOilRelativePermeability > 1 ||
+                futureDataInput.PresentOilRelativePermeability < 0)
+                throw new exInvalidIPRParameterException(
+                    "Invalid present oil relative permeability: A value between 0 and 1 is required.");
+
+            if (futureDataInput.FutureOilRelativePermeability == null)
+                throw new exMissingRequiredInputException(
+                    "Cannot generate Future IPR: Future oil relative permeability has not been provided.");
+
+            if (futureDataInput.FutureOilRelativePermeability > 1 ||
+                futureDataInput.FutureOilRelativePermeability < 0)
+                throw new exInvalidIPRParameterException(
+                    "Invalid future oil relative permeability: A value between 0 and 1 is required.");
+
+            //=====================================
+            // --- Oil Formation Volume Factor ---
+            //=====================================
+            if (futureDataInput.PresentOilFormationVolumeFactor == null)
+                throw new exMissingRequiredInputException(
+                    "Cannot generate Future IPR: Present oil formation volume factor has not been provided.");
+
+            if (futureDataInput.PresentOilFormationVolumeFactor <= 0)
+                throw new exInvalidIPRParameterException(
+                    "Invalid present oil formation volume factor: A positive value greater than zero is required.");
+
+            if (futureDataInput.FutureOilFormationVolumeFactor == null)
+                throw new exMissingRequiredInputException(
+                    "Cannot generate Future IPR: Future oil formation volume factor has not been provided.");
+
+            if (futureDataInput.FutureOilFormationVolumeFactor <= 0)
+                throw new exInvalidIPRParameterException(
+                    "Invalid future oil formation volume factor: A positive value greater than zero is required.");
+
+            //========================
+            // --- Oil Viscosity ---
+            //========================
+            if (futureDataInput.PresentOilViscosity == null)
+                throw new exMissingRequiredInputException(
+                    "Cannot generate Future IPR: Present oil viscosity has not been provided.");
+
+            if (futureDataInput.PresentOilViscosity <= 0)
+                throw new exInvalidIPRParameterException(
+                    "Invalid present oil viscosity: A positive value greater than zero is required.");
+
+            if (futureDataInput.FutureOilViscosity == null)
+                throw new exMissingRequiredInputException(
+                    "Cannot generate Future IPR: Future oil viscosity has not been provided.");
+
+            if (futureDataInput.FutureOilViscosity <= 0)
+                throw new exInvalidIPRParameterException(
+                    "Invalid future oil viscosity: A positive value greater than zero is required.");
+
+            PresentOilRelativePermeability = futureDataInput.PresentOilRelativePermeability.Value;
+            PresentOilViscosity = futureDataInput.PresentOilViscosity.Value;
+            PresentOilFomationVoilumeFactor = futureDataInput.PresentOilFormationVolumeFactor.Value;
+
+            return validationResult;
+
+        }
+
+        private double CalcualtFutureMaxFlowrate(clsFutureIPRDataInput dataInput)
         {
 
             // A method to calcualte Future Max Flowate.
@@ -428,17 +456,16 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             // 2. using the fluid properties calcuate the future max flowrate using the following eqution:
             // qo(max)F = qo(max)P * [ (PrF * (KroF / (μoF * BoF))) / (PrP * (KroP / (μoP * BoP)))]
 
-            CalcualteTestPresentMaxFlowRate();
+            CalculateTestPresentMaxFlowRate(TestFlowEfficiency);
 
+            double FutureReservoirPressure = dataInput.FutureReservoirPressure.Value;
+            double FutureOilReleativePremeability = dataInput.FutureOilRelativePermeability.Value;
+            double FutureOilViscosity = dataInput.FutureOilViscosity.Value;
+            double FutureOilFomationVoilumeFactor = dataInput.FutureOilFormationVolumeFactor.Value;
 
-            if (PresentOilRelativePermeability == null ||
-                PresentOilViscosity == null ||
-                PresentOilFomationVoilumeFactor == null)
-                throw new Exception("One or more Present Pressure function data is missing.");
+            double PresentPressureFunction = PresentOilRelativePermeability / (PresentOilViscosity * PresentOilFomationVoilumeFactor);
 
-            double PresentPressureFunction = (double)(PresentOilRelativePermeability / (PresentOilViscosity * PresentOilFomationVoilumeFactor));
-
-            double FuturePressureFunction = (FutureOilReleativePremeability / (FutureOilViscosity * FutureOilRelativePermeability));
+            double FuturePressureFunction = FutureOilReleativePremeability / (FutureOilViscosity * FutureOilFomationVoilumeFactor);
              
             double x = (FutureReservoirPressure * FuturePressureFunction) 
                 / (ReservoirPressure * PresentPressureFunction);// [ (PrF * (KroF / (μoF * BoF))) / (PrP * (KroP / (μoP * BoP)))]
@@ -447,26 +474,30 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         }
 
-        public void GenerateFutureIPR(double futureReservoirPressure,
-            double futureOilRelativePermeability, double futureOilFormationVolumeFactor, double FutureOilViscosity)
+        public void GenerateFutureIPR(clsFutureIPRDataInput dataInput)
         {
 
             // A method to generate The future IPR using Standing.
 
+            ValidateFutureInput(dataInput);
 
             List<clsInFlowDataRow> Data = new List<clsInFlowDataRow>();
-            
-            double futureMaxFlowrate = CalcualtFutureMaxFlowrate(futureReservoirPressure,
-                futureOilFormationVolumeFactor, FutureOilViscosity, futureOilRelativePermeability);
+
+            double FutureReservoirPressure = dataInput.FutureReservoirPressure.Value;
+            double FutureOilReleativePremeability = dataInput.FutureOilRelativePermeability.Value;
+            double FutureOilViscosity = dataInput.FutureOilViscosity.Value;
+            double FutureOilFomationVoilumeFactor = dataInput.FutureOilFormationVolumeFactor.Value;
+
+            double futureMaxFlowrate = CalcualtFutureMaxFlowrate(dataInput);
 
             // Genrate the IPR using the followin equation:
             // qoF = qo(max)F * [ 1 - 0.2 (Pwf/Pr) - 0.8(Pwf / Pr)^2 ]
 
-            for (double Pressure = MinimumPressure; Pressure <= futureReservoirPressure; 
-                Pressure += PressureStepSize)
+            for (double Pressure = GenerationSettings.MinimumPressure; Pressure <= FutureReservoirPressure; 
+                Pressure += GenerationSettings.PressureStepSize)
             {
 
-                double x = Pressure / futureReservoirPressure;// (Pwf/Pr)
+                double x = Pressure / FutureReservoirPressure;// (Pwf/Pr)
                 double y = 1 - 0.2 * x - 0.8 * x * x; // [ 1 - 0.2 (Pwf/Pr) - 0.8(Pwf / Pr)^2 ]
                 double oilFlowrate = futureMaxFlowrate * y;
 

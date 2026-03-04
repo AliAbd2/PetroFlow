@@ -65,15 +65,13 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         public bool IsInputValid { get; set; }
 
-        private double Slope;
+        public clsIPRGenerationSettings GenerationSettings { get; set; }
+
+        private double? WellExponent;
 
         private double PresentFlowCoefficient;
 
         private double ProductivityIndex;
-
-        private double PressureStepSize;
-
-        private double MinimumPressure;
 
         // Indicates whether the reservoir is saturated (i.e., Pr ≤ Pb).
         // If the bubble point pressure is not provided, the reservoir is treated as saturated.
@@ -93,79 +91,101 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
         public clsFetkovich()
         {
 
+            WellExponent = null;
             CurvePlotSetting = new clsCurvePlotSettings();
 
         }
-        public clsValidationResult SetInputData(Dictionary<enIPRData, object> inputData)
+
+        public clsValidationResult SetInputData(clsPresentIPRDataInput inputData)
         {
             clsValidationResult validationResult = new();
 
             //=============================
             // --- Reservoir Pressure ---
             //=============================
-            if (!inputData.TryGetValue(enIPRData.ReservoirPressure, out var pressureObj))
+            if (inputData.ReservoirPressure == null)
                 throw new exMissingRequiredInputException(
                     "Cannot generate IPR: Reservoir pressure has not been provided.");
 
-            if (pressureObj is not double reservoirPressure)
-                throw new exInvalidIPRParameterException(
-                    "Invalid reservoir pressure: Expected a numeric value.");
-
-            if (reservoirPressure <= 0)
+            if (inputData.ReservoirPressure <= 0)
                 throw new exInvalidIPRParameterException(
                     "Invalid reservoir pressure: A positive value greater than zero is required.");
+
+            //=========================
+            // --- Well Exponent ---
+            //========================
+            if (inputData.WellExponent != null)
+            {
+
+                if (inputData.WellExponent < 0.568 ||
+                    inputData.WellExponent > 1)
+                    validationResult.Warnings.Add(
+                        "Well exponent is outside the recommended range for the Fetkovich model (0.568–1.0).");
+
+
+            }
 
             //=====================
             // --- Test Data ---
             //=====================
-
-            if (!inputData.TryGetValue(enIPRData.TestData, out var testDataObj))
+            if (inputData.TestsData == null)
                 throw new exMissingRequiredInputException(
                     "Cannot generate IPR: Test data has not been provided.");
 
-            if (testDataObj is not List<clsInFlowDataRow> rows)
+            if (inputData.TestsData.Count < 3 && inputData.WellExponent == null)
                 throw new exInvalidIPRParameterException(
-                    "Invalid test data: Expected a list of InFlow data rows.");
+                    "Invalid test data: At least three test data rows is required.");
 
-            if (rows.Count == 0)
+            if (inputData.TestsData.Count < 1 && inputData.WellExponent != null)
                 throw new exInvalidIPRParameterException(
                     "Invalid test data: At least one test data row is required.");
 
-            if (rows.Any(x => x.FlowRate <= 0))
+            if (inputData.TestsData.Any(x => x.FlowRate <= 0))
                 throw new exInvalidIPRParameterException(
                     "Invalid test data: One or more flow rates are zero or negative.");
 
-            if (rows.Any(x => x.BottomHolePressure <= 0))
+            if (inputData.TestsData.Any(x => x.BottomHolePressure <= 0))
                 throw new exInvalidIPRParameterException(
                     "Invalid test data: One or more bottom hole pressures are zero or negative.");
+
+            if (inputData.TestsData.Any(x => x.BottomHolePressure >= inputData.ReservoirPressure))
+                throw new exInvalidIPRParameterException(
+                    "Bottom-hole pressure must be less than reservoir pressure.");
+
+            if (inputData.TestsData.Count > 1 && inputData.WellExponent == null)
+                validationResult.Warnings.Add(
+                    "Multiple test data rows were provided. Only the first row will be used.");
+
 
             //================================
             // --- Bubble Point Pressure ---
             //================================
-
-            double? bubblePointPressure = null;
-
-            if (!inputData.TryGetValue(enIPRData.BubblePointPressure, out var bubbleObj) || bubbleObj == null)
+            if (inputData.BubblePointPressure == null)
             {
                 validationResult.Warnings.Add(
                     "Bubble point pressure was not provided. Reservoir will be assumed saturated.");
             }
             else
             {
-                if (bubbleObj is not double bp)
-                    throw new exInvalidIPRParameterException(
-                        "Invalid bubble point pressure: Expected a numeric value.");
 
-                if (bp <= 0)
+                if (inputData.BubblePointPressure <= 0)
                     throw new exInvalidIPRParameterException(
                         "Invalid bubble point pressure: A positive value greater than zero is required.");
 
-                bubblePointPressure = bp;
+                if (inputData.BubblePointPressure.Value > inputData.ReservoirPressure.Value)
+                {
+                    validationResult.Warnings.Add(
+                        "Bubble point pressure is greater than reservoir pressure. Reservoir will behave as saturated.");
+                }
+
             }
 
-            ReservoirPressure = reservoirPressure;
-            TestsData = rows;
-            BubblePointPressure = bubblePointPressure;
+            ReservoirPressure = inputData.ReservoirPressure.Value;
+            TestsData = inputData.TestsData;
+            BubblePointPressure = inputData.BubblePointPressure;
+            WellExponent = inputData.WellExponent;
+
+            IsInputValid = true;
 
             return validationResult;
         }
@@ -173,57 +193,16 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
         private void DetermineslopeIntercept()
         {
             // This is a method to determaine the slope.
-            // the method to determine the slope is depends on the number of tests:
-            // if there is one test only then the slop is assumed to be = 1.
-            // if two tests are availble then use slope = delta y / delta x formula.
-            // if three or more tests are available then use the least squares method.
-
-            if (TestsData.Any(t =>
-                t.FlowRate <= 0 ||
-                ReservoirPressure * ReservoirPressure <= t.BottomHolePressure * t.BottomHolePressure))
-            {
-                throw new InvalidOperationException(
-                    "Invalid test data: logarithm arguments must be positive.");
-            }
-
-            // detemain the number of recoreds.
-            int n = TestsData.Count;
-
-            double pr2 = ReservoirPressure * ReservoirPressure;
-
-            if (n == 1)
-            {
-                Slope = 1;
-                return;
-            }
-
-            //if (n == 2)
-            //{
-
-            //    double flowrate1 = TestsData[0].FlowRate;
-            //    double flowrate2 = TestsData[1].FlowRate;
-
-            //    double pressure1 = TestsData[0].BottomHolePressure;
-            //    double pressure2 = TestsData[1].BottomHolePressure;
-
-            //    double deltaLogQ =
-            //        Math.Log10(flowrate2) - Math.Log10(flowrate1);
-
-            //    double deltaLogX =
-            //        Math.Log10(pr2 - pressure2 * pressure2) -
-            //        Math.Log10(pr2 - pressure1 * pressure1);
-
-            //    Slope = deltaLogQ / deltaLogX;
-
-
-
-            //    return;
-
-            //}
 
             // Least Squares formulas:
             // slope = (n * sum(x*y) - sum(x) * sum(y)) / (n * sum(x^2) - sum(x)^2)
             // where n is the number of records.
+
+            if (WellExponent != null)
+                return;
+
+            double pr2 = ReservoirPressure * ReservoirPressure;
+            int n = TestsData.Count();
 
             List<double> logX = TestsData.Select(x => Math.Log10(
                 pr2 - x.BottomHolePressure * x.BottomHolePressure)).ToList();
@@ -237,9 +216,9 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             double m = (n * sumXY - sumX * sumY)
                      / (n * sumX2 - sumX * sumX);
 
-            double intercept = (sumY - Slope * sumX) / n;
+            double intercept = (sumY - m * sumX) / n;
 
-            Slope = m;
+            WellExponent = m;
 
             PresentFlowCoefficient = 1 / Math.Pow(10, intercept);
 
@@ -267,19 +246,12 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             double flowRate = TestsData[0].FlowRate;
 
 
-            if (flowRate <= 0 || bottomHolePressure <= 0 || ReservoirPressure <= 0)
-                throw new InvalidOperationException("Invalid pressures or flow rate.");
-
-            if (!IsSaturated && BubblePointPressure < 0)
-                throw new InvalidOperationException("Bubble point pressure must be positive.");
-
-
 
             // Case 1:
             if (IsSaturated)
             {
                 double x = Math.Pow((bottomHolePressure / ReservoirPressure), 2); // (Pwf / Pr)^2
-                double y = ReservoirPressure * Math.Pow(1 - x, Slope); // (Pr * [ 1 - (Pwf / Pr)^2 ]^n)
+                double y = ReservoirPressure * Math.Pow(1 - x, WellExponent.Value); // (Pr * [ 1 - (Pwf / Pr)^2 ]^n)
                 productivityIndex = 2 * flowRate / y; 
 
             }
@@ -292,8 +264,8 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             else
             {
 
-                double x = Math.Pow((bottomHolePressure / (double)BubblePointPressure), 2); // (Pwf / Pb)^2
-                double y = Math.Pow(1 - x, Slope); // [1 - (Pwf / Pb)^2]^n
+                double x = Math.Pow(bottomHolePressure / BubblePointPressure.Value, 2); // (Pwf / Pb)^2
+                double y = Math.Pow(1 - x, WellExponent.Value); // [1 - (Pwf / Pb)^2]^n
                 double z = (ReservoirPressure - (double)BubblePointPressure) +
                     (double)BubblePointPressure / 2 * y;
                 productivityIndex = flowRate / z;
@@ -315,12 +287,12 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
             DetermineProductivityIndex();
 
-            for (double pressure = MinimumPressure; 
-                pressure <= ReservoirPressure; pressure += PressureStepSize)
+            for (double pressure = GenerationSettings.MinimumPressure; 
+                pressure <= ReservoirPressure; pressure += GenerationSettings.PressureStepSize)
             {
                 // q = J * Pr / 2 * [ 1 - (Pwf / Pr)^d2 * n ]
 
-                double x = 1 - Math.Pow(pressure / ReservoirPressure, 2 * Slope); // [ 1 - (Pwf / Pr)^d2 * n ]
+                double x = 1 - Math.Pow(pressure / ReservoirPressure, 2 * WellExponent.Value); // [ 1 - (Pwf / Pr)^d2 * n ]
                 flowRate = ProductivityIndex * ReservoirPressure / 2 * x;
 
                 dataRows.Add(new clsInFlowDataRow(pressure, flowRate));
@@ -343,10 +315,11 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             List<clsInFlowDataRow> dataRows = new List<clsInFlowDataRow>();
             double flowRate = 0;
 
-            DetermineProductivityIndex();
+            if (WellExponent == null)
+                DetermineProductivityIndex();
 
-            for (double pressure = MinimumPressure;
-                pressure <= ReservoirPressure; pressure += PressureStepSize)
+            for (double pressure = GenerationSettings.MinimumPressure;
+                pressure <= ReservoirPressure; pressure += GenerationSettings.PressureStepSize)
             {
 
                 if (pressure > BubblePointPressure)
@@ -360,7 +333,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
                 {
                     // q = J * (Pr - Pb) + J * Pb / 2 * [ 1 - (Pwf / Pb)^2 ]^n
 
-                    double x = Math.Pow((1 - Math.Pow((pressure / (double)BubblePointPressure), 2)), Slope); //[ 1 - (Pwf / Pb)^2 ]^n
+                    double x = Math.Pow((1 - Math.Pow(pressure / BubblePointPressure.Value, 2)), WellExponent.Value); //[ 1 - (Pwf / Pb)^2 ]^n
                     double y = ProductivityIndex * (double)BubblePointPressure / 2 * x; // J * Pb / 2 * [ 1 - (Pwf / Pb)^2 ]^n
                     flowRate = ProductivityIndex * (ReservoirPressure - (double)BubblePointPressure) + y;
 
@@ -377,10 +350,41 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
         public void GenerateIPR()
         {
 
+            if (!IsInputValid)
+                throw new InvalidOperationException("Invalid operation: " +
+                    "Calculation method was called before input data was set. Call SetInputData() first.");
+
+            if (GenerationSettings.MinimumPressure > ReservoirPressure)
+                throw new exInvalidIPRParameterException("Minimum pressure must be less than the reservoir pressure.");
+
             if (IsSaturated)
                 GeneratedData = GenerateIPR_SaturatedReservoir();
             else
                 GeneratedData = GenerateIPR_UnderSaturatedReservoir();
+
+        }
+
+        public clsValidationResult ValidateFutureInput(clsFutureIPRDataInput futureDataInput)
+        {
+
+            clsValidationResult validationResult = new();
+
+            //=====================================
+            // --- Future Reservoir Pressure ---
+            //=====================================
+            if (futureDataInput.FutureReservoirPressure == null)
+                throw new exMissingRequiredInputException(
+                    "Cannot generate Future IPR: Future Reservoir pressure has not been provided.");
+
+            if (futureDataInput.FutureReservoirPressure <= 0)
+                throw new exInvalidIPRParameterException(
+                    "Invalid future reservoir pressure: A positive value greater than zero is required.");
+
+            if (futureDataInput.FutureReservoirPressure > ReservoirPressure)
+                throw new exInvalidIPRParameterException(
+                    "Invalid future reservoir pressure: future reservoir pressure must be less than present reservoir pressure.");
+
+            return validationResult;
 
         }
 
@@ -398,8 +402,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         }
 
-        public void GenerateFutureIPR(double futureReservoirPressure,
-            double futureOilRelativePermeability, double futureOilFormationVolumeFactor, double FutureOilViscosity)
+        public void GenerateFutureIPR(clsFutureIPRDataInput InputData)
         {
 
             // A Method to generate future IPR using Vetkovich's method.
@@ -415,17 +418,19 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             // and then the future IPR's can thus be Generated from:
             // qo(F) = CF (PRF^2 - Pwf^2)^n
 
+            ValidateFutureInput(InputData);
+
             List<clsInFlowDataRow> Data = new List<clsInFlowDataRow>();
 
-            double futureFlowCoefficient = DetermineFutureFlowCoefficient(futureReservoirPressure);
+            double futureFlowCoefficient = DetermineFutureFlowCoefficient(InputData.FutureReservoirPressure.Value);
 
 
-            for (double pressure = MinimumPressure; pressure <= futureReservoirPressure;
-                pressure += PressureStepSize)
+            for (double pressure = GenerationSettings.MinimumPressure; pressure <= InputData.FutureReservoirPressure.Value;
+                pressure += GenerationSettings.PressureStepSize)
             {
 
-                double PRF2 = futureReservoirPressure * futureReservoirPressure;
-                double x = Math.Pow((PRF2 - pressure * pressure), Slope);
+                double PRF2 = InputData.FutureReservoirPressure.Value * InputData.FutureReservoirPressure.Value;
+                double x = Math.Pow((PRF2 - pressure * pressure), WellExponent.Value);
                 double flowrate = futureFlowCoefficient * x;
 
                 Data.Add(new clsInFlowDataRow(pressure, flowrate));
