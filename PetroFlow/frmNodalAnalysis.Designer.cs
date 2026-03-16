@@ -62,6 +62,7 @@
             lblFormatPlotTitle = new Label();
             colorDialog1 = new ColorDialog();
             pnlFormControl = new Panel();
+            statusStrip1 = new StatusStrip();
             btnDeleteCurve = new Button();
             btnReset = new Button();
             btnPlot = new Button();
@@ -70,6 +71,9 @@
             pnlMain = new Panel();
             gbIPR = new GroupBox();
             gbTestData = new GroupBox();
+            cbUseTestData = new CheckBox();
+            txtFlowCoefficient = new TextBox();
+            lblFlowCoefficient = new Label();
             txtWellExponent = new TextBox();
             dgvTestData = new DataGridView();
             lblWellExponent = new Label();
@@ -129,6 +133,8 @@
             rdoOilWell = new RadioButton();
             lblWellType = new Label();
             tpVLP = new TabPage();
+            toolStripStatusLabel1 = new ToolStripStatusLabel();
+            toolStripProgressBar1 = new ToolStripProgressBar();
             pnlPlot.SuspendLayout();
             pnlFormatPlot.SuspendLayout();
             gbCurveGenerationSettings.SuspendLayout();
@@ -140,6 +146,7 @@
             gbPlotSetting.SuspendLayout();
             pnlFormatPlotHeader.SuspendLayout();
             pnlFormControl.SuspendLayout();
+            statusStrip1.SuspendLayout();
             tabMian.SuspendLayout();
             tpIPR.SuspendLayout();
             pnlMain.SuspendLayout();
@@ -501,6 +508,7 @@
             // 
             pnlFormControl.BackColor = Color.Transparent;
             pnlFormControl.BorderStyle = BorderStyle.FixedSingle;
+            pnlFormControl.Controls.Add(statusStrip1);
             pnlFormControl.Controls.Add(btnDeleteCurve);
             pnlFormControl.Controls.Add(btnReset);
             pnlFormControl.Controls.Add(btnPlot);
@@ -509,6 +517,15 @@
             pnlFormControl.Name = "pnlFormControl";
             pnlFormControl.Size = new Size(866, 70);
             pnlFormControl.TabIndex = 17;
+            // 
+            // statusStrip1
+            // 
+            statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripProgressBar1, toolStripStatusLabel1 });
+            statusStrip1.Location = new Point(0, 46);
+            statusStrip1.Name = "statusStrip1";
+            statusStrip1.Size = new Size(864, 22);
+            statusStrip1.TabIndex = 3;
+            statusStrip1.Text = "statusStrip1";
             // 
             // btnDeleteCurve
             // 
@@ -589,13 +606,16 @@
             gbIPR.Font = new Font("Segoe UI Black", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
             gbIPR.Location = new Point(19, 3);
             gbIPR.Name = "gbIPR";
-            gbIPR.Size = new Size(813, 560);
+            gbIPR.Size = new Size(813, 627);
             gbIPR.TabIndex = 14;
             gbIPR.TabStop = false;
             gbIPR.Text = "IPR";
             // 
             // gbTestData
             // 
+            gbTestData.Controls.Add(cbUseTestData);
+            gbTestData.Controls.Add(txtFlowCoefficient);
+            gbTestData.Controls.Add(lblFlowCoefficient);
             gbTestData.Controls.Add(txtWellExponent);
             gbTestData.Controls.Add(dgvTestData);
             gbTestData.Controls.Add(lblWellExponent);
@@ -609,18 +629,51 @@
             gbTestData.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             gbTestData.Location = new Point(7, 362);
             gbTestData.Name = "gbTestData";
-            gbTestData.Size = new Size(795, 192);
+            gbTestData.Size = new Size(795, 244);
             gbTestData.TabIndex = 4;
             gbTestData.TabStop = false;
             gbTestData.Text = "Test Data";
             // 
+            // cbUseTestData
+            // 
+            cbUseTestData.AutoSize = true;
+            cbUseTestData.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            cbUseTestData.Location = new Point(366, 213);
+            cbUseTestData.Name = "cbUseTestData";
+            cbUseTestData.Size = new Size(121, 25);
+            cbUseTestData.TabIndex = 29;
+            cbUseTestData.Text = "Use Test Data";
+            cbUseTestData.UseVisualStyleBackColor = true;
+            cbUseTestData.CheckedChanged += cbUseTestData_CheckedChanged;
+            // 
+            // txtFlowCoefficient
+            // 
+            txtFlowCoefficient.Font = new Font("Segoe UI", 9.75F);
+            txtFlowCoefficient.Location = new Point(582, 166);
+            txtFlowCoefficient.Name = "txtFlowCoefficient";
+            txtFlowCoefficient.Size = new Size(116, 25);
+            txtFlowCoefficient.TabIndex = 28;
+            txtFlowCoefficient.Visible = false;
+            // 
+            // lblFlowCoefficient
+            // 
+            lblFlowCoefficient.AutoSize = true;
+            lblFlowCoefficient.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblFlowCoefficient.Location = new Point(425, 166);
+            lblFlowCoefficient.Name = "lblFlowCoefficient";
+            lblFlowCoefficient.Size = new Size(124, 21);
+            lblFlowCoefficient.TabIndex = 27;
+            lblFlowCoefficient.Text = "Flow Coefficient:";
+            lblFlowCoefficient.Visible = false;
+            // 
             // txtWellExponent
             // 
             txtWellExponent.Font = new Font("Segoe UI", 9.75F);
-            txtWellExponent.Location = new Point(582, 126);
+            txtWellExponent.Location = new Point(582, 124);
             txtWellExponent.Name = "txtWellExponent";
-            txtWellExponent.Size = new Size(90, 25);
+            txtWellExponent.Size = new Size(116, 25);
             txtWellExponent.TabIndex = 26;
+            txtWellExponent.Visible = false;
             txtWellExponent.KeyPress += EnforceNumericInput;
             // 
             // dgvTestData
@@ -629,22 +682,24 @@
             dgvTestData.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvTestData.BorderStyle = BorderStyle.None;
             dgvTestData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvTestData.Dock = DockStyle.Left;
             dgvTestData.EnableHeadersVisualStyles = false;
             dgvTestData.GridColor = SystemColors.ControlDark;
-            dgvTestData.Location = new Point(4, 28);
+            dgvTestData.Location = new Point(3, 25);
             dgvTestData.Name = "dgvTestData";
-            dgvTestData.Size = new Size(352, 154);
+            dgvTestData.Size = new Size(352, 216);
             dgvTestData.TabIndex = 19;
             // 
             // lblWellExponent
             // 
             lblWellExponent.AutoSize = true;
             lblWellExponent.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblWellExponent.Location = new Point(425, 128);
+            lblWellExponent.Location = new Point(425, 126);
             lblWellExponent.Name = "lblWellExponent";
             lblWellExponent.Size = new Size(134, 21);
             lblWellExponent.TabIndex = 25;
             lblWellExponent.Text = "Well Exponent (n):";
+            lblWellExponent.Visible = false;
             // 
             // btnAddTestDataRow
             // 
@@ -660,7 +715,7 @@
             // 
             cbNewFlowEfficiencyUnit.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
             cbNewFlowEfficiencyUnit.FormattingEnabled = true;
-            cbNewFlowEfficiencyUnit.Location = new Point(678, 85);
+            cbNewFlowEfficiencyUnit.Location = new Point(704, 86);
             cbNewFlowEfficiencyUnit.Name = "cbNewFlowEfficiencyUnit";
             cbNewFlowEfficiencyUnit.Size = new Size(51, 25);
             cbNewFlowEfficiencyUnit.TabIndex = 24;
@@ -669,7 +724,7 @@
             // 
             cbTestFlowEfficiencyUnit.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
             cbTestFlowEfficiencyUnit.FormattingEnabled = true;
-            cbTestFlowEfficiencyUnit.Location = new Point(678, 44);
+            cbTestFlowEfficiencyUnit.Location = new Point(704, 44);
             cbTestFlowEfficiencyUnit.Name = "cbTestFlowEfficiencyUnit";
             cbTestFlowEfficiencyUnit.Size = new Size(51, 25);
             cbTestFlowEfficiencyUnit.TabIndex = 23;
@@ -677,9 +732,9 @@
             // txtNewFlowEfficiency
             // 
             txtNewFlowEfficiency.Font = new Font("Segoe UI", 9.75F);
-            txtNewFlowEfficiency.Location = new Point(582, 85);
+            txtNewFlowEfficiency.Location = new Point(582, 84);
             txtNewFlowEfficiency.Name = "txtNewFlowEfficiency";
-            txtNewFlowEfficiency.Size = new Size(90, 25);
+            txtNewFlowEfficiency.Size = new Size(116, 25);
             txtNewFlowEfficiency.TabIndex = 22;
             txtNewFlowEfficiency.KeyPress += EnforceNumericInput;
             // 
@@ -687,7 +742,7 @@
             // 
             lblNewFlowEfficiency.AutoSize = true;
             lblNewFlowEfficiency.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblNewFlowEfficiency.Location = new Point(425, 87);
+            lblNewFlowEfficiency.Location = new Point(425, 86);
             lblNewFlowEfficiency.Name = "lblNewFlowEfficiency";
             lblNewFlowEfficiency.Size = new Size(151, 21);
             lblNewFlowEfficiency.TabIndex = 21;
@@ -708,7 +763,7 @@
             txtTestFlowEfficiency.Font = new Font("Segoe UI", 9.75F);
             txtTestFlowEfficiency.Location = new Point(582, 44);
             txtTestFlowEfficiency.Name = "txtTestFlowEfficiency";
-            txtTestFlowEfficiency.Size = new Size(90, 25);
+            txtTestFlowEfficiency.Size = new Size(116, 25);
             txtTestFlowEfficiency.TabIndex = 17;
             txtTestFlowEfficiency.KeyPress += EnforceNumericInput;
             // 
@@ -1246,6 +1301,17 @@
             tpVLP.Text = "VLP";
             tpVLP.UseVisualStyleBackColor = true;
             // 
+            // toolStripStatusLabel1
+            // 
+            toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            toolStripStatusLabel1.Size = new Size(118, 17);
+            toolStripStatusLabel1.Text = "toolStripStatusLabel1";
+            // 
+            // toolStripProgressBar1
+            // 
+            toolStripProgressBar1.Name = "toolStripProgressBar1";
+            toolStripProgressBar1.Size = new Size(100, 16);
+            // 
             // frmNodalAnalysis
             // 
             AutoScaleDimensions = new SizeF(8F, 17F);
@@ -1260,7 +1326,6 @@
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
             Name = "frmNodalAnalysis";
-            ShowIcon = false;
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Nodal Analysis";
             pnlPlot.ResumeLayout(false);
@@ -1278,6 +1343,9 @@
             pnlFormatPlotHeader.ResumeLayout(false);
             pnlFormatPlotHeader.PerformLayout();
             pnlFormControl.ResumeLayout(false);
+            pnlFormControl.PerformLayout();
+            statusStrip1.ResumeLayout(false);
+            statusStrip1.PerformLayout();
             tabMian.ResumeLayout(false);
             tpIPR.ResumeLayout(false);
             pnlMain.ResumeLayout(false);
@@ -1329,7 +1397,6 @@
         private Label lblFormatPlotTitle;
         private ComboBox cbLinePattern;
         private Label lblLinePattern;
-        private Label lblNewFlowEfficiency;
         private Label lblMarkerShape;
         private ComboBox cbMarkerShape;
         private Panel pnlFormControl;
@@ -1339,10 +1406,6 @@
         private TabPage tpIPR;
         private Panel pnlMain;
         private GroupBox gbIPR;
-        private GroupBox gbTestData;
-        private DataGridView dgvTestData;
-        private Label lblTestFlowEfficiency;
-        private TextBox txtTestFlowEfficiency;
         private GroupBox gbReservoirData;
         private TabControl tabReservoirData;
         private TabPage tpPresentReservoirData;
@@ -1383,27 +1446,38 @@
         private RadioButton rdoOilWell;
         private Label lblWellType;
         private TabPage tpVLP;
-        private Button btnAddTestDataRow;
         private Button btnDeleteCurve;
         private ComboBox cbReservoirPressureUnit;
         private ComboBox cbOilFormationVolumeFactorUnit;
         private ComboBox cbOilViscosityUnit;
         private ComboBox cbOilRelativePermeabilityUnit;
         private ComboBox cbBubblePointPressureUnit;
-        private ComboBox cbNewFlowEfficiencyUnit;
-        private ComboBox cbTestFlowEfficiencyUnit;
-        private TextBox txtNewFlowEfficiency;
         private ComboBox cbFutureOilFormationVolumeFactorUnit;
         private ComboBox cbFutureOilViscosityUnit;
         private ComboBox cbFutureOilRelativePermeabilityUnit;
         private ComboBox cbFutureReservoiPressureUnit;
         private ScottPlot.WinForms.FormsPlot pltNodalAnalysis;
-        private TextBox txtWellExponent;
-        private Label lblWellExponent;
         private GroupBox gbCurveGenerationSettings;
         private Label label1;
         private Label lblPressureStepSize;
         private NumericUpDown nudMinimumPressure;
         private NumericUpDown nudPressureStepSize;
+        private GroupBox gbTestData;
+        private CheckBox cbUseTestData;
+        private TextBox txtFlowCoefficient;
+        private Label lblFlowCoefficient;
+        private TextBox txtWellExponent;
+        private DataGridView dgvTestData;
+        private Label lblWellExponent;
+        private Button btnAddTestDataRow;
+        private ComboBox cbNewFlowEfficiencyUnit;
+        private ComboBox cbTestFlowEfficiencyUnit;
+        private TextBox txtNewFlowEfficiency;
+        private Label lblNewFlowEfficiency;
+        private Label lblTestFlowEfficiency;
+        private TextBox txtTestFlowEfficiency;
+        private StatusStrip statusStrip1;
+        private ToolStripProgressBar toolStripProgressBar1;
+        private ToolStripStatusLabel toolStripStatusLabel1;
     }
 }

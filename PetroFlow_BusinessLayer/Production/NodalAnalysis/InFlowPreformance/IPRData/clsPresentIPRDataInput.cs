@@ -16,9 +16,11 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPR
         public double? TestFlowEfficiency { get; set; }
 
         public double? WellExponent { get; set; }
+        public double? FlowCoefficient { get; set; }
 
         public clsPresentIPRDataInput(double? reservoirPressure, double? bubblePointPressure,
-            List<clsInFlowDataRow>? testData, double? testFlowEfficiency, double? wellExponent)
+            List<clsInFlowDataRow>? testData, double? testFlowEfficiency, double? wellExponent, 
+            double? flowCoefficient)
         {
 
             ReservoirPressure = reservoirPressure;
@@ -26,6 +28,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPR
             TestsData = testData;
             TestFlowEfficiency = testFlowEfficiency;
             WellExponent = wellExponent;
+            FlowCoefficient = flowCoefficient;
 
         }
 

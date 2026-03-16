@@ -251,6 +251,7 @@ namespace PetroFlow
             List<clsInFlowDataRow>? testData = null;
             double? testFlowEfficiency = null;
             double? wellExponent = null;
+            double? flowCoefficient = null;
 
             if (ReadDouble(txtReservoirPressure, "Reservoir Pressure", out double ReservoirPressure))
                 reservoirPressure = ReservoirPressure;
@@ -266,9 +267,11 @@ namespace PetroFlow
             if (ReadDouble(txtWellExponent, "Well Exponent", out double WellExponent))
                 wellExponent = WellExponent;
 
+            if (ReadDouble(txtFlowCoefficient, "Flow Coefficient", out double FlowCoefficient))
+                flowCoefficient = FlowCoefficient;
 
             clsPresentIPRDataInput inputData = new clsPresentIPRDataInput(reservoirPressure,
-                bubblePointPressure, testData, testFlowEfficiency, wellExponent);
+                bubblePointPressure, testData, testFlowEfficiency, wellExponent, flowCoefficient);
 
             return inputData;
 
@@ -314,7 +317,7 @@ namespace PetroFlow
             return futureIPRDataInput;
 
         }
-         
+
         private void SetWarnings(clsValidationResult result)
         {
 
@@ -401,7 +404,7 @@ namespace PetroFlow
                 curve.GenerateIPR();
                 return true;
             }
-                
+
 
             if (rdoFutureIPR.Checked && curve is IFuturePredictable future)
             {
@@ -474,6 +477,9 @@ namespace PetroFlow
             rdoCurrentIPR.Select();
             rdoVogelMethod.Select();
 
+            pltNodalAnalysis.Plot.Clear();
+            pltNodalAnalysis.Refresh();
+
             txtReservoirPressure.Text = "";
             txtBubblePointPressure.Text = "";
             txtOilRelativePermeability.Text = "";
@@ -503,6 +509,7 @@ namespace PetroFlow
             _iPRRepository = new();
 
             SetDataGridViewRows();
+
 
         }
 
@@ -541,6 +548,8 @@ namespace PetroFlow
             rdoStandingMethod.Enabled = !IsGasWell;
             rdoFetkovich.Enabled = !IsGasWell;
             rdoJones.Enabled = !IsGasWell && !IsFuture;
+
+            SetMenu(sender, e);
 
         }
 
@@ -762,8 +771,8 @@ namespace PetroFlow
             txtNewFlowEfficiency.Visible = lblNewFlowEfficiency.Visible =
                 cbNewFlowEfficiencyUnit.Visible = IsStanding;
 
-            txtWellExponent.Visible =
-                lblWellExponent.Visible = IsFetkovich;
+            cbUseTestData.Visible = IsFetkovich && rdoFutureIPR.Checked;
+            cbUseTestData.Checked = IsFetkovich;
 
             txtFutureReservoirPressure.Visible =
                 lblFutureReservoirPressure.Visible = cbFutureReservoiPressureUnit.Visible = IsStanding || IsFetkovich;
@@ -783,6 +792,29 @@ namespace PetroFlow
 
         }
 
+        private void cbUseTestData_CheckedChanged(object sender, EventArgs e)
+        {
+
+            if (cbUseTestData.Checked)
+            {
+
+                dgvTestData.Visible = btnAddTestDataRow.Visible = true;
+
+                txtWellExponent.Visible = lblWellExponent.Visible = false;
+                txtFlowCoefficient.Visible = lblFlowCoefficient.Visible = false;
+
+            }
+            else
+            {
+
+                dgvTestData.Visible = btnAddTestDataRow.Visible = false;
+
+                txtWellExponent.Visible = lblWellExponent.Visible = true;
+                txtFlowCoefficient.Visible = lblFlowCoefficient.Visible = true;
+
+            }
+
+        }
 
     }
 }

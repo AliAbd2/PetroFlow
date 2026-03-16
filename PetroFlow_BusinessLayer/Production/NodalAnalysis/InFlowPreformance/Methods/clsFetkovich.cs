@@ -69,7 +69,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         private double? WellExponent;
 
-        private double PresentFlowCoefficient;
+        private double? PresentFlowCoefficient;
 
         private double ProductivityIndex;
 
@@ -92,6 +92,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
         {
 
             WellExponent = null;
+            PresentFlowCoefficient = null;
             CurvePlotSetting = new clsCurvePlotSettings();
 
         }
@@ -125,6 +126,13 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
             }
 
+            //==========================
+            // --- Flow Coefficient ---
+            //==========================
+            if (inputData.FlowCoefficient != null)
+                PresentFlowCoefficient = inputData.FlowCoefficient;
+
+
             //=====================
             // --- Test Data ---
             //=====================
@@ -136,7 +144,9 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
                 throw new exInvalidIPRParameterException(
                     "Invalid test data: At least three test data rows is required.");
 
-            if (inputData.TestsData.Count < 1 && inputData.WellExponent != null)
+            if (inputData.TestsData.Count < 1 && 
+                inputData.WellExponent != null && 
+                PresentFlowCoefficient == null)
                 throw new exInvalidIPRParameterException(
                     "Invalid test data: At least one test data row is required.");
 
@@ -382,7 +392,16 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
             if (futureDataInput.FutureReservoirPressure > ReservoirPressure)
                 throw new exInvalidIPRParameterException(
-                    "Invalid future reservoir pressure: future reservoir pressure must be less than present reservoir pressure.");
+                    "Invalid future reservoir pressure:" +
+                    " future reservoir pressure must be less than present reservoir pressure.");
+
+            //===================================
+            // --- Present Flow Coefficient ---
+            //===================================
+            if (PresentFlowCoefficient == null)
+                throw new exMissingRequiredInputException(
+                    "Cannot generate Future IPR: Present flow Coefficinet has not been provided.");
+
 
             return validationResult;
 
@@ -398,7 +417,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
             DetermineslopeIntercept();
 
-            return PresentFlowCoefficient * (futureReservoirPressure / ReservoirPressure);
+            return PresentFlowCoefficient.Value * (futureReservoirPressure / ReservoirPressure);
 
         }
 
