@@ -1,5 +1,5 @@
-﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Exceptions_and_Validation;
-using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
+﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,7 +9,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Int
     public interface IEfficiencyAdjustable
     {
 
-        (List<clsInFlowDataRow>, clsValidationResult) GenerateWithEfficiency(double efficiency);
+        (List<clsInFlowDataRow>, ValidationResult) GenerateWithEfficiency(double efficiency);
 
     }
 }

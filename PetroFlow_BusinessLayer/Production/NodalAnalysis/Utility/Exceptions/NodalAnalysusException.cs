@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http.Headers;
 using System.Text;
 
 namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Exceptions
 {
-    internal class exMissingRequiredInputException : exIPRException
+    public abstract class NodalAnalysusException : Exception
     {
 
-        public exMissingRequiredInputException(string message) : base(message) { }
+        protected NodalAnalysusException(string message) : base(message) { }
+
 
     }
+
+
 }

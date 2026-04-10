@@ -1,7 +1,7 @@
 ﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Exceptions;
-using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Exceptions_and_Validation;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Interfaces;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation;
 using System.ComponentModel.DataAnnotations;
 
 
@@ -78,19 +78,19 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         }
 
-        public clsValidationResult SetInputData(clsPresentIPRDataInput inputData)
+        public Utility.Validation.ValidationResult SetInputData(clsPresentIPRDataInput inputData)
         {
-            clsValidationResult validationResult = new();
+            Utility.Validation.ValidationResult validationResult = new();
 
             //=============================
             // --- Reservoir Pressure ---
             //=============================
             if (inputData.ReservoirPressure == null)
-                throw new exMissingRequiredInputException(
+                throw new MissingRequiredInputException(
                     "Cannot generate IPR: Reservoir pressure has not been provided.");
 
             if (inputData.ReservoirPressure <= 0)
-                throw new exInvalidIPRParameterException(
+                throw new InvalidParameterException(
                     "Invalid reservoir pressure: A positive value greater than zero is required.");
 
 
@@ -98,23 +98,23 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             // --- Test Data ---
             //=====================
             if (inputData.TestsData == null)
-                throw new exMissingRequiredInputException(
+                throw new MissingRequiredInputException(
                     "Cannot generate IPR: Test data has not been provided.");
 
             if (inputData.TestsData.Count < 1)
-                throw new exInvalidIPRParameterException(
+                throw new InvalidParameterException(
                     "Invalid test data: At least one test data row is required.");
 
             if (inputData.TestsData.Any(x => x.FlowRate <= 0))
-                throw new exInvalidIPRParameterException(
+                throw new InvalidParameterException(
                     "Invalid test data: One or more flow rates are zero or negative.");
 
             if (inputData.TestsData.Any(x => x.BottomHolePressure <= 0))
-                throw new exInvalidIPRParameterException(
+                throw new InvalidParameterException(
                     "Invalid test data: One or more bottom hole pressures are zero or negative.");
 
             if (inputData.TestsData.Any(x => x.BottomHolePressure >= inputData.ReservoirPressure))
-                throw new exInvalidIPRParameterException(
+                throw new InvalidParameterException(
                     "Invalid test data: One or more bottom hole pressures are greater than reservoir pressure.");
 
             if (inputData.TestsData.Count > 1)
@@ -126,11 +126,11 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             // --- Test Flow Efficiency ---
             //===============================
             if (inputData.TestFlowEfficiency == null)
-                throw new exMissingRequiredInputException(
+                throw new MissingRequiredInputException(
                     "Cannot generate IPR: Test Flow Efficiency has not been provided.");
 
             if (inputData.TestFlowEfficiency <= 0)
-                throw new exInvalidIPRParameterException(
+                throw new InvalidParameterException(
                     "Invalid Test Flow Efficiency: A positive value greater than zero is required.");
 
             if (inputData.TestFlowEfficiency > 1)
@@ -151,7 +151,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             {
 
                 if (inputData.BubblePointPressure <= 0)
-                    throw new exInvalidIPRParameterException(
+                    throw new InvalidParameterException(
                         "Invalid bubble point pressure: A positive value greater than zero is required.");
 
                 if (inputData.BubblePointPressure.Value > inputData.ReservoirPressure.Value)
@@ -196,7 +196,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             // otherwise: J = qo / {(pr - pb) + pb/1.8 * [1.8 * (1 - pwf / pb) - 0.8 * (FE) * (1 - (pwf / pb))^2]}.
 
             if (BubblePointPressure == null)
-                throw new exInvalidIPRParameterException("Bubble Point Pressure is not provided.");
+                throw new InvalidParameterException("Bubble Point Pressure is not provided.");
 
             if (TestsData[0].BottomHolePressure >= BubblePointPressure)
                 ProductivityIndex = clsIPRGeneralFunctions.ProductivityIndex(TestsData[0].FlowRate,
@@ -317,7 +317,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
                     "Calculation method was called before input data was set. Call SetInputData() first.");
 
             if (GenerationSettings.MinimumPressure > ReservoirPressure)
-                throw new exInvalidIPRParameterException("Minimum pressure must be less than the reservoir pressure.");
+                throw new InvalidParameterException("Minimum pressure must be less than the reservoir pressure.");
 
             if (IsSaturated)
                 GeneratedData = GenerateIPR_SaturatedReservoir(TestFlowEfficiency);
@@ -332,20 +332,20 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
         /// <param name="newFlowEfficiency">The new flow efficiency value to apply to the reservoir. Must be a positive number.</param>
         /// <returns>A list of <see cref="clsInFlowDataRow"/> objects representing the inflow data after the flow efficiency
         /// change.</returns>
-        public (List<clsInFlowDataRow>, clsValidationResult) GenerateWithEfficiency(double newFlowEfficiency)
+        public (List<clsInFlowDataRow>, ValidationResult) GenerateWithEfficiency(double newFlowEfficiency)
         {
 
-            clsValidationResult validationResult = new();
+            Utility.Validation.ValidationResult validationResult = new();
 
             if (!IsInputValid)
                 throw new InvalidOperationException("Invalid operation: " +
                     "Calculation method was called before input data was set. Call SetInputData() first.");
 
             if (GenerationSettings.MinimumPressure > ReservoirPressure)
-                throw new exInvalidIPRParameterException("Minimum pressure must be less than the reservoir pressure.");
+                throw new InvalidParameterException("Minimum pressure must be less than the reservoir pressure.");
 
             if (newFlowEfficiency <= 0)
-                throw new exInvalidIPRParameterException(
+                throw new InvalidParameterException(
                     "Invalid Test Flow Efficiency: A positive value greater than zero is required.");
 
             if (newFlowEfficiency > 1)
@@ -360,83 +360,83 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         }
 
-        public clsValidationResult ValidateFutureInput(clsFutureIPRDataInput futureDataInput)
+        public Utility.Validation.ValidationResult ValidateFutureInput(clsFutureIPRDataInput futureDataInput)
         {
 
-            clsValidationResult validationResult = new();
+            Utility.Validation.ValidationResult validationResult = new();
 
             //=====================================
             // --- Future Reservoir Pressure ---
             //=====================================
             if (futureDataInput.FutureReservoirPressure == null)
-                throw new exMissingRequiredInputException(
+                throw new MissingRequiredInputException(
                     "Cannot generate Future IPR: Future Reservoir pressure has not been provided.");
 
             if (futureDataInput.FutureReservoirPressure <= 0)
-                throw new exInvalidIPRParameterException(
+                throw new InvalidParameterException(
                     "Invalid future reservoir pressure: A positive value greater than zero is required.");
 
             if (futureDataInput.FutureReservoirPressure > ReservoirPressure)
-                throw new exInvalidIPRParameterException(
+                throw new InvalidParameterException(
                     "Invalid future reservoir pressure: future reservoir pressure must be less than present reservoir pressure.");
 
             //=====================================
             // --- Oil Relative Permeability ---
             //=====================================
             if (futureDataInput.PresentOilRelativePermeability == null)
-                throw new exMissingRequiredInputException(
+                throw new MissingRequiredInputException(
                     "Cannot generate Future IPR: Present oil relative permeability has not been provided.");
 
             if (futureDataInput.PresentOilRelativePermeability > 1 ||
                 futureDataInput.PresentOilRelativePermeability < 0)
-                throw new exInvalidIPRParameterException(
+                throw new InvalidParameterException(
                     "Invalid present oil relative permeability: A value between 0 and 1 is required.");
 
             if (futureDataInput.FutureOilRelativePermeability == null)
-                throw new exMissingRequiredInputException(
+                throw new MissingRequiredInputException(
                     "Cannot generate Future IPR: Future oil relative permeability has not been provided.");
 
             if (futureDataInput.FutureOilRelativePermeability > 1 ||
                 futureDataInput.FutureOilRelativePermeability < 0)
-                throw new exInvalidIPRParameterException(
+                throw new InvalidParameterException(
                     "Invalid future oil relative permeability: A value between 0 and 1 is required.");
 
             //=====================================
             // --- Oil Formation Volume Factor ---
             //=====================================
             if (futureDataInput.PresentOilFormationVolumeFactor == null)
-                throw new exMissingRequiredInputException(
+                throw new MissingRequiredInputException(
                     "Cannot generate Future IPR: Present oil formation volume factor has not been provided.");
 
             if (futureDataInput.PresentOilFormationVolumeFactor <= 0)
-                throw new exInvalidIPRParameterException(
+                throw new InvalidParameterException(
                     "Invalid present oil formation volume factor: A positive value greater than zero is required.");
 
             if (futureDataInput.FutureOilFormationVolumeFactor == null)
-                throw new exMissingRequiredInputException(
+                throw new MissingRequiredInputException(
                     "Cannot generate Future IPR: Future oil formation volume factor has not been provided.");
 
             if (futureDataInput.FutureOilFormationVolumeFactor <= 0)
-                throw new exInvalidIPRParameterException(
+                throw new InvalidParameterException(
                     "Invalid future oil formation volume factor: A positive value greater than zero is required.");
 
             //========================
             // --- Oil Viscosity ---
             //========================
             if (futureDataInput.PresentOilViscosity == null)
-                throw new exMissingRequiredInputException(
+                throw new MissingRequiredInputException(
                     "Cannot generate Future IPR: Present oil viscosity has not been provided.");
 
             if (futureDataInput.PresentOilViscosity <= 0)
-                throw new exInvalidIPRParameterException(
+                throw new InvalidParameterException(
                     "Invalid present oil viscosity: A positive value greater than zero is required.");
 
             if (futureDataInput.FutureOilViscosity == null)
-                throw new exMissingRequiredInputException(
+                throw new MissingRequiredInputException(
                     "Cannot generate Future IPR: Future oil viscosity has not been provided.");
 
             if (futureDataInput.FutureOilViscosity <= 0)
-                throw new exInvalidIPRParameterException(
+                throw new InvalidParameterException(
                     "Invalid future oil viscosity: A positive value greater than zero is required.");
 
             PresentOilRelativePermeability = futureDataInput.PresentOilRelativePermeability.Value;

@@ -14,11 +14,11 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPR
         public clsIPRGenerationSettings(double stepSize, double minPressure)
         {
             if (stepSize <= 0)
-                throw new exInvalidIPRParameterException(
+                throw new InvalidParameterException(
                     "Pressure step size must be greater than zero.");
 
             if (minPressure < 0)
-                throw new exInvalidIPRParameterException(
+                throw new InvalidParameterException(
                     "Minimum pressure cannot be negative.");
 
             PressureStepSize = stepSize;

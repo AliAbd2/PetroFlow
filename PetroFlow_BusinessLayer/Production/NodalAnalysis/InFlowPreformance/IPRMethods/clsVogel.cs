@@ -1,7 +1,7 @@
 ﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Exceptions;
-using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Exceptions_and_Validation;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Interfaces;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
@@ -72,42 +72,42 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         }
 
-        public clsValidationResult SetInputData(clsPresentIPRDataInput inputData)
+        public ValidationResult SetInputData(clsPresentIPRDataInput inputData)
         {
-            clsValidationResult validationResult = new();
+            ValidationResult validationResult = new();
 
             //=============================
             // --- Reservoir Pressure ---
             //=============================
             if (inputData.ReservoirPressure == null)
-                throw new exMissingRequiredInputException(
+                throw new MissingRequiredInputException(
                     "Cannot generate IPR: Reservoir pressure has not been provided.");
 
             if (inputData.ReservoirPressure <= 0)
-                throw new exInvalidIPRParameterException(
+                throw new InvalidParameterException(
                     "Invalid reservoir pressure: A positive value greater than zero is required.");
 
             //=====================
             // --- Test Data ---
             //=====================
             if (inputData.TestsData == null)
-                throw new exMissingRequiredInputException(
+                throw new MissingRequiredInputException(
                     "Cannot generate IPR: Test data has not been provided.");
 
             if (inputData.TestsData.Count < 1)
-                throw new exInvalidIPRParameterException(
+                throw new InvalidParameterException(
                     "Invalid test data: At least one test data row is required.");
 
             if (inputData.TestsData.Any(x => x.FlowRate <= 0))
-                throw new exInvalidIPRParameterException(
+                throw new InvalidParameterException(
                     "Invalid test data: One or more flow rates are zero or negative.");
 
             if (inputData.TestsData.Any(x => x.BottomHolePressure <= 0))
-                throw new exInvalidIPRParameterException(
+                throw new InvalidParameterException(
                     "Invalid test data: One or more bottom hole pressures are zero or negative.");
 
             if (inputData.TestsData.Any(x => x.BottomHolePressure >= inputData.ReservoirPressure))
-                throw new exInvalidIPRParameterException(
+                throw new InvalidParameterException(
                     "Invalid test data: One or more bottom hole pressures are greater than reservoir pressure.");
 
             if (inputData.TestsData.Count > 1)
@@ -126,7 +126,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             {
 
                 if (inputData.BubblePointPressure <= 0)
-                    throw new exInvalidIPRParameterException(
+                    throw new InvalidParameterException(
                         "Invalid bubble point pressure: A positive value greater than zero is required.");
 
                 if (inputData.BubblePointPressure.Value > inputData.ReservoirPressure.Value)
@@ -259,7 +259,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
                     "Calculation method was called before input data was set. Call SetInputData() first.");
 
             if (GenerationSettings.MinimumPressure > ReservoirPressure)
-                throw new exInvalidIPRParameterException("Minimum pressure must be less than the reservoir pressure.");
+                throw new InvalidParameterException("Minimum pressure must be less than the reservoir pressure.");
 
             if (IsSaturated)
                 GeneratedData = GenerateIPR_SaturatedReservoir();

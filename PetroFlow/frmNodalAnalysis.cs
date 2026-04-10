@@ -1,8 +1,8 @@
- using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance;
-using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Exceptions_and_Validation;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Interfaces;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Methods;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation;
 using PetroFlow_PresentationLayer;
 using PetroFlow_PresentationLayer.Properties;
 using ScottPlot;
@@ -318,7 +318,7 @@ namespace PetroFlow
 
         }
 
-        private void SetWarnings(clsValidationResult result)
+        private void SetWarnings(ValidationResult result)
         {
 
             foreach (string warning in result.Warnings)
@@ -355,7 +355,7 @@ namespace PetroFlow
             if (inputData == null)
                 return false;
 
-            clsValidationResult validationResult = new();
+            ValidationResult validationResult = new();
 
             if (rdoStandingMethod.Checked)
                 method = new clsStanding();

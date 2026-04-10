@@ -4,10 +4,10 @@ using System.Text;
 
 namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Exceptions
 {
-    internal class exInvalidIPRParameterException : exIPRException
+    internal class InvalidParameterException : NodalAnalysusException
     {
 
-        public exInvalidIPRParameterException(string message) : base(message) { }
+        public InvalidParameterException(string message) : base(message) { }
 
     }
 }

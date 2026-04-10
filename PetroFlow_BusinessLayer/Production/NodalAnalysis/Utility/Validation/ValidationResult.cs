@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Exceptions_and_Validation
+namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation
 {
-    public class clsValidationResult
+    public class ValidationResult
     {
 
         public List<string> Warnings { get; } = new();
