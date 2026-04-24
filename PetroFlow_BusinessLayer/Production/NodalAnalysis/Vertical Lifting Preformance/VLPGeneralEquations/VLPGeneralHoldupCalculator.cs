@@ -65,15 +65,27 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
         static public double CalculateNoSlipLiquidHoldupByLiquidVolume(double liquidFlowrate, double gasFlowrate)
         {
 
-            Validation.NonNegative(liquidFlowrate, "Liquid flowrate");
+            Validation.NonNegative(liquidFlowrate, "Liquid flow rate");
 
-            Validation.NonNegative(gasFlowrate, "Gas flowrate");
+            Validation.NonNegative(gasFlowrate, "Gas flow rate");
 
             double TotalFlowrate = liquidFlowrate + gasFlowrate;
 
-            Validation.GreaterThanZero(TotalFlowrate, "Total flowrate");
+            Validation.GreaterThanZero(TotalFlowrate, "Total flow rate");
 
             return liquidFlowrate / TotalFlowrate;
+        }
+
+        static public double CalculateNoSlipLiquidHoldupByVelocity(double superficialLiquidVelocity,
+            double superficialGasVelocity)
+        {
+
+            double totalVelosity = superficialGasVelocity + superficialLiquidVelocity;
+
+            Validation.GreaterThanZero(totalVelosity, "Total superficial velocity");
+
+            return superficialLiquidVelocity / totalVelosity;
+
         }
 
         static public double CalculateNoSlipLiquidHoldupByGasHoldup(double noSlipGasHoldup)
@@ -104,6 +116,19 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             Validation.Range(noSlipLiquidHoldup, 0, 1, "No slip liquid holdup");
 
             return 1 - noSlipLiquidHoldup;
+        }
+        
+        static public double CalculateNoSlipGasHoldupByVelocity(double superficialLiquidVelocity,
+            double superficialGasVelocity)
+        {
+
+
+            double totalVelosity = superficialGasVelocity + superficialLiquidVelocity;
+
+            Validation.GreaterThanZero(totalVelosity, "Total superficial velocity");
+
+            return superficialGasVelocity / totalVelosity;
+
         }
 
     }

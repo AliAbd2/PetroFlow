@@ -72,9 +72,9 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         }
 
-        public ValidationResult SetInputData(clsPresentIPRDataInput inputData)
+        public NodalAnalysisValidationResult SetInputData(clsPresentIPRDataInput inputData)
         {
-            ValidationResult validationResult = new();
+            NodalAnalysisValidationResult validationResult = new();
 
             //=============================
             // --- Reservoir Pressure ---

@@ -1,6 +1,6 @@
 ﻿using OpenTK.Input;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Exceptions;
-using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Exceptions;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -59,6 +59,14 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation
             if (Math.Abs(total - 1) > tolerance)
                 throw new InvalidParameterException(
                     $"The sum of {name1} and {name2} must be approximately 1 (within tolerance {tolerance}).");
+
+        }
+
+        public static void Missing(double? value, string name)
+        {
+
+            if (value == null)
+                throw new MissingRequiredInputException($"Missing Required Data, Please provide {name}.");
 
         }
 

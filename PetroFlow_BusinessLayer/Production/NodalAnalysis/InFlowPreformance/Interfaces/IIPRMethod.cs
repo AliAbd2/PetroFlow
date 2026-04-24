@@ -32,9 +32,9 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Int
 
         bool IsInputValid { get; set; }
 
-        clsIPRGenerationSettings GenerationSettings { get; set; } 
+        clsIPRGenerationSettings GenerationSettings { get; set; }
 
-        ValidationResult SetInputData(clsPresentIPRDataInput dataInput);
+        NodalAnalysisValidationResult SetInputData(clsPresentIPRDataInput dataInput);
 
         void GenerateIPR();
 

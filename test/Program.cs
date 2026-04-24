@@ -2,35 +2,36 @@
 using PetroFlow_BusinessLayer;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Methods;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.VLPData;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.VLPMethod.VLPFrictionFactorMethods;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.VLPMethods;
 
 class Program
 {
 
     static void Main(string[] args)
     {
-        List<clsInFlowDataRow> inputData = new List<clsInFlowDataRow>();
 
-        inputData.Add(new clsInFlowDataRow(3170, 263));
-        inputData.Add(new clsInFlowDataRow(2897, 383));
-        inputData.Add(new clsInFlowDataRow(2150, 640));
+        VLPDataInput vLPDataInput = new();
+        vLPDataInput.GasSuperficialVelocity = 4.09;
+        vLPDataInput.LiquidSuperficialVelocity = 2.65;
+        vLPDataInput.PipeInsideDiameter = 0.249;
+        vLPDataInput.GasDensity = 2.84;
+        vLPDataInput.LiquidDesnity = 56.6;
+        vLPDataInput.TotalMassFlowRate = 7.87;
+        vLPDataInput.GasLiquidRatio = 1500;
 
-        clsFetkovich fetkovich = new clsFetkovich(3600, inputData);
+        FancherBrownFrictionFactor poettamnnCarpenterFrictionFactor = new();
 
-        List<clsInFlowDataRow> data = new List<clsInFlowDataRow>();
+        NoSlipNoFlowRegime calculator = new(poettamnnCarpenterFrictionFactor);
 
-        fetkovich.GenerateIPR();
+        NodalAnalysisValidationResult validationResult = new();
 
-        data = fetkovich.GeneratedData;
+        double pressureGradient = calculator.DeterminePressureGradient(vLPDataInput, ref validationResult);
 
-        Console.WriteLine("Pwf      Qo");
 
-        foreach (clsInFlowDataRow dataRow in data)
-        {
-
-            Console.WriteLine(dataRow.BottomHolePressure + "   " + dataRow.FlowRate);
-
-        }
-
+        Console.WriteLine(pressureGradient);
 
     }
 

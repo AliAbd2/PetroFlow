@@ -6,12 +6,12 @@ using System.Text;
 
 namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.Interfaces
 {
-    public interface IVLPMethod
+    public interface IVLPModel
     {
 
-        public ValidationResult ReadDataInput(clsVLPDataInput dataInout);
+        public NodalAnalysisValidationResult ValidateInputData(VLPDataInput InputData);
 
-        public double DeterminePressureGradient();
+        public double DeterminePressureGradient(VLPDataInput InputData, ref NodalAnalysisValidationResult validationResult);
 
     }
 }

@@ -1,6 +1,7 @@
 ﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Exceptions;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Interfaces;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation;
 using System.ComponentModel.DataAnnotations;
 
@@ -78,9 +79,9 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         }
 
-        public Utility.Validation.ValidationResult SetInputData(clsPresentIPRDataInput inputData)
+        public NodalAnalysisValidationResult SetInputData(clsPresentIPRDataInput inputData)
         {
-            Utility.Validation.ValidationResult validationResult = new();
+            NodalAnalysisValidationResult validationResult = new();
 
             //=============================
             // --- Reservoir Pressure ---
@@ -332,10 +333,10 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
         /// <param name="newFlowEfficiency">The new flow efficiency value to apply to the reservoir. Must be a positive number.</param>
         /// <returns>A list of <see cref="clsInFlowDataRow"/> objects representing the inflow data after the flow efficiency
         /// change.</returns>
-        public (List<clsInFlowDataRow>, ValidationResult) GenerateWithEfficiency(double newFlowEfficiency)
+        public (List<clsInFlowDataRow>, NodalAnalysisValidationResult) GenerateWithEfficiency(double newFlowEfficiency)
         {
 
-            Utility.Validation.ValidationResult validationResult = new();
+            NodalAnalysisValidationResult validationResult = new();
 
             if (!IsInputValid)
                 throw new InvalidOperationException("Invalid operation: " +
@@ -360,10 +361,10 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         }
 
-        public Utility.Validation.ValidationResult ValidateFutureInput(clsFutureIPRDataInput futureDataInput)
+        public NodalAnalysisValidationResult ValidateFutureInput(clsFutureIPRDataInput futureDataInput)
         {
 
-            Utility.Validation.ValidationResult validationResult = new();
+            NodalAnalysisValidationResult validationResult = new();
 
             //=====================================
             // --- Future Reservoir Pressure ---
