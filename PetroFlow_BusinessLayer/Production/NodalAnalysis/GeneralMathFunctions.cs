@@ -16,5 +16,12 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis
             return y1 + (x - x1) * (y2 - y1) / (x2 - x1);
         }
 
+        public static double CrircleArea(double diameter)
+        {
+
+            return Math.PI * 0.25 * diameter * diameter;
+
+        }
+
     }
 }

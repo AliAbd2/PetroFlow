@@ -9,8 +9,20 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation
 
         public List<string> Warnings { get; } = new();
 
+        private HashSet<string> _uniqueWarnings = new();
+
         public NodalAnalysisValidationResult()
         {
+
+        }
+
+        public void AddWarning(string warning)
+        {
+
+            if (_uniqueWarnings.Add(warning))
+            {
+                Warnings.Add(warning);
+            }
 
         }
 

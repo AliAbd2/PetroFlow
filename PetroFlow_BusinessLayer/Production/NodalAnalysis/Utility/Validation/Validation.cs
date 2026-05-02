@@ -38,7 +38,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation
                 throw new InvalidParameterException($"{greaterValueName} must be greater than {smallerValueName}.");
         }
 
-        public static void Lessthan(double smallerValue, double greaterValue,
+        public static void LessThan(double smallerValue, double greaterValue,
             string smallerValueName, string greaterValueName)
         {
 
@@ -67,6 +67,14 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation
 
             if (value == null)
                 throw new MissingRequiredInputException($"Missing Required Data, Please provide {name}.");
+
+        }
+
+        public static void GreaterThanZeroNotMissing(double? value, string name)
+        {
+
+            Missing(value, name);
+            GreaterThanZero(value.Value, name);
 
         }
 

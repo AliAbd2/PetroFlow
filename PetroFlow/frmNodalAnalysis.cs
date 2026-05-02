@@ -2,6 +2,7 @@ using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Interfaces;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Methods;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.ShearedData;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation;
 using PetroFlow_PresentationLayer;
 using PetroFlow_PresentationLayer.Properties;
@@ -13,9 +14,9 @@ namespace PetroFlow
     public partial class frmNodalAnalysis : Form
     {
 
-        private clsIPRRepository _iPRRepository;
+        private InFlowPreformanceRelationship _iPRRepository;
 
-        private clsCurvePlotter _plotter;
+        private CurvePlotter _plotter;
 
         private List<string> _linePatternStrings = new List<string>
         {
@@ -55,7 +56,7 @@ namespace PetroFlow
         {
             InitializeComponent();
 
-            _plotter = new clsCurvePlotter(pltNodalAnalysis.Plot);
+            _plotter = new CurvePlotter(pltNodalAnalysis.Plot);
 
             cbLinePattern.DataSource = _linePatternStrings;
             cbMarkerShape.DataSource = _markerShapStrings;
@@ -155,10 +156,10 @@ namespace PetroFlow
 
         }
 
-        private clsCurvePlotSettings GetPlotsetting(string CurveName)
+        private CurvePlotSettings GetPlotsetting(string CurveName)
         {
 
-            clsCurvePlotSettings plotSettings = new clsCurvePlotSettings();
+            CurvePlotSettings plotSettings = new CurvePlotSettings();
 
 
             plotSettings.LegendText = CurveName;
@@ -192,10 +193,10 @@ namespace PetroFlow
 
         }
 
-        private List<clsInFlowDataRow> ReadTestData()
+        private List<InFlowDataRow> ReadTestData()
         {
 
-            List<clsInFlowDataRow> data = new();
+            List<InFlowDataRow> data = new();
 
             foreach (DataGridViewRow row in dgvTestData.Rows)
             {
@@ -232,7 +233,7 @@ namespace PetroFlow
                 }
 
 
-                clsInFlowDataRow newRow = new clsInFlowDataRow(bottomHolePressure, flowRate);
+                InFlowDataRow newRow = new InFlowDataRow(bottomHolePressure, flowRate);
 
                 data.Add(newRow);
 
@@ -243,12 +244,12 @@ namespace PetroFlow
 
         }
 
-        private clsPresentIPRDataInput ReadPresentIPRDataInput()
+        private IPRInputData ReadPresentIPRDataInput()
         {
 
             double? reservoirPressure = null;
             double? bubblePointPressure = null;
-            List<clsInFlowDataRow>? testData = null;
+            List<InFlowDataRow>? testData = null;
             double? testFlowEfficiency = null;
             double? wellExponent = null;
             double? flowCoefficient = null;
@@ -270,7 +271,7 @@ namespace PetroFlow
             if (ReadDouble(txtFlowCoefficient, "Flow Coefficient", out double FlowCoefficient))
                 flowCoefficient = FlowCoefficient;
 
-            clsPresentIPRDataInput inputData = new clsPresentIPRDataInput(reservoirPressure,
+            IPRInputData inputData = new IPRInputData(reservoirPressure,
                 bubblePointPressure, testData, testFlowEfficiency, wellExponent, flowCoefficient);
 
             return inputData;
@@ -318,7 +319,7 @@ namespace PetroFlow
 
         }
 
-        private void SetWarnings(ValidationResult result)
+        private void SetWarnings(NodalAnalysisValidationResult result)
         {
 
             foreach (string warning in result.Warnings)
@@ -343,7 +344,7 @@ namespace PetroFlow
         private bool AddCurve(ref string curveName)
         {
             IIPRMethod method;
-            clsPresentIPRDataInput inputData = ReadPresentIPRDataInput();
+            IPRInputData inputData = ReadPresentIPRDataInput();
             clsIPRGenerationSettings generationSettings = SetGenerationSettings();
 
             if (rdoFutureIPR.Checked)
@@ -355,7 +356,7 @@ namespace PetroFlow
             if (inputData == null)
                 return false;
 
-            ValidationResult validationResult = new();
+            NodalAnalysisValidationResult validationResult = new();
 
             if (rdoStandingMethod.Checked)
                 method = new clsStanding();
@@ -521,7 +522,7 @@ namespace PetroFlow
 
             IIPRMethod curve = _iPRRepository.Get(cbSelectCurve.SelectedItem.ToString());
 
-            clsCurvePlotSettings plotSettings = curve.CurvePlotSetting;
+            CurvePlotSettings plotSettings = curve.CurvePlotSetting;
 
 
             plotSettings.LegendText = txtLegendText.Text;

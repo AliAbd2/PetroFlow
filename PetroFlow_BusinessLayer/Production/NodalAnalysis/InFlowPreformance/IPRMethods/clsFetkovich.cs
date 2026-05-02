@@ -1,6 +1,7 @@
 ﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Exceptions;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Interfaces;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.ShearedData;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation;
 using System;
 using System.CodeDom.Compiler;
@@ -32,19 +33,18 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
     // determined from production test data.
     //
     // This class determines the exponent n using:
-    //   • n = 1 when only one test point is available
     //   • Δlog(qo) / Δlog(Pr² − Pwf²) when two test points are available
     //   • Least-squares linear regression when three or more test points exist
     //
     // After determining n, the class calculates the productivity index (J)
     // using Fetkovich’s formulations for:
     //   • Saturated reservoirs
-    //   • Undersaturated reservoirs (with or without test points above Pb)
+    //   • Under-saturated reservoirs (with or without test points above Pb)
     //
     // Finally, the class generates IPR data over a specified pressure range
     // using the calculated productivity index and exponent.
     //
-    // The class supports both saturated and undersaturated reservoirs,
+    // The class supports both saturated and under-saturated reservoirs,
     // with optional bubble-point pressure input.
 
     public class clsFetkovich : IIPRMethod, IFuturePredictable
@@ -61,7 +61,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         public List<clsInFlowDataRow> GeneratedData { get; set; }
 
-        public clsCurvePlotSettings CurvePlotSetting { get; set; }
+        public CurvePlotSettings CurvePlotSetting { get; set; }
 
         public bool IsInputValid { get; set; }
 
@@ -93,7 +93,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
             WellExponent = null;
             PresentFlowCoefficient = null;
-            CurvePlotSetting = new clsCurvePlotSettings();
+            CurvePlotSetting = new CurvePlotSettings();
 
         }
 

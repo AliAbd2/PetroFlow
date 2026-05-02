@@ -1,6 +1,7 @@
 ﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Exceptions;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Interfaces;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.ShearedData;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation;
 using System;
 using System.Collections.Generic;
@@ -45,11 +46,11 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         public double? BubblePointPressure { get; set; }
 
-        public List<clsInFlowDataRow> TestsData { get; set; }
+        public List<InFlowDataRow> TestsData { get; set; }
 
-        public List<clsInFlowDataRow> GeneratedData { get; set; }
+        public List<InFlowDataRow> GeneratedData { get; set; }
 
-        public clsCurvePlotSettings CurvePlotSetting { get; set; }
+        public CurvePlotSettings CurvePlotSetting { get; set; }
 
         public bool IsInputValid { get; set; }
 
@@ -62,11 +63,11 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
         public clsJonesBlountGlaze()
         {
 
-            CurvePlotSetting = new clsCurvePlotSettings();
+            CurvePlotSetting = new CurvePlotSettings();
 
         }
 
-        public NodalAnalysisValidationResult SetInputData(clsPresentIPRDataInput inputData)
+        public NodalAnalysisValidationResult SetInputData(IPRInputData inputData)
         {
             NodalAnalysisValidationResult validationResult = new();
 
@@ -164,7 +165,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             // B  : Slope.
 
 
-            List<clsInFlowDataRow> DataRows = new List<clsInFlowDataRow>();
+            List<InFlowDataRow> DataRows = new List<InFlowDataRow>();
 
             double flowRate = 0;
 
@@ -177,7 +178,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
                 flowRate = x / (2 * Slope);
 
-                DataRows.Add(new clsInFlowDataRow(Pressure, flowRate));
+                DataRows.Add(new InFlowDataRow(Pressure, flowRate));
 
             }
 

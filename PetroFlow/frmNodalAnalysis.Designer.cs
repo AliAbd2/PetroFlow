@@ -35,7 +35,23 @@
             tabMian = new TabControl();
             tpIPR = new TabPage();
             panel1 = new Panel();
-            gbIPR = new GroupBox();
+            gbGeneralControl = new GroupBox();
+            cbSelectCurve = new ComboBox();
+            lblSelectCurve = new Label();
+            pnlSelectMethod = new Panel();
+            rdoJones = new RadioButton();
+            rdoFetkovich = new RadioButton();
+            rdoStandingMethod = new RadioButton();
+            rdoVogelMethod = new RadioButton();
+            lblSelectMethod = new Label();
+            pnlIPRScenario = new Panel();
+            lblIPRScenario = new Label();
+            rdoFutureIPR = new RadioButton();
+            rdoCurrentIPR = new RadioButton();
+            pnlWellType = new Panel();
+            rdoGasWell = new RadioButton();
+            rdoOilWell = new RadioButton();
+            lblWellType = new Label();
             gbTestData = new GroupBox();
             cbUseTestData = new CheckBox();
             txtFlowCoefficient = new TextBox();
@@ -81,27 +97,9 @@
             lblFutureOilRelativePermeability = new Label();
             lblFutureOilViscosity = new Label();
             lblFutureReservoirPressure = new Label();
-            gbGeneralControl = new GroupBox();
-            cbSelectCurve = new ComboBox();
-            lblSelectCurve = new Label();
-            pnlSelectMethod = new Panel();
-            rdoJones = new RadioButton();
-            rdoFetkovich = new RadioButton();
-            rdoStandingMethod = new RadioButton();
-            rdoVogelMethod = new RadioButton();
-            lblSelectMethod = new Label();
-            pnlIPRScenario = new Panel();
-            lblIPRScenario = new Label();
-            rdoFutureIPR = new RadioButton();
-            rdoCurrentIPR = new RadioButton();
-            pnlWellType = new Panel();
-            rdoGasWell = new RadioButton();
-            rdoOilWell = new RadioButton();
-            lblWellType = new Label();
             tpVLP = new TabPage();
-            pnlMain = new Panel();
+            tabResult = new TabPage();
             pnlPlot = new Panel();
-            btnFomatPlot = new Button();
             pnlFormatPlot = new Panel();
             gbCurveGenerationSettings = new GroupBox();
             nudMinimumPressure = new NumericUpDown();
@@ -130,23 +128,24 @@
             txtylabel = new TextBox();
             pnlFormatPlotHeader = new Panel();
             lblFormatPlotTitle = new Label();
+            btnFomatPlot = new Button();
             pltNodalAnalysis = new ScottPlot.WinForms.FormsPlot();
+            pnlMain = new Panel();
             statusStrip1.SuspendLayout();
             tabMian.SuspendLayout();
             tpIPR.SuspendLayout();
             panel1.SuspendLayout();
-            gbIPR.SuspendLayout();
+            gbGeneralControl.SuspendLayout();
+            pnlSelectMethod.SuspendLayout();
+            pnlIPRScenario.SuspendLayout();
+            pnlWellType.SuspendLayout();
             gbTestData.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvTestData).BeginInit();
             gbReservoirData.SuspendLayout();
             tabReservoirData.SuspendLayout();
             tpPresentReservoirData.SuspendLayout();
             tpFuture.SuspendLayout();
-            gbGeneralControl.SuspendLayout();
-            pnlSelectMethod.SuspendLayout();
-            pnlIPRScenario.SuspendLayout();
-            pnlWellType.SuspendLayout();
-            pnlMain.SuspendLayout();
+            tabResult.SuspendLayout();
             pnlPlot.SuspendLayout();
             pnlFormatPlot.SuspendLayout();
             gbCurveGenerationSettings.SuspendLayout();
@@ -157,10 +156,12 @@
             ((System.ComponentModel.ISupportInitialize)nudMarkerSize).BeginInit();
             gbPlotSetting.SuspendLayout();
             pnlFormatPlotHeader.SuspendLayout();
+            pnlMain.SuspendLayout();
             SuspendLayout();
             // 
             // statusStrip1
             // 
+            statusStrip1.BackColor = Color.FromArgb(86, 156, 214);
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
             statusStrip1.Location = new Point(0, 727);
             statusStrip1.Name = "statusStrip1";
@@ -178,6 +179,7 @@
             // 
             tabMian.Controls.Add(tpIPR);
             tabMian.Controls.Add(tpVLP);
+            tabMian.Controls.Add(tabResult);
             tabMian.Dock = DockStyle.Fill;
             tabMian.Font = new Font("Segoe UI Black", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             tabMian.ItemSize = new Size(25, 25);
@@ -186,7 +188,7 @@
             tabMian.Name = "tabMian";
             tabMian.RightToLeft = RightToLeft.No;
             tabMian.SelectedIndex = 0;
-            tabMian.Size = new Size(868, 727);
+            tabMian.Size = new Size(1666, 727);
             tabMian.TabIndex = 21;
             // 
             // tpIPR
@@ -196,7 +198,7 @@
             tpIPR.Location = new Point(4, 29);
             tpIPR.Name = "tpIPR";
             tpIPR.Padding = new Padding(3);
-            tpIPR.Size = new Size(860, 694);
+            tpIPR.Size = new Size(1658, 694);
             tpIPR.TabIndex = 0;
             tpIPR.Text = "IPR";
             tpIPR.UseVisualStyleBackColor = true;
@@ -204,31 +206,217 @@
             // panel1
             // 
             panel1.AutoScroll = true;
-            panel1.BackColor = Color.White;
-            panel1.Controls.Add(gbIPR);
+            panel1.BackColor = Color.FromArgb(30, 30, 30);
+            panel1.Controls.Add(gbGeneralControl);
+            panel1.Controls.Add(gbTestData);
+            panel1.Controls.Add(gbReservoirData);
             panel1.Dock = DockStyle.Fill;
             panel1.Location = new Point(3, 3);
             panel1.Name = "panel1";
-            panel1.Size = new Size(854, 688);
+            panel1.Size = new Size(1652, 688);
             panel1.TabIndex = 20;
             // 
-            // gbIPR
+            // gbGeneralControl
             // 
-            gbIPR.BackColor = Color.White;
-            gbIPR.Controls.Add(gbTestData);
-            gbIPR.Controls.Add(gbReservoirData);
-            gbIPR.Controls.Add(gbGeneralControl);
-            gbIPR.Font = new Font("Segoe UI Black", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            gbIPR.Location = new Point(5, 3);
-            gbIPR.Name = "gbIPR";
-            gbIPR.Size = new Size(829, 639);
-            gbIPR.TabIndex = 14;
-            gbIPR.TabStop = false;
-            gbIPR.Text = "IPR";
+            gbGeneralControl.BackColor = Color.FromArgb(45, 45, 48);
+            gbGeneralControl.Controls.Add(cbSelectCurve);
+            gbGeneralControl.Controls.Add(lblSelectCurve);
+            gbGeneralControl.Controls.Add(pnlSelectMethod);
+            gbGeneralControl.Controls.Add(pnlIPRScenario);
+            gbGeneralControl.Controls.Add(pnlWellType);
+            gbGeneralControl.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            gbGeneralControl.ForeColor = Color.FromArgb(212, 212, 212);
+            gbGeneralControl.Location = new Point(710, 30);
+            gbGeneralControl.Name = "gbGeneralControl";
+            gbGeneralControl.Size = new Size(728, 299);
+            gbGeneralControl.TabIndex = 11;
+            gbGeneralControl.TabStop = false;
+            gbGeneralControl.Text = "General Control";
+            // 
+            // cbSelectCurve
+            // 
+            cbSelectCurve.DropDownStyle = ComboBoxStyle.DropDownList;
+            cbSelectCurve.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            cbSelectCurve.FormattingEnabled = true;
+            cbSelectCurve.Location = new Point(134, 243);
+            cbSelectCurve.Name = "cbSelectCurve";
+            cbSelectCurve.Size = new Size(198, 25);
+            cbSelectCurve.TabIndex = 17;
+            // 
+            // lblSelectCurve
+            // 
+            lblSelectCurve.AutoSize = true;
+            lblSelectCurve.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblSelectCurve.Location = new Point(6, 245);
+            lblSelectCurve.Name = "lblSelectCurve";
+            lblSelectCurve.Size = new Size(106, 21);
+            lblSelectCurve.TabIndex = 16;
+            lblSelectCurve.Text = "Select Curve:";
+            // 
+            // pnlSelectMethod
+            // 
+            pnlSelectMethod.BackColor = Color.Transparent;
+            pnlSelectMethod.Controls.Add(rdoJones);
+            pnlSelectMethod.Controls.Add(rdoFetkovich);
+            pnlSelectMethod.Controls.Add(rdoStandingMethod);
+            pnlSelectMethod.Controls.Add(rdoVogelMethod);
+            pnlSelectMethod.Controls.Add(lblSelectMethod);
+            pnlSelectMethod.Dock = DockStyle.Top;
+            pnlSelectMethod.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            pnlSelectMethod.Location = new Point(3, 106);
+            pnlSelectMethod.Name = "pnlSelectMethod";
+            pnlSelectMethod.Size = new Size(722, 104);
+            pnlSelectMethod.TabIndex = 15;
+            // 
+            // rdoJones
+            // 
+            rdoJones.AutoSize = true;
+            rdoJones.Location = new Point(16, 66);
+            rdoJones.Name = "rdoJones";
+            rdoJones.Size = new Size(194, 25);
+            rdoJones.TabIndex = 16;
+            rdoJones.TabStop = true;
+            rdoJones.Text = "Jones, Blount, and Glaze";
+            rdoJones.UseVisualStyleBackColor = true;
+            // 
+            // rdoFetkovich
+            // 
+            rdoFetkovich.AutoSize = true;
+            rdoFetkovich.Location = new Point(208, 31);
+            rdoFetkovich.Name = "rdoFetkovich";
+            rdoFetkovich.Size = new Size(94, 25);
+            rdoFetkovich.TabIndex = 15;
+            rdoFetkovich.TabStop = true;
+            rdoFetkovich.Text = "Fetkovich";
+            rdoFetkovich.UseVisualStyleBackColor = true;
+            // 
+            // rdoStandingMethod
+            // 
+            rdoStandingMethod.AutoSize = true;
+            rdoStandingMethod.Location = new Point(99, 31);
+            rdoStandingMethod.Name = "rdoStandingMethod";
+            rdoStandingMethod.Size = new Size(89, 25);
+            rdoStandingMethod.TabIndex = 14;
+            rdoStandingMethod.TabStop = true;
+            rdoStandingMethod.Text = "Standing";
+            rdoStandingMethod.UseVisualStyleBackColor = true;
+            // 
+            // rdoVogelMethod
+            // 
+            rdoVogelMethod.AutoSize = true;
+            rdoVogelMethod.Location = new Point(16, 31);
+            rdoVogelMethod.Name = "rdoVogelMethod";
+            rdoVogelMethod.Size = new Size(67, 25);
+            rdoVogelMethod.TabIndex = 13;
+            rdoVogelMethod.TabStop = true;
+            rdoVogelMethod.Text = "Vogel";
+            rdoVogelMethod.UseVisualStyleBackColor = true;
+            // 
+            // lblSelectMethod
+            // 
+            lblSelectMethod.AutoSize = true;
+            lblSelectMethod.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblSelectMethod.Location = new Point(6, 3);
+            lblSelectMethod.Name = "lblSelectMethod";
+            lblSelectMethod.Size = new Size(122, 21);
+            lblSelectMethod.TabIndex = 12;
+            lblSelectMethod.Text = "Select Method:";
+            // 
+            // pnlIPRScenario
+            // 
+            pnlIPRScenario.BackColor = Color.Transparent;
+            pnlIPRScenario.Controls.Add(lblIPRScenario);
+            pnlIPRScenario.Controls.Add(rdoFutureIPR);
+            pnlIPRScenario.Controls.Add(rdoCurrentIPR);
+            pnlIPRScenario.Dock = DockStyle.Top;
+            pnlIPRScenario.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            pnlIPRScenario.Location = new Point(3, 69);
+            pnlIPRScenario.Name = "pnlIPRScenario";
+            pnlIPRScenario.Size = new Size(722, 37);
+            pnlIPRScenario.TabIndex = 14;
+            // 
+            // lblIPRScenario
+            // 
+            lblIPRScenario.AutoSize = true;
+            lblIPRScenario.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblIPRScenario.Location = new Point(6, 3);
+            lblIPRScenario.Name = "lblIPRScenario";
+            lblIPRScenario.Size = new Size(105, 21);
+            lblIPRScenario.TabIndex = 11;
+            lblIPRScenario.Text = "IPR Scenario:";
+            // 
+            // rdoFutureIPR
+            // 
+            rdoFutureIPR.AutoSize = true;
+            rdoFutureIPR.Location = new Point(229, 1);
+            rdoFutureIPR.Name = "rdoFutureIPR";
+            rdoFutureIPR.Size = new Size(73, 25);
+            rdoFutureIPR.TabIndex = 13;
+            rdoFutureIPR.TabStop = true;
+            rdoFutureIPR.Text = "Future";
+            rdoFutureIPR.UseVisualStyleBackColor = true;
+            // 
+            // rdoCurrentIPR
+            // 
+            rdoCurrentIPR.AutoSize = true;
+            rdoCurrentIPR.BackColor = Color.Transparent;
+            rdoCurrentIPR.Location = new Point(127, 1);
+            rdoCurrentIPR.Name = "rdoCurrentIPR";
+            rdoCurrentIPR.Size = new Size(81, 25);
+            rdoCurrentIPR.TabIndex = 12;
+            rdoCurrentIPR.TabStop = true;
+            rdoCurrentIPR.Text = "Current";
+            rdoCurrentIPR.UseVisualStyleBackColor = false;
+            // 
+            // pnlWellType
+            // 
+            pnlWellType.BackColor = Color.Transparent;
+            pnlWellType.Controls.Add(rdoGasWell);
+            pnlWellType.Controls.Add(rdoOilWell);
+            pnlWellType.Controls.Add(lblWellType);
+            pnlWellType.Dock = DockStyle.Top;
+            pnlWellType.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            pnlWellType.Location = new Point(3, 25);
+            pnlWellType.Name = "pnlWellType";
+            pnlWellType.Size = new Size(722, 44);
+            pnlWellType.TabIndex = 0;
+            // 
+            // rdoGasWell
+            // 
+            rdoGasWell.AutoSize = true;
+            rdoGasWell.Location = new Point(229, 9);
+            rdoGasWell.Name = "rdoGasWell";
+            rdoGasWell.Size = new Size(88, 25);
+            rdoGasWell.TabIndex = 7;
+            rdoGasWell.TabStop = true;
+            rdoGasWell.Text = "Gas Well";
+            rdoGasWell.UseVisualStyleBackColor = true;
+            // 
+            // rdoOilWell
+            // 
+            rdoOilWell.AutoSize = true;
+            rdoOilWell.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            rdoOilWell.Location = new Point(127, 9);
+            rdoOilWell.Name = "rdoOilWell";
+            rdoOilWell.Size = new Size(82, 25);
+            rdoOilWell.TabIndex = 6;
+            rdoOilWell.TabStop = true;
+            rdoOilWell.Text = "Oil Well";
+            rdoOilWell.UseVisualStyleBackColor = true;
+            // 
+            // lblWellType
+            // 
+            lblWellType.AutoSize = true;
+            lblWellType.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblWellType.Location = new Point(6, 11);
+            lblWellType.Name = "lblWellType";
+            lblWellType.Size = new Size(85, 21);
+            lblWellType.TabIndex = 5;
+            lblWellType.Text = "Well Type:";
             // 
             // gbTestData
             // 
-            gbTestData.BackColor = Color.White;
+            gbTestData.BackColor = Color.FromArgb(45, 45, 48);
             gbTestData.Controls.Add(cbUseTestData);
             gbTestData.Controls.Add(txtFlowCoefficient);
             gbTestData.Controls.Add(lblFlowCoefficient);
@@ -243,9 +431,10 @@
             gbTestData.Controls.Add(lblTestFlowEfficiency);
             gbTestData.Controls.Add(txtTestFlowEfficiency);
             gbTestData.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            gbTestData.Location = new Point(7, 362);
+            gbTestData.ForeColor = Color.FromArgb(212, 212, 212);
+            gbTestData.Location = new Point(33, 354);
             gbTestData.Name = "gbTestData";
-            gbTestData.Size = new Size(795, 244);
+            gbTestData.Size = new Size(1290, 301);
             gbTestData.TabIndex = 4;
             gbTestData.TabStop = false;
             gbTestData.Text = "Test Data";
@@ -253,13 +442,14 @@
             // cbUseTestData
             // 
             cbUseTestData.AutoSize = true;
+            cbUseTestData.BackColor = Color.Transparent;
             cbUseTestData.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             cbUseTestData.Location = new Point(366, 213);
             cbUseTestData.Name = "cbUseTestData";
             cbUseTestData.Size = new Size(121, 25);
             cbUseTestData.TabIndex = 29;
             cbUseTestData.Text = "Use Test Data";
-            cbUseTestData.UseVisualStyleBackColor = true;
+            cbUseTestData.UseVisualStyleBackColor = false;
             // 
             // txtFlowCoefficient
             // 
@@ -273,6 +463,7 @@
             // lblFlowCoefficient
             // 
             lblFlowCoefficient.AutoSize = true;
+            lblFlowCoefficient.BackColor = Color.Transparent;
             lblFlowCoefficient.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblFlowCoefficient.Location = new Point(425, 166);
             lblFlowCoefficient.Name = "lblFlowCoefficient";
@@ -294,19 +485,20 @@
             // 
             dgvTestData.AllowUserToAddRows = false;
             dgvTestData.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvTestData.BackgroundColor = Color.White;
             dgvTestData.BorderStyle = BorderStyle.None;
             dgvTestData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvTestData.Dock = DockStyle.Left;
             dgvTestData.EnableHeadersVisualStyles = false;
             dgvTestData.GridColor = SystemColors.ControlDark;
-            dgvTestData.Location = new Point(3, 25);
+            dgvTestData.Location = new Point(24, 28);
             dgvTestData.Name = "dgvTestData";
-            dgvTestData.Size = new Size(352, 216);
+            dgvTestData.Size = new Size(320, 258);
             dgvTestData.TabIndex = 19;
             // 
             // lblWellExponent
             // 
             lblWellExponent.AutoSize = true;
+            lblWellExponent.BackColor = Color.Transparent;
             lblWellExponent.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblWellExponent.Location = new Point(425, 126);
             lblWellExponent.Name = "lblWellExponent";
@@ -353,6 +545,7 @@
             // lblNewFlowEfficiency
             // 
             lblNewFlowEfficiency.AutoSize = true;
+            lblNewFlowEfficiency.BackColor = Color.Transparent;
             lblNewFlowEfficiency.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblNewFlowEfficiency.Location = new Point(425, 86);
             lblNewFlowEfficiency.Name = "lblNewFlowEfficiency";
@@ -363,6 +556,7 @@
             // lblTestFlowEfficiency
             // 
             lblTestFlowEfficiency.AutoSize = true;
+            lblTestFlowEfficiency.BackColor = Color.Transparent;
             lblTestFlowEfficiency.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblTestFlowEfficiency.Location = new Point(425, 46);
             lblTestFlowEfficiency.Name = "lblTestFlowEfficiency";
@@ -380,12 +574,13 @@
             // 
             // gbReservoirData
             // 
-            gbReservoirData.BackColor = Color.White;
+            gbReservoirData.BackColor = Color.FromArgb(45, 45, 48);
             gbReservoirData.Controls.Add(tabReservoirData);
             gbReservoirData.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            gbReservoirData.Location = new Point(7, 40);
+            gbReservoirData.ForeColor = Color.FromArgb(212, 212, 212);
+            gbReservoirData.Location = new Point(26, 30);
             gbReservoirData.Name = "gbReservoirData";
-            gbReservoirData.Size = new Size(418, 299);
+            gbReservoirData.Size = new Size(654, 299);
             gbReservoirData.TabIndex = 8;
             gbReservoirData.TabStop = false;
             gbReservoirData.Text = "Reservoir Data";
@@ -399,12 +594,14 @@
             tabReservoirData.Location = new Point(3, 25);
             tabReservoirData.Name = "tabReservoirData";
             tabReservoirData.SelectedIndex = 0;
-            tabReservoirData.Size = new Size(412, 271);
+            tabReservoirData.Size = new Size(648, 271);
             tabReservoirData.TabIndex = 0;
             // 
             // tpPresentReservoirData
             // 
-            tpPresentReservoirData.BackColor = Color.Gainsboro;
+            tpPresentReservoirData.BackColor = Color.FromArgb(45, 45, 48);
+            tpPresentReservoirData.BackgroundImageLayout = ImageLayout.None;
+            tpPresentReservoirData.BorderStyle = BorderStyle.FixedSingle;
             tpPresentReservoirData.Controls.Add(cbOilFormationVolumeFactorUnit);
             tpPresentReservoirData.Controls.Add(cbOilViscosityUnit);
             tpPresentReservoirData.Controls.Add(cbOilRelativePermeabilityUnit);
@@ -424,7 +621,7 @@
             tpPresentReservoirData.Location = new Point(4, 26);
             tpPresentReservoirData.Name = "tpPresentReservoirData";
             tpPresentReservoirData.Padding = new Padding(3);
-            tpPresentReservoirData.Size = new Size(404, 241);
+            tpPresentReservoirData.Size = new Size(640, 241);
             tpPresentReservoirData.TabIndex = 0;
             tpPresentReservoirData.Text = "Present";
             // 
@@ -432,45 +629,45 @@
             // 
             cbOilFormationVolumeFactorUnit.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
             cbOilFormationVolumeFactorUnit.FormattingEnabled = true;
-            cbOilFormationVolumeFactorUnit.Location = new Point(331, 166);
+            cbOilFormationVolumeFactorUnit.Location = new Point(425, 166);
             cbOilFormationVolumeFactorUnit.Name = "cbOilFormationVolumeFactorUnit";
-            cbOilFormationVolumeFactorUnit.Size = new Size(51, 25);
+            cbOilFormationVolumeFactorUnit.Size = new Size(166, 25);
             cbOilFormationVolumeFactorUnit.TabIndex = 15;
             // 
             // cbOilViscosityUnit
             // 
             cbOilViscosityUnit.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
             cbOilViscosityUnit.FormattingEnabled = true;
-            cbOilViscosityUnit.Location = new Point(331, 129);
+            cbOilViscosityUnit.Location = new Point(425, 129);
             cbOilViscosityUnit.Name = "cbOilViscosityUnit";
-            cbOilViscosityUnit.Size = new Size(51, 25);
+            cbOilViscosityUnit.Size = new Size(166, 25);
             cbOilViscosityUnit.TabIndex = 14;
             // 
             // cbOilRelativePermeabilityUnit
             // 
             cbOilRelativePermeabilityUnit.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
             cbOilRelativePermeabilityUnit.FormattingEnabled = true;
-            cbOilRelativePermeabilityUnit.Location = new Point(331, 92);
+            cbOilRelativePermeabilityUnit.Location = new Point(425, 88);
             cbOilRelativePermeabilityUnit.Name = "cbOilRelativePermeabilityUnit";
-            cbOilRelativePermeabilityUnit.Size = new Size(51, 25);
+            cbOilRelativePermeabilityUnit.Size = new Size(166, 25);
             cbOilRelativePermeabilityUnit.TabIndex = 13;
             // 
             // cbBubblePointPressureUnit
             // 
             cbBubblePointPressureUnit.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
             cbBubblePointPressureUnit.FormattingEnabled = true;
-            cbBubblePointPressureUnit.Location = new Point(331, 55);
+            cbBubblePointPressureUnit.Location = new Point(425, 54);
             cbBubblePointPressureUnit.Name = "cbBubblePointPressureUnit";
-            cbBubblePointPressureUnit.Size = new Size(51, 25);
+            cbBubblePointPressureUnit.Size = new Size(166, 25);
             cbBubblePointPressureUnit.TabIndex = 12;
             // 
             // cbReservoirPressureUnit
             // 
             cbReservoirPressureUnit.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
             cbReservoirPressureUnit.FormattingEnabled = true;
-            cbReservoirPressureUnit.Location = new Point(331, 18);
+            cbReservoirPressureUnit.Location = new Point(425, 17);
             cbReservoirPressureUnit.Name = "cbReservoirPressureUnit";
-            cbReservoirPressureUnit.Size = new Size(51, 25);
+            cbReservoirPressureUnit.Size = new Size(166, 25);
             cbReservoirPressureUnit.TabIndex = 11;
             // 
             // lblOilFormationVolumeFactor
@@ -484,42 +681,44 @@
             // 
             // txtReservoirPressure
             // 
+            txtReservoirPressure.BackColor = Color.FromArgb(45, 45, 48);
             txtReservoirPressure.Font = new Font("Segoe UI", 9.75F);
-            txtReservoirPressure.Location = new Point(235, 18);
+            txtReservoirPressure.ForeColor = Color.FromArgb(212, 212, 212);
+            txtReservoirPressure.Location = new Point(253, 18);
             txtReservoirPressure.Name = "txtReservoirPressure";
-            txtReservoirPressure.Size = new Size(90, 25);
+            txtReservoirPressure.Size = new Size(166, 25);
             txtReservoirPressure.TabIndex = 9;
             // 
             // txtOilRelativePermeability
             // 
             txtOilRelativePermeability.Font = new Font("Segoe UI", 9.75F);
-            txtOilRelativePermeability.Location = new Point(235, 92);
+            txtOilRelativePermeability.Location = new Point(253, 88);
             txtOilRelativePermeability.Name = "txtOilRelativePermeability";
-            txtOilRelativePermeability.Size = new Size(90, 25);
+            txtOilRelativePermeability.Size = new Size(166, 25);
             txtOilRelativePermeability.TabIndex = 8;
             // 
             // txtOilFormationVolumeFactor
             // 
             txtOilFormationVolumeFactor.Font = new Font("Segoe UI", 9.75F);
-            txtOilFormationVolumeFactor.Location = new Point(235, 166);
+            txtOilFormationVolumeFactor.Location = new Point(253, 166);
             txtOilFormationVolumeFactor.Name = "txtOilFormationVolumeFactor";
-            txtOilFormationVolumeFactor.Size = new Size(90, 25);
+            txtOilFormationVolumeFactor.Size = new Size(166, 25);
             txtOilFormationVolumeFactor.TabIndex = 7;
             // 
             // txtOilViscosity
             // 
             txtOilViscosity.Font = new Font("Segoe UI", 9.75F);
-            txtOilViscosity.Location = new Point(235, 129);
+            txtOilViscosity.Location = new Point(253, 129);
             txtOilViscosity.Name = "txtOilViscosity";
-            txtOilViscosity.Size = new Size(90, 25);
+            txtOilViscosity.Size = new Size(166, 25);
             txtOilViscosity.TabIndex = 6;
             // 
             // txtBubblePointPressure
             // 
             txtBubblePointPressure.Font = new Font("Segoe UI", 9.75F);
-            txtBubblePointPressure.Location = new Point(235, 55);
+            txtBubblePointPressure.Location = new Point(253, 55);
             txtBubblePointPressure.Name = "txtBubblePointPressure";
-            txtBubblePointPressure.Size = new Size(90, 25);
+            txtBubblePointPressure.Size = new Size(166, 25);
             txtBubblePointPressure.TabIndex = 5;
             // 
             // lblOilViscosity
@@ -562,7 +761,7 @@
             // 
             // tpFuture
             // 
-            tpFuture.BackColor = Color.Gainsboro;
+            tpFuture.BackColor = Color.FromArgb(45, 45, 48);
             tpFuture.Controls.Add(cbFutureOilFormationVolumeFactorUnit);
             tpFuture.Controls.Add(cbFutureOilViscosityUnit);
             tpFuture.Controls.Add(cbFutureOilRelativePermeabilityUnit);
@@ -579,7 +778,7 @@
             tpFuture.Location = new Point(4, 26);
             tpFuture.Name = "tpFuture";
             tpFuture.Padding = new Padding(3);
-            tpFuture.Size = new Size(404, 241);
+            tpFuture.Size = new Size(640, 241);
             tpFuture.TabIndex = 1;
             tpFuture.Text = "Future";
             // 
@@ -687,246 +886,38 @@
             lblFutureReservoirPressure.TabIndex = 0;
             lblFutureReservoirPressure.Text = "Reservoir Pressure:";
             // 
-            // gbGeneralControl
-            // 
-            gbGeneralControl.BackColor = Color.White;
-            gbGeneralControl.Controls.Add(cbSelectCurve);
-            gbGeneralControl.Controls.Add(lblSelectCurve);
-            gbGeneralControl.Controls.Add(pnlSelectMethod);
-            gbGeneralControl.Controls.Add(pnlIPRScenario);
-            gbGeneralControl.Controls.Add(pnlWellType);
-            gbGeneralControl.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            gbGeneralControl.Location = new Point(457, 40);
-            gbGeneralControl.Name = "gbGeneralControl";
-            gbGeneralControl.Size = new Size(345, 299);
-            gbGeneralControl.TabIndex = 11;
-            gbGeneralControl.TabStop = false;
-            gbGeneralControl.Text = "General Control";
-            // 
-            // cbSelectCurve
-            // 
-            cbSelectCurve.DropDownStyle = ComboBoxStyle.DropDownList;
-            cbSelectCurve.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            cbSelectCurve.FormattingEnabled = true;
-            cbSelectCurve.Location = new Point(134, 243);
-            cbSelectCurve.Name = "cbSelectCurve";
-            cbSelectCurve.Size = new Size(198, 25);
-            cbSelectCurve.TabIndex = 17;
-            // 
-            // lblSelectCurve
-            // 
-            lblSelectCurve.AutoSize = true;
-            lblSelectCurve.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblSelectCurve.Location = new Point(6, 245);
-            lblSelectCurve.Name = "lblSelectCurve";
-            lblSelectCurve.Size = new Size(106, 21);
-            lblSelectCurve.TabIndex = 16;
-            lblSelectCurve.Text = "Select Curve:";
-            // 
-            // pnlSelectMethod
-            // 
-            pnlSelectMethod.BackColor = Color.Transparent;
-            pnlSelectMethod.Controls.Add(rdoJones);
-            pnlSelectMethod.Controls.Add(rdoFetkovich);
-            pnlSelectMethod.Controls.Add(rdoStandingMethod);
-            pnlSelectMethod.Controls.Add(rdoVogelMethod);
-            pnlSelectMethod.Controls.Add(lblSelectMethod);
-            pnlSelectMethod.Dock = DockStyle.Top;
-            pnlSelectMethod.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            pnlSelectMethod.Location = new Point(3, 106);
-            pnlSelectMethod.Name = "pnlSelectMethod";
-            pnlSelectMethod.Size = new Size(339, 104);
-            pnlSelectMethod.TabIndex = 15;
-            // 
-            // rdoJones
-            // 
-            rdoJones.AutoSize = true;
-            rdoJones.Location = new Point(16, 66);
-            rdoJones.Name = "rdoJones";
-            rdoJones.Size = new Size(194, 25);
-            rdoJones.TabIndex = 16;
-            rdoJones.TabStop = true;
-            rdoJones.Text = "Jones, Blount, and Glaze";
-            rdoJones.UseVisualStyleBackColor = true;
-            // 
-            // rdoFetkovich
-            // 
-            rdoFetkovich.AutoSize = true;
-            rdoFetkovich.Location = new Point(208, 31);
-            rdoFetkovich.Name = "rdoFetkovich";
-            rdoFetkovich.Size = new Size(94, 25);
-            rdoFetkovich.TabIndex = 15;
-            rdoFetkovich.TabStop = true;
-            rdoFetkovich.Text = "Fetkovich";
-            rdoFetkovich.UseVisualStyleBackColor = true;
-            // 
-            // rdoStandingMethod
-            // 
-            rdoStandingMethod.AutoSize = true;
-            rdoStandingMethod.Location = new Point(99, 31);
-            rdoStandingMethod.Name = "rdoStandingMethod";
-            rdoStandingMethod.Size = new Size(89, 25);
-            rdoStandingMethod.TabIndex = 14;
-            rdoStandingMethod.TabStop = true;
-            rdoStandingMethod.Text = "Standing";
-            rdoStandingMethod.UseVisualStyleBackColor = true;
-            // 
-            // rdoVogelMethod
-            // 
-            rdoVogelMethod.AutoSize = true;
-            rdoVogelMethod.Location = new Point(16, 31);
-            rdoVogelMethod.Name = "rdoVogelMethod";
-            rdoVogelMethod.Size = new Size(67, 25);
-            rdoVogelMethod.TabIndex = 13;
-            rdoVogelMethod.TabStop = true;
-            rdoVogelMethod.Text = "Vogel";
-            rdoVogelMethod.UseVisualStyleBackColor = true;
-            // 
-            // lblSelectMethod
-            // 
-            lblSelectMethod.AutoSize = true;
-            lblSelectMethod.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblSelectMethod.Location = new Point(6, 3);
-            lblSelectMethod.Name = "lblSelectMethod";
-            lblSelectMethod.Size = new Size(122, 21);
-            lblSelectMethod.TabIndex = 12;
-            lblSelectMethod.Text = "Select Method:";
-            // 
-            // pnlIPRScenario
-            // 
-            pnlIPRScenario.BackColor = Color.Transparent;
-            pnlIPRScenario.Controls.Add(lblIPRScenario);
-            pnlIPRScenario.Controls.Add(rdoFutureIPR);
-            pnlIPRScenario.Controls.Add(rdoCurrentIPR);
-            pnlIPRScenario.Dock = DockStyle.Top;
-            pnlIPRScenario.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            pnlIPRScenario.Location = new Point(3, 69);
-            pnlIPRScenario.Name = "pnlIPRScenario";
-            pnlIPRScenario.Size = new Size(339, 37);
-            pnlIPRScenario.TabIndex = 14;
-            // 
-            // lblIPRScenario
-            // 
-            lblIPRScenario.AutoSize = true;
-            lblIPRScenario.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblIPRScenario.Location = new Point(6, 3);
-            lblIPRScenario.Name = "lblIPRScenario";
-            lblIPRScenario.Size = new Size(105, 21);
-            lblIPRScenario.TabIndex = 11;
-            lblIPRScenario.Text = "IPR Scenario:";
-            // 
-            // rdoFutureIPR
-            // 
-            rdoFutureIPR.AutoSize = true;
-            rdoFutureIPR.Location = new Point(229, 1);
-            rdoFutureIPR.Name = "rdoFutureIPR";
-            rdoFutureIPR.Size = new Size(73, 25);
-            rdoFutureIPR.TabIndex = 13;
-            rdoFutureIPR.TabStop = true;
-            rdoFutureIPR.Text = "Future";
-            rdoFutureIPR.UseVisualStyleBackColor = true;
-            // 
-            // rdoCurrentIPR
-            // 
-            rdoCurrentIPR.AutoSize = true;
-            rdoCurrentIPR.BackColor = Color.Transparent;
-            rdoCurrentIPR.Location = new Point(127, 1);
-            rdoCurrentIPR.Name = "rdoCurrentIPR";
-            rdoCurrentIPR.Size = new Size(81, 25);
-            rdoCurrentIPR.TabIndex = 12;
-            rdoCurrentIPR.TabStop = true;
-            rdoCurrentIPR.Text = "Current";
-            rdoCurrentIPR.UseVisualStyleBackColor = false;
-            // 
-            // pnlWellType
-            // 
-            pnlWellType.BackColor = Color.Transparent;
-            pnlWellType.Controls.Add(rdoGasWell);
-            pnlWellType.Controls.Add(rdoOilWell);
-            pnlWellType.Controls.Add(lblWellType);
-            pnlWellType.Dock = DockStyle.Top;
-            pnlWellType.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            pnlWellType.Location = new Point(3, 25);
-            pnlWellType.Name = "pnlWellType";
-            pnlWellType.Size = new Size(339, 44);
-            pnlWellType.TabIndex = 0;
-            // 
-            // rdoGasWell
-            // 
-            rdoGasWell.AutoSize = true;
-            rdoGasWell.Location = new Point(229, 9);
-            rdoGasWell.Name = "rdoGasWell";
-            rdoGasWell.Size = new Size(88, 25);
-            rdoGasWell.TabIndex = 7;
-            rdoGasWell.TabStop = true;
-            rdoGasWell.Text = "Gas Well";
-            rdoGasWell.UseVisualStyleBackColor = true;
-            // 
-            // rdoOilWell
-            // 
-            rdoOilWell.AutoSize = true;
-            rdoOilWell.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            rdoOilWell.Location = new Point(127, 9);
-            rdoOilWell.Name = "rdoOilWell";
-            rdoOilWell.Size = new Size(82, 25);
-            rdoOilWell.TabIndex = 6;
-            rdoOilWell.TabStop = true;
-            rdoOilWell.Text = "Oil Well";
-            rdoOilWell.UseVisualStyleBackColor = true;
-            // 
-            // lblWellType
-            // 
-            lblWellType.AutoSize = true;
-            lblWellType.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblWellType.Location = new Point(6, 11);
-            lblWellType.Name = "lblWellType";
-            lblWellType.Size = new Size(85, 21);
-            lblWellType.TabIndex = 5;
-            lblWellType.Text = "Well Type:";
-            // 
             // tpVLP
             // 
+            tpVLP.BackColor = Color.FromArgb(30, 30, 30);
             tpVLP.Location = new Point(4, 29);
             tpVLP.Name = "tpVLP";
             tpVLP.Padding = new Padding(3);
-            tpVLP.Size = new Size(860, 694);
+            tpVLP.Size = new Size(1658, 694);
             tpVLP.TabIndex = 1;
             tpVLP.Text = "VLP";
-            tpVLP.UseVisualStyleBackColor = true;
             // 
-            // pnlMain
+            // tabResult
             // 
-            pnlMain.Controls.Add(tabMian);
-            pnlMain.Controls.Add(pnlPlot);
-            pnlMain.Dock = DockStyle.Left;
-            pnlMain.Location = new Point(0, 0);
-            pnlMain.Name = "pnlMain";
-            pnlMain.Size = new Size(1666, 727);
-            pnlMain.TabIndex = 1;
+            tabResult.BackColor = Color.FromArgb(30, 30, 30);
+            tabResult.Controls.Add(pnlPlot);
+            tabResult.Location = new Point(4, 29);
+            tabResult.Name = "tabResult";
+            tabResult.Padding = new Padding(3);
+            tabResult.Size = new Size(1658, 694);
+            tabResult.TabIndex = 2;
+            tabResult.Text = "Results";
             // 
             // pnlPlot
             // 
-            pnlPlot.BackColor = Color.White;
+            pnlPlot.BackColor = Color.FromArgb(45, 45, 48);
             pnlPlot.Controls.Add(pnlFormatPlot);
             pnlPlot.Controls.Add(btnFomatPlot);
             pnlPlot.Controls.Add(pltNodalAnalysis);
             pnlPlot.Dock = DockStyle.Right;
-            pnlPlot.Location = new Point(868, 0);
+            pnlPlot.Location = new Point(561, 3);
             pnlPlot.Name = "pnlPlot";
-            pnlPlot.Size = new Size(798, 727);
-            pnlPlot.TabIndex = 22;
-            // 
-            // btnFomatPlot
-            // 
-            btnFomatPlot.Dock = DockStyle.Right;
-            btnFomatPlot.Location = new Point(792, 0);
-            btnFomatPlot.Name = "btnFomatPlot";
-            btnFomatPlot.Size = new Size(6, 727);
-            btnFomatPlot.TabIndex = 1;
-            btnFomatPlot.UseVisualStyleBackColor = true;
-            btnFomatPlot.Click += btnFomatPlot_Click;
-            btnFomatPlot.MouseEnter += btnFomatPlot_MouseEnter;
-            btnFomatPlot.MouseLeave += btnFomatPlot_MouseLeave;
+            pnlPlot.Size = new Size(1094, 688);
+            pnlPlot.TabIndex = 23;
             // 
             // pnlFormatPlot
             // 
@@ -938,9 +929,9 @@
             pnlFormatPlot.Controls.Add(gbPlotSetting);
             pnlFormatPlot.Controls.Add(pnlFormatPlotHeader);
             pnlFormatPlot.Dock = DockStyle.Right;
-            pnlFormatPlot.Location = new Point(467, 0);
+            pnlFormatPlot.Location = new Point(763, 0);
             pnlFormatPlot.Name = "pnlFormatPlot";
-            pnlFormatPlot.Size = new Size(325, 727);
+            pnlFormatPlot.Size = new Size(325, 688);
             pnlFormatPlot.TabIndex = 0;
             pnlFormatPlot.Visible = false;
             // 
@@ -1213,7 +1204,7 @@
             pnlFormatPlotHeader.Dock = DockStyle.Top;
             pnlFormatPlotHeader.Location = new Point(0, 0);
             pnlFormatPlotHeader.Name = "pnlFormatPlotHeader";
-            pnlFormatPlotHeader.Size = new Size(323, 84);
+            pnlFormatPlotHeader.Size = new Size(317, 84);
             pnlFormatPlotHeader.TabIndex = 22;
             // 
             // lblFormatPlotTitle
@@ -1226,20 +1217,45 @@
             lblFormatPlotTitle.TabIndex = 0;
             lblFormatPlotTitle.Text = "Format Plot";
             // 
+            // btnFomatPlot
+            // 
+            btnFomatPlot.Dock = DockStyle.Right;
+            btnFomatPlot.Location = new Point(1088, 0);
+            btnFomatPlot.Name = "btnFomatPlot";
+            btnFomatPlot.Size = new Size(6, 688);
+            btnFomatPlot.TabIndex = 1;
+            btnFomatPlot.UseVisualStyleBackColor = true;
+            btnFomatPlot.Click += btnFomatPlot_Click;
+            btnFomatPlot.MouseEnter += btnFomatPlot_MouseEnter;
+            btnFomatPlot.MouseLeave += btnFomatPlot_MouseLeave;
+            // 
             // pltNodalAnalysis
             // 
-            pltNodalAnalysis.BackColor = Color.White;
+            pltNodalAnalysis.BackColor = Color.FromArgb(45, 45, 48);
             pltNodalAnalysis.BorderStyle = BorderStyle.FixedSingle;
             pltNodalAnalysis.DisplayScale = 1F;
+            pltNodalAnalysis.ForeColor = SystemColors.ButtonHighlight;
             pltNodalAnalysis.Location = new Point(29, 24);
             pltNodalAnalysis.Name = "pltNodalAnalysis";
-            pltNodalAnalysis.Size = new Size(736, 672);
+            pltNodalAnalysis.Size = new Size(1024, 638);
             pltNodalAnalysis.TabIndex = 4;
+            // 
+            // pnlMain
+            // 
+            pnlMain.BackColor = Color.FromArgb(86, 156, 214);
+            pnlMain.Controls.Add(tabMian);
+            pnlMain.Dock = DockStyle.Fill;
+            pnlMain.Location = new Point(0, 0);
+            pnlMain.Name = "pnlMain";
+            pnlMain.Size = new Size(1666, 727);
+            pnlMain.TabIndex = 1;
             // 
             // frmNodalAnalysis
             // 
             AutoScaleDimensions = new SizeF(8F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.FromArgb(30, 30, 30);
+            BackgroundImageLayout = ImageLayout.None;
             ClientSize = new Size(1666, 749);
             Controls.Add(pnlMain);
             Controls.Add(statusStrip1);
@@ -1256,7 +1272,14 @@
             tabMian.ResumeLayout(false);
             tpIPR.ResumeLayout(false);
             panel1.ResumeLayout(false);
-            gbIPR.ResumeLayout(false);
+            gbGeneralControl.ResumeLayout(false);
+            gbGeneralControl.PerformLayout();
+            pnlSelectMethod.ResumeLayout(false);
+            pnlSelectMethod.PerformLayout();
+            pnlIPRScenario.ResumeLayout(false);
+            pnlIPRScenario.PerformLayout();
+            pnlWellType.ResumeLayout(false);
+            pnlWellType.PerformLayout();
             gbTestData.ResumeLayout(false);
             gbTestData.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dgvTestData).EndInit();
@@ -1266,15 +1289,7 @@
             tpPresentReservoirData.PerformLayout();
             tpFuture.ResumeLayout(false);
             tpFuture.PerformLayout();
-            gbGeneralControl.ResumeLayout(false);
-            gbGeneralControl.PerformLayout();
-            pnlSelectMethod.ResumeLayout(false);
-            pnlSelectMethod.PerformLayout();
-            pnlIPRScenario.ResumeLayout(false);
-            pnlIPRScenario.PerformLayout();
-            pnlWellType.ResumeLayout(false);
-            pnlWellType.PerformLayout();
-            pnlMain.ResumeLayout(false);
+            tabResult.ResumeLayout(false);
             pnlPlot.ResumeLayout(false);
             pnlFormatPlot.ResumeLayout(false);
             gbCurveGenerationSettings.ResumeLayout(false);
@@ -1289,6 +1304,7 @@
             gbPlotSetting.PerformLayout();
             pnlFormatPlotHeader.ResumeLayout(false);
             pnlFormatPlotHeader.PerformLayout();
+            pnlMain.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -1300,21 +1316,6 @@
         private TabControl tabMian;
         private TabPage tpIPR;
         private Panel panel1;
-        private GroupBox gbIPR;
-        private GroupBox gbTestData;
-        private CheckBox cbUseTestData;
-        private TextBox txtFlowCoefficient;
-        private Label lblFlowCoefficient;
-        private TextBox txtWellExponent;
-        private DataGridView dgvTestData;
-        private Label lblWellExponent;
-        private Button btnAddTestDataRow;
-        private ComboBox cbNewFlowEfficiencyUnit;
-        private ComboBox cbTestFlowEfficiencyUnit;
-        private TextBox txtNewFlowEfficiency;
-        private Label lblNewFlowEfficiency;
-        private Label lblTestFlowEfficiency;
-        private TextBox txtTestFlowEfficiency;
         private GroupBox gbReservoirData;
         private TabControl tabReservoirData;
         private TabPage tpPresentReservoirData;
@@ -1365,9 +1366,11 @@
         private Label lblWellType;
         private TabPage tpVLP;
         private Panel pnlMain;
+        private ToolStripStatusLabel toolStripStatusLabel1;
+        private TabPage tabResult;
         private Panel pnlPlot;
-        private ScottPlot.WinForms.FormsPlot pltNodalAnalysis;
         private Button btnFomatPlot;
+        private ScottPlot.WinForms.FormsPlot pltNodalAnalysis;
         private Panel pnlFormatPlot;
         private GroupBox gbCurveGenerationSettings;
         private NumericUpDown nudMinimumPressure;
@@ -1396,6 +1399,19 @@
         private TextBox txtylabel;
         private Panel pnlFormatPlotHeader;
         private Label lblFormatPlotTitle;
-        private ToolStripStatusLabel toolStripStatusLabel1;
+        private GroupBox gbTestData;
+        private CheckBox cbUseTestData;
+        private TextBox txtFlowCoefficient;
+        private Label lblFlowCoefficient;
+        private TextBox txtWellExponent;
+        private DataGridView dgvTestData;
+        private Label lblWellExponent;
+        private Button btnAddTestDataRow;
+        private ComboBox cbNewFlowEfficiencyUnit;
+        private ComboBox cbTestFlowEfficiencyUnit;
+        private TextBox txtNewFlowEfficiency;
+        private Label lblNewFlowEfficiency;
+        private Label lblTestFlowEfficiency;
+        private TextBox txtTestFlowEfficiency;
     }
 }
