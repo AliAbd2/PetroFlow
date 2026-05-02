@@ -7,9 +7,11 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Constants
     public class PhysicsConstants
     {
 
-        public static readonly double StanderConditionPressure = 14.7;
+        public static readonly double StandardConditionPressure = 14.7;
 
-        public static readonly double StanderConditionTemperature = 60;
+        public static readonly double StandarConditionTemperature = 60;
+
+        public static readonly double EarthAcceleration = 32.2;
 
     }
 }

@@ -9,16 +9,16 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
     public abstract class NoSlipNoFlowRegimeFrictionFactorCalculator
     {
 
-        public double CalculateFrictionFactor(VLPDataInput input, double noSlipMixtureDensity, 
+        public double CalculateFrictionFactor(VLPDataInput input, VLPDerivedProperties derivedProperties, 
             ref NodalAnalysisValidationResult validationResult)
         {
-            Validate(input, noSlipMixtureDensity, ref validationResult);
-            return Compute(input, noSlipMixtureDensity, ref validationResult);
+            Validate(input, derivedProperties, ref validationResult);
+            return Compute(input, derivedProperties, ref validationResult);
         }
 
-        protected abstract void Validate(VLPDataInput input, double noSlipMixtureDensity,
+        protected abstract void Validate(VLPDataInput input, VLPDerivedProperties derivedProperties,
             ref NodalAnalysisValidationResult validationResult);
-        protected abstract double Compute(VLPDataInput input, double noSlipMixtureDensity,
+        protected abstract double Compute(VLPDataInput input, VLPDerivedProperties derivedProperties,
             ref NodalAnalysisValidationResult validationResult);
 
     }

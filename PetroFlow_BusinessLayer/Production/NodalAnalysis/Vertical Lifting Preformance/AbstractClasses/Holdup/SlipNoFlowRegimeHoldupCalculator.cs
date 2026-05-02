@@ -12,11 +12,11 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
         public double CalculateLiquidHoldup(VLPDataInput input,
             ref NodalAnalysisValidationResult validationResult)
         {
-            ValidateRawInpu(input, ref validationResult);
+            ValidateRawInput(input, ref validationResult);
             return ComputeLiquidHoldup(input, ref validationResult);
         }
 
-        protected abstract void ValidateRawInpu(VLPDataInput input,
+        protected abstract void ValidateRawInput(VLPDataInput input,
             ref NodalAnalysisValidationResult validationResult);
         protected abstract double ComputeLiquidHoldup(VLPDataInput input,
             ref NodalAnalysisValidationResult validationResult);

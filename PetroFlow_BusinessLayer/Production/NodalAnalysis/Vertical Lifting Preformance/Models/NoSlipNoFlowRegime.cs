@@ -31,19 +31,16 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             _FrictionFactorCalculator = calculator;
         }
 
-        public NodalAnalysisValidationResult ValidateInputData(VLPDataInput inputData)
+        public void ValidateInputData(VLPDataInput inputData, ref NodalAnalysisValidationResult validationResult)
         {
 
-            NodalAnalysisValidationResult validationResult = new();
 
             Validation.Missing(inputData.TotalMassFlowRate, "total mass flow rate");
             Validation.Missing(inputData.PipeInsideDiameter, "pipe inside diameter");
             Validation.Missing(inputData.GasDensity, "gas density");
-            Validation.Missing(inputData.LiquidDesnity, "liquid density");
+            Validation.Missing(inputData.LiquidDensity, "liquid density");
             Validation.Missing(inputData.GasSuperficialVelocity, "gas superficial velocity");
             Validation.Missing(inputData.LiquidSuperficialVelocity, "liquid superficial velocity");
-
-            return validationResult;
 
         }
 
@@ -58,7 +55,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
                 CalculateNoSlipLiquidHoldupByVelocity(liquidSuperficialVelocity,
                 gasSupeficialVelocity);
 
-            gasHoldup = VLPGeneralHoldupCalculator.CalculateNoSlipGasHoldupByLiquidHoldup(liquidHoldup);
+            gasHoldup = 1 - liquidHoldup;
 
             return (liquidHoldup, gasHoldup);
 
@@ -69,7 +66,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
 
             (double liquidHoldup, double gasHoldup) noSlipHoldups = DetermineNoSlipeHoldups(inputData);
 
-            double liquidDensity = inputData.LiquidDesnity.Value;
+            double liquidDensity = inputData.LiquidDensity.Value;
             double gasDensity = inputData.GasDensity.Value;
             double liquidHoldup = noSlipHoldups.liquidHoldup;
             double gasHoldup = noSlipHoldups.gasHoldup;
@@ -84,9 +81,13 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
         private void DetermineFrictonFactor(VLPDataInput inputData, ref NodalAnalysisValidationResult validationResult)
         {
 
+            VLPDerivedProperties derivedProperties = new();
+
+            derivedProperties.NoSlipMixtureDensity = NoSlipMixtureDensity;
+
             TwoPhaseFirctionFactor =
                 _FrictionFactorCalculator.CalculateFrictionFactor(
-                    inputData, NoSlipMixtureDensity, ref validationResult);
+                    inputData, derivedProperties, ref validationResult);
         }
 
         public double DeterminePressureGradient(VLPDataInput inputData, ref NodalAnalysisValidationResult validationResult)
@@ -94,7 +95,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
 
             double pressureGradient = 0;
 
-            validationResult = ValidateInputData(inputData);
+            ValidateInputData(inputData, ref validationResult);
 
             TubingInsideDiameter = inputData.PipeInsideDiameter.Value;
             TotalMassFlowrate = inputData.TotalMassFlowRate.Value;

@@ -38,7 +38,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation
                 throw new InvalidParameterException($"{greaterValueName} must be greater than {smallerValueName}.");
         }
 
-        public static void Lessthan(double smallerValue, double greaterValue,
+        public static void LessThan(double smallerValue, double greaterValue,
             string smallerValueName, string greaterValueName)
         {
 

@@ -15,7 +15,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
 
         }
 
-        protected override void Validate(VLPDataInput input, double noSlipMixtureDensity,
+        protected override void Validate(VLPDataInput input, VLPDerivedProperties derivedProperties,
             ref NodalAnalysisValidationResult validationResult)
         {
 
@@ -25,7 +25,8 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             Validation.Missing(input.LiquidSuperficialVelocity, "liquid superficial velocity");
             Validation.NonNegative(input.LiquidSuperficialVelocity.Value, "liquid superficial velocity");
 
-            Validation.GreaterThanZero(noSlipMixtureDensity, "no slip mixture density");
+            Validation.Missing(derivedProperties.NoSlipMixtureDensity, "no slip mixture density");
+            Validation.GreaterThanZero(derivedProperties.NoSlipMixtureDensity.Value, "no slip mixture density");
 
             Validation.Missing(input.PipeInsideDiameter, "pipe inside diameter");
             Validation.GreaterThanZero(input.PipeInsideDiameter.Value, "pipe inside diameter");
@@ -37,7 +38,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
         {
             return liquidSuperficialVelocity + gasSuperficialVelocity;
         }
-        private double DetermineReynoldNumberNumerator(double totalSuperficialVelocity,
+        private double DeterminereynoldsNumberNumerator(double totalSuperficialVelocity,
             double noSlipMixtureDensity, double pipeInsideDiameter)
         {
 
@@ -45,41 +46,41 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
 
         }
 
-        private void ValidateDerivedData(double reynoldNumberNumerator,
+        private void ValidateDerivedData(double reynoldsNumberNumerator,
             double totalSuperficialVelocity, ref NodalAnalysisValidationResult validationResult)
         {
 
-            Validation.GreaterThanZero(reynoldNumberNumerator, "Reynold number numerator");
+            Validation.GreaterThanZero(reynoldsNumberNumerator, "Reynold number numerator");
             Validation.GreaterThanZero(totalSuperficialVelocity, "total superficial velocity");
 
-            if (reynoldNumberNumerator < 2 || reynoldNumberNumerator > 100)
-                validationResult.Warnings.Add($"The calculated Reynolds number numerator ({reynoldNumberNumerator}) is outside "
+            if (reynoldsNumberNumerator < 2 || reynoldsNumberNumerator > 100)
+                validationResult.Warnings.Add($"The calculated Reynolds number numerator ({reynoldsNumberNumerator}) is outside "
                     + $"Baxendell and Thomas range [2, 100].");
 
         }
 
-        protected override double Compute(VLPDataInput input, double noSlipMixtureDensity,
+        protected override double Compute(VLPDataInput input, VLPDerivedProperties derivedProperties,
             ref NodalAnalysisValidationResult validationResult)
         {
 
             double totalSuperficialVelocity = DetermineTotalSuperficialVelocity
                 (input.LiquidSuperficialVelocity.Value, input.GasSuperficialVelocity.Value);
 
-            double reynoldNumberNumerator = DetermineReynoldNumberNumerator(totalSuperficialVelocity,
-                noSlipMixtureDensity, input.PipeInsideDiameter.Value);
+            double reynoldsNumberNumerator = DeterminereynoldsNumberNumerator(totalSuperficialVelocity,
+                derivedProperties.NoSlipMixtureDensity.Value, input.PipeInsideDiameter.Value);
 
-            ValidateDerivedData(reynoldNumberNumerator, totalSuperficialVelocity, ref validationResult);
+            ValidateDerivedData(reynoldsNumberNumerator, totalSuperficialVelocity, ref validationResult);
 
             // The Baxendell and Thomas friction factor will be calculated using a correlation 
             // made by regression analysis using python 
             // the equation that was founded by the regression: 
             // f = 10^(2.3345 - 3.5464 * log(ρvd) + 0.34663 * (log(ρvd)))^2 + 0.21188 * (log(ρvd))^3)
 
-            double logRynoldNumberNumerator = Math.Log10(reynoldNumberNumerator);
-            double logRynoldNumberNumerator2 = logRynoldNumberNumerator * logRynoldNumberNumerator;
-            double logRynoldNumberNumerator3 = logRynoldNumberNumerator2 * logRynoldNumberNumerator;
-            double x = 2.3345 - 3.5464 * logRynoldNumberNumerator + 0.34663 * logRynoldNumberNumerator2 +
-                0.21188 * logRynoldNumberNumerator3;
+            double logReynoldsNumberNumerator = Math.Log10(reynoldsNumberNumerator);
+            double logReynoldsNumberNumerator2 = logReynoldsNumberNumerator * logReynoldsNumberNumerator;
+            double logReynoldsNumberNumerator3 = logReynoldsNumberNumerator2 * logReynoldsNumberNumerator;
+            double x = 2.3345 - 3.5464 * logReynoldsNumberNumerator + 0.34663 * logReynoldsNumberNumerator2 +
+                0.21188 * logReynoldsNumberNumerator3;
 
             return Math.Pow(10, x);
 

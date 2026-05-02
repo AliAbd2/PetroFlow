@@ -8,15 +8,15 @@ using System.Text;
 
 namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.VLPMethod.VLPFrictionFactorMethods
 {
-    public class PoettamnnCarpenterFrictionFactor : NoSlipNoFlowRegimeFrictionFactorCalculator
+    public class PoettmannCarpenterFrictionFactor : NoSlipNoFlowRegimeFrictionFactorCalculator
     {
 
-        public PoettamnnCarpenterFrictionFactor()
+        public PoettmannCarpenterFrictionFactor()
         {
 
         }
 
-        protected override void Validate(VLPDataInput input, double noSlipMixtureDensity,
+        protected override void Validate(VLPDataInput input, VLPDerivedProperties derivedProperties,
             ref NodalAnalysisValidationResult validationResult)
         {
 
@@ -26,7 +26,8 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             Validation.Missing(input.LiquidSuperficialVelocity, "liquid superficial velocity");
             Validation.NonNegative(input.LiquidSuperficialVelocity.Value, "liquid superficial velocity");
 
-            Validation.GreaterThanZero(noSlipMixtureDensity, "no slip mixture density");
+            Validation.Missing(derivedProperties.NoSlipMixtureDensity, "no slip mixture density");
+            Validation.GreaterThanZero(derivedProperties.NoSlipMixtureDensity.Value, "no slip mixture density");
 
             Validation.Missing(input.PipeInsideDiameter, "pipe inside diameter");
             Validation.GreaterThanZero(input.PipeInsideDiameter.Value, "pipe inside diameter");
@@ -38,7 +39,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
         {
             return liquidSuperficialVelocity + gasSuperficialVelocity;
         }
-        private double DetermineReynoldNumberNumerator(double totalSuperficialVelocity,
+        private double DeterminereynoldsNumberNumerator(double totalSuperficialVelocity,
             double noSlipMixtureDensity, double pipeInsideDiameter)
         {
 
@@ -46,39 +47,39 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
 
         }
 
-        private void ValidateDerivedData(double reynoldNumberNumerator,
+        private void ValidateDerivedData(double reynoldsNumberNumerator,
             double totalSuperficialVelocity, ref NodalAnalysisValidationResult validationResult)
         {
 
-            Validation.GreaterThanZero(reynoldNumberNumerator, "Reynold number numerator");
+            Validation.GreaterThanZero(reynoldsNumberNumerator, "Reynold number numerator");
             Validation.GreaterThanZero(totalSuperficialVelocity, "total superficial velocity");
 
-            if (reynoldNumberNumerator < 2 || reynoldNumberNumerator > 100)
-                validationResult.Warnings.Add($"The calculated Reynolds number numerator ({reynoldNumberNumerator}) is outside "
+            if (reynoldsNumberNumerator < 2 || reynoldsNumberNumerator > 100)
+                validationResult.Warnings.Add($"The calculated Reynolds number numerator ({reynoldsNumberNumerator}) is outside "
                     + $"Poettmann & Carpenter range [2, 100].");
 
         }
 
-        protected override double Compute(VLPDataInput input, double noSlipMixtureDensity,
+        protected override double Compute(VLPDataInput input, VLPDerivedProperties derivedProperties,
             ref NodalAnalysisValidationResult validationResult)
         {
 
             double totalSuperficialVelocity = DetermineTotalSuperficialVelocity
                 (input.LiquidSuperficialVelocity.Value, input.GasSuperficialVelocity.Value);
 
-            double reynoldNumberNumerator = DetermineReynoldNumberNumerator(totalSuperficialVelocity,
-                noSlipMixtureDensity, input.PipeInsideDiameter.Value);
+            double reynoldsNumberNumerator = DeterminereynoldsNumberNumerator(totalSuperficialVelocity,
+                derivedProperties.NoSlipMixtureDensity.Value, input.PipeInsideDiameter.Value);
 
-            ValidateDerivedData(reynoldNumberNumerator, totalSuperficialVelocity, ref validationResult);
+            ValidateDerivedData(reynoldsNumberNumerator, totalSuperficialVelocity, ref validationResult);
 
             // The Poettmann and Carpenter friction factor will be calculated using a correlation 
             // made by regression analysis using python 
             // the equation that was founded by the regression: 
             // f = 10^(2.2326 - 3.4118 * log(ρvd) + 0.60488 * (log(ρvd))^2)
 
-            double logRynoldNumberNumerator = Math.Log10(reynoldNumberNumerator);
-            double logRynoldNumberNumerator2 = logRynoldNumberNumerator * logRynoldNumberNumerator;
-            double x = 2.2326 - 3.4118 * logRynoldNumberNumerator + 0.60488 * logRynoldNumberNumerator2;
+            double logReynoldsNumberNumerator = Math.Log10(reynoldsNumberNumerator);
+            double logReynoldsNumberNumerator2 = logReynoldsNumberNumerator * logReynoldsNumberNumerator;
+            double x = 2.2326 - 3.4118 * logReynoldsNumberNumerator + 0.60488 * logReynoldsNumberNumerator2;
 
             return Math.Pow(10, x);
 

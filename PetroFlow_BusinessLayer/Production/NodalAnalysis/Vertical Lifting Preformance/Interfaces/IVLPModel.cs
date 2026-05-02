@@ -9,9 +9,11 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
     public interface IVLPModel
     {
 
-        public NodalAnalysisValidationResult ValidateInputData(VLPDataInput InputData);
+        public void ValidateInputData(VLPDataInput InputData,
+            ref NodalAnalysisValidationResult validationResult);
 
-        public double DeterminePressureGradient(VLPDataInput InputData, ref NodalAnalysisValidationResult validationResult);
+        public double DeterminePressureGradient(VLPDataInput InputData,
+            ref NodalAnalysisValidationResult validationResult);
 
     }
 }
