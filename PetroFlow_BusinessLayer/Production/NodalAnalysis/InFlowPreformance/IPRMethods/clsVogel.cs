@@ -70,7 +70,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
                     "Invalid test data: One or more bottom hole pressures are greater than reservoir pressure.");
 
             if (inputData.TestsData.Count > 1)
-                validationResult.Warnings.Add(
+                validationResult.AddWarning(
                     "Multiple test data rows were provided. Only the first row will be used.");
 
             //================================
@@ -78,7 +78,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             //================================
             if (inputData.BubblePointPressure == null)
             {
-                validationResult.Warnings.Add(
+                validationResult.AddWarning(
                     "Bubble point pressure was not provided. Reservoir will be assumed saturated.");
             }
             else
@@ -90,7 +90,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
                 if (inputData.BubblePointPressure.Value > inputData.ReservoirPressure.Value)
                 {
-                    validationResult.Warnings.Add(
+                    validationResult.AddWarning(
                         "Bubble point pressure is greater than reservoir pressure. Reservoir will behave as saturated.");
                 }
 
@@ -212,8 +212,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
         }
 
 
-        protected override List<InFlowDataRow> ComputeIPR(IPRInputData input,
-            ref NodalAnalysisValidationResult validationResult)
+        protected override List<InFlowDataRow> ComputeIPR(IPRInputData input)
         {
 
             bool IsSaturated;
@@ -224,8 +223,6 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
                     input.BubblePointPressure.Value;
             else
                 IsSaturated = true;
-
-
 
 
             if (IsSaturated)

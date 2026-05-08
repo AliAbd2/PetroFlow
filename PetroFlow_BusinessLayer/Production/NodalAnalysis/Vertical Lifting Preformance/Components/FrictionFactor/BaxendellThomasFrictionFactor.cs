@@ -15,11 +15,8 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
 
         }
 
-<<<<<<<< HEAD:PetroFlow_BusinessLayer/Production/NodalAnalysis/Vertical Lifting Preformance/Components/FrictionFactor/BaxendellThomasFrictionFactor.cs
-        protected override void ValidateRawData(VLPWorkingData input, VLPDerivedProperties derivedProperties,
-========
-        protected override void Validate(VLPDataInput input, VLPDerivedProperties derivedProperties,
->>>>>>>> d86bfa57d1bf36a1f3ab64c4864d7562c2f709a3:PetroFlow_BusinessLayer/Production/NodalAnalysis/Vertical Lifting Preformance/Components/FrictionFactor/BaxendellThomasFrictionFacto.cs
+        protected override void ValidateRawData(VLPWorkingData input,
+            VLPDerivedProperties derivedProperties, 
             ref NodalAnalysisValidationResult validationResult)
         {
 
@@ -58,17 +55,16 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             Validation.GreaterThanZero(totalSuperficialVelocity, "total superficial velocity");
 
             if (reynoldsNumberNumerator < 2 || reynoldsNumberNumerator > 100)
-                validationResult.Warnings.Add($"The calculated Reynolds number numerator ({reynoldsNumberNumerator}) is outside "
+                validationResult.AddWarning($"The calculated Reynolds number numerator ({reynoldsNumberNumerator}) is outside "
                     + $"Baxendell and Thomas range [2, 100].");
 
         }
 
-<<<<<<<< HEAD:PetroFlow_BusinessLayer/Production/NodalAnalysis/Vertical Lifting Preformance/Components/FrictionFactor/BaxendellThomasFrictionFactor.cs
-        protected override double ComputeFrictionFactor(VLPWorkingData input, VLPDerivedProperties derivedProperties,
-========
-        protected override double Compute(VLPDataInput input, VLPDerivedProperties derivedProperties,
->>>>>>>> d86bfa57d1bf36a1f3ab64c4864d7562c2f709a3:PetroFlow_BusinessLayer/Production/NodalAnalysis/Vertical Lifting Preformance/Components/FrictionFactor/BaxendellThomasFrictionFacto.cs
+
+        protected override double ComputeFrictionFactor(VLPWorkingData input,
+            VLPDerivedProperties derivedProperties,
             ref NodalAnalysisValidationResult validationResult)
+
         {
 
             double totalSuperficialVelocity = DetermineTotalSuperficialVelocity

@@ -62,7 +62,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
 
 
             if (x < 1e-3 || x > 1e+3)
-                validationResult.Warnings.Add(
+                validationResult.AddWarning(
                     "The parameter used to calculate the second Duns & Ros dimensionless friction factor " +
                     "is outside the recommended range [0.001, 1000]. The calculated friction factor may be unreliable.");
 
@@ -218,7 +218,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
                 case SlipFlowRegime.enFlowRegime.MistFlow:
                     return _determineFrictionFactorMistFlow(input);
                 default:
-                    validationResult.Warnings.Add("The system could not identify the flow regime," +
+                    validationResult.AddWarning("The system could not identify the flow regime," +
                         "The flow regime will be assumed bubble.");
                     return _determineFrictionFactorBubbleFlow(input, derivedProperties,
                         ref validationResult);

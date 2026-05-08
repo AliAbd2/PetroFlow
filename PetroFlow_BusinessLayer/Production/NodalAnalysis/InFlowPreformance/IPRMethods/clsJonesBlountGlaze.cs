@@ -38,38 +38,16 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
     public class clsJonesBlountGlaze : IPRMethodBase
     {
 
-        public string Name { get; set; }
-
-        public enIPRMethodType MethodType { get { return enIPRMethodType.Standing; } }
-
-        public double ReservoirPressure { get; set; }
-
-        public double? BubblePointPressure { get; set; }
-
-        public List<InFlowDataRow> TestsData { get; set; }
-
-        public List<InFlowDataRow> GeneratedData { get; set; }
-
-        public CurvePlotSettings CurvePlotSetting { get; set; }
-
-        public bool IsInputValid { get; set; }
-
-        public clsIPRGenerationSettings GenerationSettings { get; set; }
-
-        private double Slope;
-
-        private double Intercept;
-
+      
         public clsJonesBlountGlaze()
         {
 
-            CurvePlotSetting = new CurvePlotSettings();
 
         }
 
-        public NodalAnalysisValidationResult SetInputData(IPRInputData inputData)
+        protected override void ValidateRawData(IPRInputData inputData,
+            ref NodalAnalysisValidationResult validationResult)
         {
-            NodalAnalysisValidationResult validationResult = new();
 
             //=============================
             // --- Reservoir Pressure ---
@@ -107,14 +85,9 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
                     "Bottom-hole pressure must be less than reservoir pressure.");
 
 
-            ReservoirPressure = inputData.ReservoirPressure.Value;
-            TestsData = inputData.TestsData;
-
-            IsInputValid = true;
-            return validationResult;
         }
 
-        private void DetermineSlopeIntercept()
+        private (double slope, double intercept) DetermineSlopeIntercept(IPRInputData inputData)
         {
 
             // A method to Determine Slope(B) and Intercept(A) using least squares method.
@@ -122,6 +95,9 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             // slope = (n * sum(x*y) - sum(x) * sum(y)) / (n * sum(x^2) - sum(x)^2)
             // Intercept = (sum(y) - Slope * sum(x)) / n
             // where n is the number of records.
+
+            List<InFlowDataRow> TestsData = inputData.TestsData.ToList();
+            double ReservoirPressure = inputData.ReservoirPressure.Value;
 
             int n = TestsData.Count;
             List<double> q = TestsData.Select(x => x.FlowRate).ToList();
@@ -134,26 +110,20 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             double Sumxy = q.Zip(piTerm, (x, y) => x * y).Sum();
 
 
-            Slope = (n * Sumxy - Sumx * Sumy) / (n * SumX2 - Math.Pow(Sumx, 2));
+            double slope = (n * Sumxy - Sumx * Sumy) / (n * SumX2 - Math.Pow(Sumx, 2));
 
-            Intercept = (Sumy - Slope * Sumx) / n;
+            double intercept = (Sumy - slope * Sumx) / n;
+
+            return (slope, intercept);
 
 
         }
 
-        public void GenerateIPR()
+        protected override List<InFlowDataRow> ComputeIPR(IPRInputData input)
         {
 
             // A method to generate the IPR using Jones, Blount, and Glaze method.
 
-            if (!IsInputValid)
-                throw new InvalidOperationException("Invalid operation: " +
-                    "Calculation method was called before input data was set. Call SetInputData() first.");
-
-            if (GenerationSettings.MinimumPressure > ReservoirPressure)
-                throw new InvalidParameterException("Minimum pressure must be less than the reservoir pressure.");
-
-            DetermineSlopeIntercept();
 
             // This method will assume Bottom-Hole Flowing Pressure and calcualte Flow Rate Using:
             // qo = (-A + √(A² + 4B(Pr - Pwf))) / (2B)
@@ -169,6 +139,19 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
             double flowRate = 0;
 
+            (double slope, double intercept) jonesCoeff = DetermineSlopeIntercept(input);
+
+            double Slope = jonesCoeff.slope;
+            double Intercept = jonesCoeff.intercept;
+
+            double ReservoirPressure = input.ReservoirPressure.Value;
+
+
+            IPRGenerationSettings GenerationSettings = new IPRGenerationSettings(
+                input.GenerationSettings.PressureStepSize,
+                input.GenerationSettings.MinimumPressure);
+
+
             for (double Pressure = GenerationSettings.MinimumPressure; Pressure <= ReservoirPressure;
                 Pressure += GenerationSettings.PressureStepSize)
             {
@@ -182,7 +165,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
             }
 
-            GeneratedData = DataRows;
+            return DataRows;
 
         }
 

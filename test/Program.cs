@@ -52,7 +52,7 @@ class Program
 
         DunsRos dunsRos = new();
 
-        VerticalLiftingPreformance verticalLiftingPreformance = new(dunsRos, input);
+        VerticalLiftingPreformance verticalLiftingPreformance = new(HagedornBrown, input);
 
         NodalAnalysisValidationResult validationResult = new();
 

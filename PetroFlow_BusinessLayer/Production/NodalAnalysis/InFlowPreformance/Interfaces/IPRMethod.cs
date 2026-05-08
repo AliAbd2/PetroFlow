@@ -18,15 +18,14 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Int
 
             ValidateRawData(inputData, ref validationResult);
 
-            return ComputeIPR(inputData, ref validationResult);
+            return ComputeIPR(inputData);
 
         }
 
         protected abstract void ValidateRawData(IPRInputData inputData,
             ref NodalAnalysisValidationResult validationResult);
 
-        protected abstract List<InFlowDataRow> ComputeIPR(IPRInputData inputData,
-            ref NodalAnalysisValidationResult validationResult);
+        protected abstract List<InFlowDataRow> ComputeIPR(IPRInputData inputData);
 
 
     }

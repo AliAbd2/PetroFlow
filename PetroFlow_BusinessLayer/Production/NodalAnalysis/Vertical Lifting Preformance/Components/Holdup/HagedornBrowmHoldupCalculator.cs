@@ -115,7 +115,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
         {
 
             if (liquidViscosityNumber < 0.002 || liquidViscosityNumber > .5)
-                validationResult.Warnings.Add("Liquid Viscosity Number is out of range [0.002, 0.5], " +
+                validationResult.AddWarning("Liquid Viscosity Number is out of range [0.002, 0.5], " +
                     "Unrealistic result is expected");
 
             double logNl = Math.Log10(liquidViscosityNumber);
@@ -141,7 +141,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double a = x * y * z;
 
             if (a < 2e-6 || a > 5e-3)
-                validationResult.Warnings.Add("The factor that is used to determine" +
+                validationResult.AddWarning("The factor that is used to determine" +
                     " holdup factor is out of range [2e-6, 5e-3], Unrealistic result is expected");
 
 
@@ -177,7 +177,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
                 Math.Pow(pipeDiameterNumber, 2.14);
 
             if (x < 0.1 || x > 0.9)
-                validationResult.Warnings.Add("The factor that is used to correct" +
+                validationResult.AddWarning("The factor that is used to correct" +
                     " holdup is out of range [0.1, 0.9], Unrealistic result is expected");
 
             if (x < 0.1)

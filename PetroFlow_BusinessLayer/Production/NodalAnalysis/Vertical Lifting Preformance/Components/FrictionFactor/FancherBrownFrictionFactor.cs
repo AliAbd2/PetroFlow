@@ -57,7 +57,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             Validation.GreaterThanZero(totalSuperficialVelocity, "total superficial velocity");
 
             if (reynoldsNumberNumerator < 2 || reynoldsNumberNumerator > 80)
-                validationResult.Warnings.Add($"The calculated Reynolds number numerator ({reynoldsNumberNumerator}) is outside "
+                validationResult.AddWarning($"The calculated Reynolds number numerator ({reynoldsNumberNumerator}) is outside "
                     + $"Fancher and Brown range [2, 100].");
 
         }

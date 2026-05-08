@@ -72,7 +72,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
                     "Invalid test data: One or more bottom hole pressures are greater than reservoir pressure.");
 
             if (inputData.TestsData.Count > 1)
-                validationResult.Warnings.Add(
+                validationResult.AddWarning(
                     "Multiple test data rows were provided. Only the first row will be used.");
 
 
@@ -88,7 +88,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
                     "Invalid Test Flow Efficiency: A positive value greater than zero is required.");
 
             if (inputData.TestFlowEfficiency > 1)
-                validationResult.Warnings.Add("Flow efficiency is greater than 1. " +
+                validationResult.AddWarning("Flow efficiency is greater than 1. " +
                     "The Standing method is limited in this range;" +
                     " the maximum flow rate will be estimated using an approximate relationship.");
 
@@ -98,7 +98,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             //================================
             if (inputData.BubblePointPressure == null)
             {
-                validationResult.Warnings.Add(
+                validationResult.AddWarning(
                     "Bubble point pressure was not provided. Reservoir will be assumed saturated.");
             }
             else
@@ -110,7 +110,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
                 if (inputData.BubblePointPressure.Value > inputData.ReservoirPressure.Value)
                 {
-                    validationResult.Warnings.Add(
+                    validationResult.AddWarning(
                         "Bubble point pressure is greater than reservoir pressure. Reservoir will behave as saturated.");
                 }
 
@@ -279,8 +279,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
         /// <returns>A list of <see cref="InFlowDataRow"/> objects representing the calculated IPR data. The list reflects
         /// either saturated or undersaturated reservoir conditions, depending on the current state.</returns>
 
-        protected override List<InFlowDataRow> ComputeIPR(IPRInputData input, 
-            ref NodalAnalysisValidationResult validationResult)
+        protected override List<InFlowDataRow> ComputeIPR(IPRInputData input)
         {
             bool IsSaturated;
             // Indicates whether the reservoir is saturated (i.e., Pr ≤ Pb).
@@ -332,7 +331,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
         //            "Invalid Test Flow Efficiency: A positive value greater than zero is required.");
 
         //    if (NewFlowEfficiency > 1)
-        //        validationResult.Warnings.Add("Flow efficiency is greater than 1. " +
+        //        validationResult.AddWarning("Flow efficiency is greater than 1. " +
         //            "The Standing method is limited in this range;" +
         //            " the maximum flow rate will be estimated using an approximate relationship.");
 

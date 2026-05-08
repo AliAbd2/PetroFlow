@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PetroFlow_BusinessLayer.Production.NodalAnalysis
 {
-    public class GeneralMathFunctions
+    internal abstract class GeneralMathFunctions
     {
 
         public static double LinearInterpolate(
