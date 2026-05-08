@@ -16,8 +16,10 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
 
         }
 
-        protected override void ValidateRawData(VLPWorkingData input, VLPDerivedProperties derivedProperties,
+        protected override void ValidateRawData(VLPWorkingData input,
+            VLPDerivedProperties derivedProperties,
             ref NodalAnalysisValidationResult validationResult)
+
         {
 
             Validation.Missing(input.GasSuperficialVelocity, "gas superficial velocity");

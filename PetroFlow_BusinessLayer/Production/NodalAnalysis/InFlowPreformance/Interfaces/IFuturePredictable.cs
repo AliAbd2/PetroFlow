@@ -9,9 +9,11 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Int
     public interface IFuturePredictable
     {
 
-        NodalAnalysisValidationResult ValidateFutureInput(clsFutureIPRDataInput futureDataInput);
+        void ValidateFutureRawDataInput(IPRInputData Input,
+            ref NodalAnalysisValidationResult validationResult);
 
-        void GenerateFutureIPR(clsFutureIPRDataInput futureDataInput);
+        List<InFlowDataRow> GenerateFutureIPR(IPRInputData Input,
+            ref NodalAnalysisValidationResult validationResult);
 
     }
 }

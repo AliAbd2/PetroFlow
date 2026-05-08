@@ -343,7 +343,7 @@ namespace PetroFlow
 
         private bool AddCurve(ref string curveName)
         {
-            IIPRMethod method;
+            IPRMethodBase method;
             IPRInputData inputData = ReadPresentIPRDataInput();
             clsIPRGenerationSettings generationSettings = SetGenerationSettings();
 
@@ -445,11 +445,11 @@ namespace PetroFlow
         private void PlotCurves()
         {
 
-            List<IIPRMethod> curves = _iPRRepository.GetAll();
+            List<IPRMethodBase> curves = _iPRRepository.GetAll();
 
             pltNodalAnalysis.Plot.Clear();
 
-            foreach (IIPRMethod curve in curves)
+            foreach (IPRMethodBase curve in curves)
             {
 
                 List<double> flowrates = curve.GeneratedData.Select(x => x.FlowRate).ToList();
@@ -520,7 +520,7 @@ namespace PetroFlow
             if (cbSelectCurve.SelectedItem == "Add Curve" || cbSelectCurve.SelectedItem == null)
                 return;
 
-            IIPRMethod curve = _iPRRepository.Get(cbSelectCurve.SelectedItem.ToString());
+            IPRMethodBase curve = _iPRRepository.Get(cbSelectCurve.SelectedItem.ToString());
 
             CurvePlotSettings plotSettings = curve.CurvePlotSetting;
 
@@ -665,7 +665,7 @@ namespace PetroFlow
             if (cbSelectCurve.SelectedItem == "Add Curve" || cbSelectCurve.SelectedItem == null)
                 return;
 
-            IIPRMethod curve = _iPRRepository.Get(cbSelectCurve.SelectedItem.ToString());
+            IPRMethodBase curve = _iPRRepository.Get(cbSelectCurve.SelectedItem.ToString());
 
             txtReservoirPressure.Text = curve.ReservoirPressure.ToString();
             txtBubblePointPressure.Text = curve.BubblePointPressure.ToString();

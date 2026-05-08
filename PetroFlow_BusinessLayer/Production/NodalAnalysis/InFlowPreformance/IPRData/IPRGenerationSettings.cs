@@ -5,13 +5,13 @@ using System.Text;
 
 namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData
 {
-    public class clsIPRGenerationSettings
+    public class IPRGenerationSettings
     {
         public double PressureStepSize { get; set; } = 10;
         public double MinimumPressure { get; set; } = 0;
 
 
-        public clsIPRGenerationSettings(double stepSize, double minPressure)
+        public IPRGenerationSettings(double stepSize, double minPressure)
         {
             if (stepSize <= 0)
                 throw new InvalidParameterException(

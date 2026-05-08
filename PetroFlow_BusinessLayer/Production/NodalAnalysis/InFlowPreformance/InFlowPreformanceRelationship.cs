@@ -9,18 +9,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance
     public class InFlowPreformanceRelationship
     {
 
-        private IIPRMethod _method;
 
-        private IPRInputData _iPRInput;
-
-        public InFlowPreformanceRelationship(IIPRMethod method, 
-            IPRInputData input)
-        {
-
-            _method = method;
-            _iPRInput = input;
-
-        }
 
 
 

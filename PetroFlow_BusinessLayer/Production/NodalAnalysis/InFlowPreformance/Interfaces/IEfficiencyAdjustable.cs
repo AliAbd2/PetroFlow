@@ -9,7 +9,8 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Int
     public interface IEfficiencyAdjustable
     {
 
-        (List<InFlowDataRow>, NodalAnalysisValidationResult) GenerateWithEfficiency(double efficiency);
+        List<InFlowDataRow> GenerateWithEfficiency(IPRInputData input, double efficiency, 
+            ref NodalAnalysisValidationResult validationResult);
 
     }
 }

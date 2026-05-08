@@ -7,7 +7,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
     // A class to store the functions that are used in different IPR methods.
 
-    public class clsIPRGeneralFunctions
+    public class IPRGeneralFunctions
     {
 
         public static double ProductivityIndex(double oilFlowRate, double reservoirPressure, double flowingPressure)

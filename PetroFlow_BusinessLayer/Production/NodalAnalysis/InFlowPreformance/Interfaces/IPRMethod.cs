@@ -9,37 +9,25 @@ using System.Text;
 namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Interfaces
 {
 
-    public enum enIPRMethodType { Vogel, Standing, Fetkovich, Jones }
-
-    public enum enIPRData { ReservoirPressure, BubblePointPressure, TestData, TestFlowEfficiency, 
-    FutureReservoirPressur, OilRelativePermeability, OilFromationVolumeFactor, OilViscosity,
-        FutureOilRelativePermeability, FutureOilFromationVolumeFactor, FutureOilViscosity, CurveName, CurvePlotSettings
-    }
-    public interface IIPRMethod
+    public abstract class IPRMethodBase
     {
-        string Name { get; set; }
 
-        enIPRMethodType MethodType { get; }
+        public List<InFlowDataRow> GenerateIPR(IPRInputData inputData,
+            ref NodalAnalysisValidationResult validationResult)
+        {
 
-        double ReservoirPressure { get; set; }
+            ValidateRawData(inputData, ref validationResult);
 
-        double? BubblePointPressure { get; set; }
+            return ComputeIPR(inputData, ref validationResult);
 
-        List<InFlowDataRow> TestsData { get; set; }
+        }
 
-        List<InFlowDataRow> GeneratedData { get; set; } 
+        protected abstract void ValidateRawData(IPRInputData inputData,
+            ref NodalAnalysisValidationResult validationResult);
 
-        CurvePlotSettings CurvePlotSetting { get; set; }
-
-        bool IsInputValid { get; set; }
-
-        clsIPRGenerationSettings GenerationSettings { get; set; }
-
-        NodalAnalysisValidationResult SetInputData(IPRInputData dataInput);
-
-        void GenerateIPR();
+        protected abstract List<InFlowDataRow> ComputeIPR(IPRInputData inputData,
+            ref NodalAnalysisValidationResult validationResult);
 
 
     }
-
 }

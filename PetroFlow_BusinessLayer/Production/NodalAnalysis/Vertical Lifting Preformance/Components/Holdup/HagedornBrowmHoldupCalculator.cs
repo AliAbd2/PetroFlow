@@ -18,7 +18,8 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
         }
 
         protected override void ValidateRawInput(VLPWorkingData input, 
-            ref NodalAnalysisValidationResult validationResult, VLPDerivedProperties? derivedProperties = null)
+            ref NodalAnalysisValidationResult validationResult, 
+            VLPDerivedProperties? derivedProperties = null)
         {
 
             if (input.LiquidVelocityNumber.HasValue)

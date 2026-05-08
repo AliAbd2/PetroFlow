@@ -18,19 +18,25 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPR
         public double? WellExponent { get; set; }
         public double? FlowCoefficient { get; set; }
 
-        public IPRInputData(double? reservoirPressure, double? bubblePointPressure,
-            List<InFlowDataRow>? testData, double? testFlowEfficiency, double? wellExponent, 
-            double? flowCoefficient)
-        {
+        public IPRGenerationSettings GenerationSettings { get; set; }
 
-            ReservoirPressure = reservoirPressure;
-            BubblePointPressure = bubblePointPressure;
-            TestsData = testData;
-            TestFlowEfficiency = testFlowEfficiency;
-            WellExponent = wellExponent;
-            FlowCoefficient = flowCoefficient;
+        public double? FutureReservoirPressure { get; set; }
 
-        }
+        public double? PresentOilRelativePermeability { get; set; }
+
+        public double? PresentOilViscosity { get; set; }
+
+        public double? PresentOilFormationVolumeFactor { get; set; }
+
+        public double? FutureOilRelativePermeability { get; set; }
+
+        public double? FutureOilViscosity { get; set; }
+
+        public double? FutureOilFormationVolumeFactor { get; set; }
+
+        public double? NewFlowEfficiency { get; set; }
+
+        public double? PresentFlowCoefficient { get; set; }
 
     }
 }

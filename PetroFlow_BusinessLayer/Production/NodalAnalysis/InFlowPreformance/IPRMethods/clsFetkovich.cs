@@ -47,79 +47,41 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
     // The class supports both saturated and under-saturated reservoirs,
     // with optional bubble-point pressure input.
 
-    public class clsFetkovich : IIPRMethod, IFuturePredictable
+    public class clsFetkovich : IPRMethodBase, IFuturePredictable
     {
-        public string Name { get; set; }
 
-        public enIPRMethodType MethodType { get { return enIPRMethodType.Fetkovich; } }
 
-        public double ReservoirPressure { get; set; }
-
-        public double? BubblePointPressure { get; set; }
-
-        public List<clsInFlowDataRow> TestsData { get; set; }
-
-        public List<clsInFlowDataRow> GeneratedData { get; set; }
-
-        public CurvePlotSettings CurvePlotSetting { get; set; }
-
-        public bool IsInputValid { get; set; }
-
-        public clsIPRGenerationSettings GenerationSettings { get; set; }
-
-        private double? WellExponent;
-
-        private double? PresentFlowCoefficient;
-
-        private double ProductivityIndex;
-
-        // Indicates whether the reservoir is saturated (i.e., Pr ≤ Pb).
-        // If the bubble point pressure is not provided, the reservoir is treated as saturated.
-        private bool IsSaturated
-        {
-            get
-            {
-
-                if (BubblePointPressure == null)
-                    return true;
-
-                return ReservoirPressure <= BubblePointPressure;
-
-            }
-        }
 
         public clsFetkovich()
         {
 
-            WellExponent = null;
-            PresentFlowCoefficient = null;
-            CurvePlotSetting = new CurvePlotSettings();
+  
 
         }
 
-        public NodalAnalysisValidationResult SetInputData(clsPresentIPRDataInput inputData)
+        protected override void ValidateRawData(IPRInputData input,
+            ref NodalAnalysisValidationResult validationResult)
         {
-            NodalAnalysisValidationResult validationResult = new();
 
             //=============================
             // --- Reservoir Pressure ---
             //=============================
-            if (inputData.ReservoirPressure == null)
+            if (input.ReservoirPressure == null)
                 throw new MissingRequiredInputException(
                     "Cannot generate IPR: Reservoir pressure has not been provided.");
 
-            if (inputData.ReservoirPressure <= 0)
+            if (input.ReservoirPressure <= 0)
                 throw new InvalidParameterException(
                     "Invalid reservoir pressure: A positive value greater than zero is required.");
 
             //=========================
             // --- Well Exponent ---
             //========================
-            if (inputData.WellExponent != null)
+            if (input.WellExponent != null)
             {
 
-                if (inputData.WellExponent < 0.568 ||
-                    inputData.WellExponent > 1)
+                if (input.WellExponent < 0.568 ||
+                    input.WellExponent > 1)
                     validationResult.Warnings.Add(
                         "Well exponent is outside the recommended range for the Fetkovich model (0.568–1.0).");
 
@@ -129,40 +91,39 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             //==========================
             // --- Flow Coefficient ---
             //==========================
-            if (inputData.FlowCoefficient != null)
-                PresentFlowCoefficient = inputData.FlowCoefficient;
+
 
 
             //=====================
             // --- Test Data ---
             //=====================
-            if (inputData.TestsData == null)
+            if (input.TestsData == null)
                 throw new MissingRequiredInputException(
                     "Cannot generate IPR: Test data has not been provided.");
 
-            if (inputData.TestsData.Count < 3 && inputData.WellExponent == null)
+            if (input.TestsData.Count < 3 && input.WellExponent == null)
                 throw new InvalidParameterException(
                     "Invalid test data: At least three test data rows is required.");
 
-            if (inputData.TestsData.Count < 1 && 
-                inputData.WellExponent != null && 
-                PresentFlowCoefficient == null)
+            if (input.TestsData.Count < 1 &&
+                input.WellExponent != null &&
+                input.PresentFlowCoefficient == null)
                 throw new InvalidParameterException(
                     "Invalid test data: At least one test data row is required.");
 
-            if (inputData.TestsData.Any(x => x.FlowRate <= 0))
+            if (input.TestsData.Any(x => x.FlowRate <= 0))
                 throw new InvalidParameterException(
                     "Invalid test data: One or more flow rates are zero or negative.");
 
-            if (inputData.TestsData.Any(x => x.BottomHolePressure <= 0))
+            if (input.TestsData.Any(x => x.BottomHolePressure <= 0))
                 throw new InvalidParameterException(
                     "Invalid test data: One or more bottom hole pressures are zero or negative.");
 
-            if (inputData.TestsData.Any(x => x.BottomHolePressure >= inputData.ReservoirPressure))
+            if (input.TestsData.Any(x => x.BottomHolePressure >= input.ReservoirPressure))
                 throw new InvalidParameterException(
                     "Bottom-hole pressure must be less than reservoir pressure.");
 
-            if (inputData.TestsData.Count > 1 && inputData.WellExponent == null)
+            if (input.TestsData.Count > 1 && input.WellExponent == null)
                 validationResult.Warnings.Add(
                     "Multiple test data rows were provided. Only the first row will be used.");
 
@@ -170,7 +131,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             //================================
             // --- Bubble Point Pressure ---
             //================================
-            if (inputData.BubblePointPressure == null)
+            if (input.BubblePointPressure == null)
             {
                 validationResult.Warnings.Add(
                     "Bubble point pressure was not provided. Reservoir will be assumed saturated.");
@@ -178,11 +139,11 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             else
             {
 
-                if (inputData.BubblePointPressure <= 0)
+                if (input.BubblePointPressure <= 0)
                     throw new InvalidParameterException(
                         "Invalid bubble point pressure: A positive value greater than zero is required.");
 
-                if (inputData.BubblePointPressure.Value > inputData.ReservoirPressure.Value)
+                if (input.BubblePointPressure.Value > input.ReservoirPressure.Value)
                 {
                     validationResult.Warnings.Add(
                         "Bubble point pressure is greater than reservoir pressure. Reservoir will behave as saturated.");
@@ -190,17 +151,11 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
             }
 
-            ReservoirPressure = inputData.ReservoirPressure.Value;
-            TestsData = inputData.TestsData;
-            BubblePointPressure = inputData.BubblePointPressure;
-            WellExponent = inputData.WellExponent;
 
-            IsInputValid = true;
-
-            return validationResult;
         }
 
-        private void DetermineslopeIntercept()
+        private (double wellExponent, double flowCorfficient)
+            DetermineslopeFlowCoefficient(IPRInputData input)
         {
             // This is a method to determaine the slope.
 
@@ -208,8 +163,12 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             // slope = (n * sum(x*y) - sum(x) * sum(y)) / (n * sum(x^2) - sum(x)^2)
             // where n is the number of records.
 
-            if (WellExponent != null)
-                return;
+            if (input.WellExponent != null)
+                return (input.WellExponent.Value,
+                    input.FlowCoefficient.Value);
+
+            double ReservoirPressure = input.ReservoirPressure.Value;
+            List<InFlowDataRow> TestsData = input.TestsData;
 
             double pr2 = ReservoirPressure * ReservoirPressure;
             int n = TestsData.Count();
@@ -228,14 +187,15 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
             double intercept = (sumY - m * sumX) / n;
 
-            WellExponent = m;
+            double WellExponent = m;
 
-            PresentFlowCoefficient = 1 / Math.Pow(10, intercept);
+            double PresentFlowCoefficient = 1 / Math.Pow(10, intercept);
 
+            return (WellExponent, PresentFlowCoefficient);
             
         }
 
-        private void DetermineProductivityIndex()
+        private double DetermineProductivityIndex(IPRInputData input)
         {
             // A method to calculate the productivity index for fetkovich method.
             // There is three cases:
@@ -248,12 +208,13 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             // bottom hole pressure > bubble point then:
             // J = q / ((Pr - Pwf) + Pb / 2 *([1 - (Pwf / Pb)^2]^n)
 
-            DetermineslopeIntercept();
+            (double wellExponent, double flowCorfficient) t = 
+                DetermineslopeFlowCoefficient(input);
 
             double productivityIndex = 0;
 
-            double bottomHolePressure = TestsData[0].BottomHolePressure;
-            double flowRate = TestsData[0].FlowRate;
+            double bottomHolePressure = input.TestsData[0].BottomHolePressure;
+            double flowRate = input.TestsData[0].FlowRate;
 
 
 
@@ -286,13 +247,13 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         }
 
-        private List<clsInFlowDataRow> GenerateIPR_SaturatedReservoir()
+        private List<InFlowDataRow> GenerateIPR_SaturatedReservoir()
         {
 
             // A method to generate the IPR data for saturated reservoir using Fetkovich method.
 
 
-            List<clsInFlowDataRow> dataRows = new List<clsInFlowDataRow>();
+            List<InFlowDataRow> dataRows = new List<InFlowDataRow>();
             double flowRate = 0;
 
             DetermineProductivityIndex();
@@ -305,7 +266,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
                 double x = 1 - Math.Pow(pressure / ReservoirPressure, 2 * WellExponent.Value); // [ 1 - (Pwf / Pr)^d2 * n ]
                 flowRate = ProductivityIndex * ReservoirPressure / 2 * x;
 
-                dataRows.Add(new clsInFlowDataRow(pressure, flowRate));
+                dataRows.Add(new InFlowDataRow(pressure, flowRate));
 
 
             }
@@ -315,14 +276,14 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         }
 
-        private List<clsInFlowDataRow> GenerateIPR_UnderSaturatedReservoir()
+        private List<InFlowDataRow> GenerateIPR_UnderSaturatedReservoir()
         {
 
 
             // A method to generate the IPR data for undersaturated reservoir using Fetkovich method.
 
 
-            List<clsInFlowDataRow> dataRows = new List<clsInFlowDataRow>();
+            List<InFlowDataRow> dataRows = new List<InFlowDataRow>();
             double flowRate = 0;
 
             if (WellExponent == null)
@@ -335,7 +296,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
                 if (pressure > BubblePointPressure)
                 {
                     // q = J * (Pr - Pwf)
-                    flowRate = clsIPRGeneralFunctions.LinearFlowRate(ProductivityIndex,
+                    flowRate = IPRGeneralFunctions.LinearFlowRate(ProductivityIndex,
                         ReservoirPressure, pressure);
 
                 }
@@ -349,7 +310,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
                 }
 
-                dataRows.Add(new clsInFlowDataRow(pressure, flowRate));
+                dataRows.Add(new InFlowDataRow(pressure, flowRate));
 
             }
 
@@ -357,24 +318,27 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         }
 
-        public void GenerateIPR()
+        protected override List<InFlowDataRow> ComputeIPR(IPRInputData input,
+            ref NodalAnalysisValidationResult validationResult)
         {
 
-            if (!IsInputValid)
-                throw new InvalidOperationException("Invalid operation: " +
-                    "Calculation method was called before input data was set. Call SetInputData() first.");
-
-            if (GenerationSettings.MinimumPressure > ReservoirPressure)
-                throw new InvalidParameterException("Minimum pressure must be less than the reservoir pressure.");
+            bool IsSaturated;
+            // Indicates whether the reservoir is saturated (i.e., Pr ≤ Pb).
+            // If the bubble point pressure is not provided, the reservoir is treated as saturated.
+            if (input.BubblePointPressure.HasValue)
+                IsSaturated = input.ReservoirPressure.Value <=
+                    input.BubblePointPressure.Value;
+            else
+                IsSaturated = true;
 
             if (IsSaturated)
-                GeneratedData = GenerateIPR_SaturatedReservoir();
+                return GenerateIPR_SaturatedReservoir();
             else
-                GeneratedData = GenerateIPR_UnderSaturatedReservoir();
+                return GenerateIPR_UnderSaturatedReservoir();
 
         }
 
-        public NodalAnalysisValidationResult ValidateFutureInput(clsFutureIPRDataInput futureDataInput)
+        public NodalAnalysisValidationResult ValidateFutureInput(IPRInputData futureDataInput)
         {
 
             NodalAnalysisValidationResult validationResult = new();
@@ -421,7 +385,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         }
 
-        public void GenerateFutureIPR(clsFutureIPRDataInput InputData)
+        public void GenerateFutureIPR(IPRInputData InputData)
         {
 
             // A Method to generate future IPR using Vetkovich's method.
@@ -439,7 +403,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
             ValidateFutureInput(InputData);
 
-            List<clsInFlowDataRow> Data = new List<clsInFlowDataRow>();
+            List<InFlowDataRow> Data = new List<InFlowDataRow>();
 
             double futureFlowCoefficient = DetermineFutureFlowCoefficient(InputData.FutureReservoirPressure.Value);
 
@@ -452,7 +416,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
                 double x = Math.Pow((PRF2 - pressure * pressure), WellExponent.Value);
                 double flowrate = futureFlowCoefficient * x;
 
-                Data.Add(new clsInFlowDataRow(pressure, flowrate));
+                Data.Add(new InFlowDataRow(pressure, flowrate));
 
             }
 

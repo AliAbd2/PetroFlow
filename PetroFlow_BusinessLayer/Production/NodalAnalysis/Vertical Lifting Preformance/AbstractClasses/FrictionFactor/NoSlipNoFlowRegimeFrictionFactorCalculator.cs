@@ -16,7 +16,5 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
     {
 
 
-
-
     }
 }
