@@ -4,6 +4,7 @@ using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preforma
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.Interfaces;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.Main_VLP_Classes;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.Models;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.PVT;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.VLPData;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.VLPGeneralEquations;
 using System;
@@ -31,21 +32,61 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             ref NodalAnalysisValidationResult validationResult)
         {
 
-            workingData.Pressure = _inputData.WellHeadPressure;
+            workingData.PVT.PSIPressure = _inputData.WellHeadPressure;
+            double pipeIsindeDiameter = workingData.PipeInsideDiameter.Value;
+            double gasLiquidRatio = _inputData.PVT.GasOilRatio.Value;
+
 
             for (double depth = 0; depth < _inputData.TotalDepth.Value; 
                 depth +=_inputData.DepthStepSize.Value)
             {
 
+                double gasFormationVolumeFactor =
+                VerticalLiftingPreformancePVT.GasFormationVolumeFactorInBurrel(workingData.PVT);
+                double oilFormationVolumeFactor =
+                    VerticalLiftingPreformancePVT.OilFormationVolumeFactorByVasquezBeggs(workingData.PVT);
+
+                workingData.LiquidDensity =
+                    VerticalLiftingPreformancePVT.OilDensity(workingData.PVT);
+
+                workingData.GasDensity =
+                    VerticalLiftingPreformancePVT.GasDensity(workingData.PVT);
+
+                double Rs = VerticalLiftingPreformancePVT.SolutionGasOilRatioByVasquezBeggs(workingData.PVT);
+
+                workingData.GasSuperficialVelocity =
+                    VLPRawDataProcessor.DetermineGasSuperficialVelocity(flowRate,
+                    pipeIsindeDiameter, gasFormationVolumeFactor, gasLiquidRatio, Rs);
+
+                workingData.LiquidSuperficialVelocity =
+                    VLPRawDataProcessor.DetermineLiquidSuperficialVelocity(flowRate,
+                    pipeIsindeDiameter, oilFormationVolumeFactor);
+
+                workingData.TotalMassFlowRate = VLPRawDataProcessor.DetermineMassFlowRate(workingData,
+                    flowRate, oilFormationVolumeFactor, gasFormationVolumeFactor);
+
+
+                workingData.LiquidVelocityNumber =
+                    VLPDimensionlessNumbers.DetermineLiquidVelocityNumber(workingData);
+
+                workingData.GasVelocityNumber =
+                    VLPDimensionlessNumbers.DetermineGasVelocityNumber(workingData);
+
+                workingData.LiquidViscosityNumber =
+                    VLPDimensionlessNumbers.DetermineViscosityNumber(workingData);
+
+                
+                workingData.PipeDiameterNumber =
+                    VLPDimensionlessNumbers.DeterminePipeDiameterNumber(workingData);
 
                 double pressureGradient = _model.DeterminePressureGradient(workingData,
                     ref validationResult);
 
-                workingData.Pressure += pressureGradient * _inputData.DepthStepSize.Value;
+                workingData.PVT.PSIPressure += pressureGradient * _inputData.DepthStepSize.Value;
 
             }
 
-            return workingData.Pressure.Value;
+            return workingData.PVT.PSIPressure.Value;
 
         }
 
@@ -59,40 +100,13 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
 
             double pressure = 0;
 
-            double pipeIsindeDiameter = workingData.PipeInsideDiameter.Value;
-            double gasLiquidRatio = _inputData.GasLiquidRatio.Value;
-            double gasFormationVolumeFactor = _inputData.GasFormationVolumeFactor.Value;
-            double oilFormationVolumeFactor = _inputData.OilFormationVolumeFactor.Value;
             double flowRateStepSize = _inputData.FlowRateStepSize.Value;
 
 
-            for (double flowRate = _inputData.MinimumPressure.Value; flowRate < maxFlowRate;
+            for (double flowRate = _inputData.MinimumFlowRate.Value; flowRate < maxFlowRate;
                 flowRate += flowRateStepSize)
             {
 
-                workingData.GasSuperficialVelocity =
-                    VLPRawDataProcessor.DetermineGasSuperficialVelocity(flowRate,
-                    pipeIsindeDiameter, gasFormationVolumeFactor, gasLiquidRatio);
-
-                workingData.LiquidSuperficialVelocity =
-                    VLPRawDataProcessor.DetermineLiquidSuperficialVelocity(flowRate,
-                    pipeIsindeDiameter, oilFormationVolumeFactor);
-
-                workingData.TotalMassFlowRate = VLPRawDataProcessor.DetermineMassFlowRate(workingData,
-                    flowRate, oilFormationVolumeFactor, gasFormationVolumeFactor);
-
-
-                workingData.LiquidVelocityNumber = 
-                    VLPDimensionlessNumbers.DetermineLiquidVelocityNumber(workingData);
-
-                workingData.GasVelocityNumber =
-                    VLPDimensionlessNumbers.DetermineGasVelocityNumber(workingData);
-
-                workingData.LiquidViscosityNumber =
-                    VLPDimensionlessNumbers.DetermineViscosityNumber(workingData);
-
-                workingData.PipeDiameterNumber =
-                    VLPDimensionlessNumbers.DeterminePipeDiameterNumber(workingData);
 
                 pressure = _determinePressureAtFlowRate(workingData, flowRate,
                     ref validationResult);
@@ -116,39 +130,11 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
 
             double pressure = 0;
 
-            double pipeIsindeDiameter = workingData.PipeInsideDiameter.Value;
-            double gasLiquidRatio = _inputData.GasLiquidRatio.Value;
-            double gasFormationVolumeFactor = _inputData.GasFormationVolumeFactor.Value;
-            double oilFormationVolumeFactor = _inputData.OilFormationVolumeFactor.Value;
             double flowRateStepSize = _inputData.FlowRateStepSize.Value;
 
 
             foreach (double flowRate in inFlowData.Select(x => x.FlowRate))
             {
-
-                workingData.GasSuperficialVelocity =
-                    VLPRawDataProcessor.DetermineGasSuperficialVelocity(flowRate,
-                    pipeIsindeDiameter, gasFormationVolumeFactor, gasLiquidRatio);
-
-                workingData.LiquidSuperficialVelocity =
-                    VLPRawDataProcessor.DetermineLiquidSuperficialVelocity(flowRate,
-                    pipeIsindeDiameter, oilFormationVolumeFactor);
-
-                workingData.TotalMassFlowRate = VLPRawDataProcessor.DetermineMassFlowRate(workingData,
-                    flowRate, oilFormationVolumeFactor, gasFormationVolumeFactor);
-
-
-                workingData.LiquidVelocityNumber =
-                    VLPDimensionlessNumbers.DetermineLiquidVelocityNumber(workingData);
-
-                workingData.GasVelocityNumber =
-                    VLPDimensionlessNumbers.DetermineGasVelocityNumber(workingData);
-
-                workingData.LiquidViscosityNumber =
-                    VLPDimensionlessNumbers.DetermineViscosityNumber(workingData);
-
-                workingData.PipeDiameterNumber =
-                    VLPDimensionlessNumbers.DeterminePipeDiameterNumber(workingData);
 
                 pressure = _determinePressureAtFlowRate(workingData, flowRate,
                     ref validationResult);
@@ -160,6 +146,8 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             return outFlowData;
 
         }
+
+
 
     }
 }

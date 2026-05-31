@@ -18,7 +18,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPR
         public double? WellExponent { get; set; }
         public double? FlowCoefficient { get; set; }
 
-        public IPRGenerationSettings GenerationSettings { get; set; }
+        public IPRGenerationSettings? GenerationSettings { get; set; }
 
         public double? FutureReservoirPressure { get; set; }
 
@@ -37,6 +37,12 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPR
         public double? NewFlowEfficiency { get; set; }
 
         public double? PresentFlowCoefficient { get; set; }
+
+        public IPRInputData()
+        {
+            TestsData = new();
+
+        }
 
     }
 }

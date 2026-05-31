@@ -23,9 +23,9 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
     // Therefore, this class is designed to store test values as objects and to provide
     // methods that calculate the effect of changing FE.
 
-    public class clsStanding : IPRMethodBase, IFuturePredictable
+    public class Standing : IPRMethodBase, IFuturePredictable
     {
-        public clsStanding()
+        public Standing()
         {
 
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.PVT;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -18,11 +19,6 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
         //=================
         // --- General ---
         //=================
-        public double? Pressure { get; set; } // psi
-
-        public double? Temperature { get; set; } // F
-
-        public double? GasLiquidRatio { get; set; } // SCF / STB
 
         public double? PipeInsideDiameter { get; set; } // ft
 
@@ -77,6 +73,8 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
         public double? PipeDiameterNumber { get; set; }
 
         public double? LiquidViscosityNumber { get; set; }
+
+        public PVTDataInput PVT { get; set; } = new();
 
     }
 }

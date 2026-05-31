@@ -17,10 +17,10 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             ref NodalAnalysisValidationResult validationResult, VLPDerivedProperties? derivedProperties = null)
         {
 
-            Validation.GreaterThanZeroNotMissing(input.LiquidVelocityNumber, "liquid velocity number");
-            Validation.GreaterThanZeroNotMissing(input.GasVelocityNumber, "gas velocity number");
-            Validation.GreaterThanZeroNotMissing(input.LiquidDensity, "liquid density");
-            Validation.GreaterThanZeroNotMissing(input.LiquidSurfaceTension, "liquid surface tension");
+            Validation.NonNegativeNotMissing(input.LiquidVelocityNumber, "liquid velocity number");
+            Validation.NonNegativeNotMissing(input.GasVelocityNumber, "gas velocity number");
+            Validation.NonNegativeNotMissing(input.LiquidDensity, "liquid density");
+            Validation.NonNegativeNotMissing(input.LiquidSurfaceTension, "liquid surface tension");
 
             if (derivedProperties?.FlowRegime == null)
                 throw new MissingRequiredInputException("Flow regime is required for Duns & Ros holdup calculation.");
@@ -35,7 +35,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             ref NodalAnalysisValidationResult validationResult)
         {
 
-            double Nl = input.LiquidVelocityNumber.Value;
+            double Nl = input.LiquidViscosityNumber.Value;
 
             if (Nl < 2e-3 || Nl > 2)
                 validationResult.AddWarning(
@@ -52,9 +52,9 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double logNl7 = logNl6 * logNl;
             double logNl8 = logNl7 * logNl;
 
-            double x = 0.079607 - 0.75829 * logNl - 0.50545 * logNl2
-                + 1.9872 * logNl3 + 5.9203 * logNl4 + 7.1021 * logNl5
-                + 4.2355 * logNl6 + 1.2345 * logNl7 + 0.14034 * logNl8;
+            double x = 0.07960693318590623 - 0.7582859318441545 * logNl - 0.5054462330299302 * logNl2
+                + 1.9872221260923268 * logNl3 + 5.920270668948145 * logNl4 + 7.10211126536129 * logNl5
+                + 4.2354609478746195 * logNl6 + 1.2344885844958777 * logNl7 + 0.14033985973556018 * logNl8;
 
             return Math.Pow(10, x);
 
@@ -64,7 +64,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             ref NodalAnalysisValidationResult validationResult)
         {
 
-            double Nl = input.LiquidVelocityNumber.Value;
+            double Nl = input.LiquidViscosityNumber.Value;
 
             if (Nl < 2e-3 || Nl > 2)
                 validationResult.AddWarning(
@@ -82,10 +82,10 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double logNl9 = logNl8 * logNl;
             double logNl10 = logNl9 * logNl;
 
-            double x = -0.097793 + 0.20462 * logNl + 1.8685 * logNl2
-                - 0.2653 * logNl3 - 16.899 * logNl4 - 41.868 * logNl5
-                - 49.304 * logNl6 - 32.296 * logNl7 - 12.003 * logNl8
-                - 2.360 * logNl9 - 0.19306 * logNl10;
+            double x = -0.09779253871430399 + 0.20461637178584866 * logNl + 1.8685355551760476 * logNl2
+                - 0.26538040558679576 * logNl3 - 16.899016734225402 * logNl4 - 41.86824439478302 * logNl5
+                - 49.30405393810165 * logNl6 - 32.29555433980717 * logNl7 - 12.002705613816044 * logNl8
+                - 2.368986006643564 * logNl9 - 0.19306432300296328 * logNl10;
 
             return Math.Pow(10, x);
 
@@ -95,7 +95,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             ref NodalAnalysisValidationResult validationResult)
         {
 
-            double Nl = input.LiquidVelocityNumber.Value;
+            double Nl = input.LiquidViscosityNumber.Value;
 
             if (Nl < 2e-3 || Nl > 2)
                 validationResult.AddWarning(
@@ -113,10 +113,10 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double logNl9 = logNl8 * logNl;
             double logNl10 = logNl9 * logNl;
 
-            double x = 0.59618 - 0.061896 * logNl - 0.26095 * logNl2
-                + 0.62097 * logNl3 + 2.5739 * logNl4 + 3.4162 * logNl5
-                + 2.1006 * logNl6 + 0.50572 * logNl7 - 0.070574 * logNl8
-                - 0.0596 * logNl9 - 0.0084175 * logNl10;
+            double x = 0.596183789607616 - 0.06189582571525779 * logNl - 0.2609535213344842 * logNl2
+                + 0.6209715404585027 * logNl3 + 2.573941079218668 * logNl4 + 3.4162364292767164 * logNl5
+                + 2.100603185883344 * logNl6 + 0.5057179338218712 * logNl7 - 0.07057382762893977 * logNl8
+                - 0.05959975693496161 * logNl9 - 0.008417462424274678 * logNl10;
 
             return Math.Pow(10, x);
 
@@ -126,7 +126,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             ref NodalAnalysisValidationResult validationResult)
         {
 
-            double Nl = input.LiquidVelocityNumber.Value;
+            double Nl = input.LiquidViscosityNumber.Value;
 
             if (Nl < 2e-3 || Nl > 2)
                 validationResult.AddWarning(
@@ -140,9 +140,9 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double logNl5 = logNl4 * logNl;
             double logNl6 = logNl5 * logNl;
 
-            return 57.985 + 2.0535 * logNl + 1.8173 * logNl2
-                - 17.454 * logNl3 - 28.929 * logNl4 - 12.381 * logNl5
-                - 1.7221 * logNl6;
+            return 57.984502635323324 + 2.05245663072945 * logNl + 1.8172530701422203 * logNl2
+                - 17.45443895077694 * logNl3 - 28.92925210857443 * logNl4 - 12.380682434263594 * logNl5
+                - 1.7220558769243466 * logNl6;
 
         }
 
@@ -187,7 +187,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             ref NodalAnalysisValidationResult validationResult)
         {
 
-            double Nl = input.LiquidVelocityNumber.Value;
+            double Nl = input.LiquidViscosityNumber.Value;
 
             if (Nl < 2e-3 || Nl > 2)
                 validationResult.AddWarning(
@@ -207,11 +207,11 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double logNl11 = logNl10 * logNl;
             double logNl12 = logNl11 * logNl;
 
-            double x = -1.0363 - 1.0044 * logNl - 9.9128 * logNl2
-                - 15.896 * logNl3 + 54.705 * logNl4 + 285.75 * logNl5
-                + 564.76 * logNl6 + 628.12 * logNl7 + 431.22 * logNl8
-                + 186.82 * logNl9 + 49.853 * logNl10 + 7.4949 * logNl11
-                + 0.48637 * logNl12;
+            double x = -1.0363169525162275 - 1.004404769642721 * logNl - 9.912779180798784 * logNl2
+                - 15.895742771558664 * logNl3 + 54.70515128504116 * logNl4 + 285.7518947305839 * logNl5
+                + 564.758052879776 * logNl6 + 628.1160498282394 * logNl7 + 431.21993284258303 * logNl8
+                + 186.81786848025925 * logNl9 + 49.85321510774732 * logNl10 + 7.494865077345032 * logNl11
+                + 0.4863652633065185 * logNl12;
 
             return Math.Pow(10, x);
 
@@ -222,7 +222,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             ref NodalAnalysisValidationResult validationResult)
         {
 
-            double Nl = input.LiquidVelocityNumber.Value;
+            double Nl = input.LiquidViscosityNumber.Value;
 
             if (Nl < 2e-3 || Nl > 2)
                 validationResult.AddWarning(
@@ -242,11 +242,11 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double logNl11 = logNl10 * logNl;
             double logNl12 = logNl11 * logNl;
 
-            return 1.7501 + 3.3712 * logNl + 25.096 * logNl2
-                + 39.691 * logNl3 - 143.84 * logNl4 - 712.83 * logNl5
-                - 1334.7 * logNl6 - 1406.1 * logNl7 - 918.85 * logNl8
-                - 381.77 * logNl9 - 98.511 * logNl10 - 14.437 * logNl11
-                - 0.92 * logNl12;
+            return 1.7500846493788171 + 3.37118526235901 * logNl + 25.09587333537104 * logNl2
+                + 39.691055078043576 * logNl3 - 143.83675488757757 * logNl4 - 712.8254562746409 * logNl5
+                - 1334.728637559747 * logNl6 - 1406.058432928918 * logNl7 - 918.8546588491067 * logNl8
+                - 381.7661427954624 * logNl9 - 98.51136170259781 * logNl10 - 14.436857218950813 * logNl11
+                - 0.9200040502977727 * logNl12;
 
         }
 
@@ -254,7 +254,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             ref NodalAnalysisValidationResult validationResult)
         {
 
-             double Nl = input.LiquidVelocityNumber.Value;
+            double Nl = input.LiquidViscosityNumber.Value;
 
             if (Nl < 2e-3 || Nl > 2)
                 validationResult.AddWarning(
@@ -265,8 +265,8 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double logNl2 = logNl * logNl;
             double logNl3 = logNl2 * logNl;
 
-            double x = -1.6056 - 0.099951 * logNl + 0.15497 * logNl2
-                 + 0.032593 * logNl3;
+            double x = -1.6055824648455717 - 0.09995069462715704 * logNl + 0.15497397543611768 * logNl2
+                 + 0.03259310792620898 * logNl3;
 
             return Math.Pow(10, x);
         }
@@ -283,16 +283,16 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             ref NodalAnalysisValidationResult validationResult)
         {
 
-            double F5 = _determineFifthSlipVelocityNumber(input, ref validationResult);
+           double F5 = _determineFifthSlipVelocityNumber(input, ref validationResult);
             double F6 = _determineSixthSlipVelocityNumber(input, ref validationResult);
             double F6c = _correctSixthSlipVelocityNumber(input, F6);
             double F7 = _determineSeventhSlipVelocityNumber(input, ref validationResult);
             double Ng = input.GasVelocityNumber.Value;
-            double Nl = input.LiquidVelocityNumber.Value;
+            double Nlv = input.LiquidVelocityNumber.Value;
 
             double x = 1 + F5;
             double y = Math.Pow(Ng, 0.982) + F6c;
-            double z = 1 + F7 * Nl;
+            double z = 1 + F7 * Nlv;
             double z2 = z * z;
 
             return x * (y / z2);
@@ -305,9 +305,11 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
         {
 
             double liquidDensity = input.LiquidDensity.Value;
-            double liquidSurfaceTension = input.LiquidSurfaceTension.Value;
+            double liquidSurfaceTensionlbsec2 = 
+                input.LiquidSurfaceTension.Value * UnitConversionConstants.PoundsPerDyne;
 
-            double x = liquidDensity / (liquidSurfaceTension * PhysicsConstants.EarthAcceleration);
+
+            double x = liquidDensity / (liquidSurfaceTensionlbsec2 * PhysicsConstants.EarthAcceleration);
             double y = Math.Pow(x, 0.25);
 
             return dimensionlessSlipVelocity / y;
@@ -336,10 +338,10 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double Vs = _determineSlipVelocity(input, S);
             double Vm = input.GasSuperficialVelocity.Value + input.LiquidSuperficialVelocity.Value;
 
-            double x = (Vm - Vs) * (Vm - Vs) + 4 * Vs * input.LiquidSuperficialVelocity.Value;
+            double x = ((Vm - Vs) * (Vm - Vs)) + 4 * Vs * input.LiquidSuperficialVelocity.Value;
             double y = Math.Pow(x, 0.5);
 
-            return ((Vs - Vm) + y) / (2 * Vs);
+            return (Vs - Vm + y) / (2 * Vs);
 
         }
 

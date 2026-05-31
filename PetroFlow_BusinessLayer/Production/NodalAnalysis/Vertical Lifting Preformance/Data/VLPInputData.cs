@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.PVT;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -15,29 +16,9 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
 
         public double? WellHeadPressure { get; set; }
 
-        public double? Temperature { get; set; }
-
-        public double? GasLiquidRatio { get; set; }
-
         public double? TotalDepth { get; set; }
 
         public double? GravityAcceleration { get; set; } 
-
-        public double? OilFormationVolumeFactor { get; set; }
-
-        public double? GasFormationVolumeFactor { get; set; }
-
-        //=================
-        // --- Density ---
-        //=================
-
-        public double? OilDensity { get; set; }
-
-        public double? WaterDensity { get; set; }
-
-        public double? liquidDensity { get; set; }
-
-        public double?  GasDensity { get; set; }
 
         //===================
         // --- Viscosity ---
@@ -66,7 +47,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
         public double? SurfaceTension { get; set; }
 
         //============================
-        // --- Summation Settings ---
+        // --- Simulation Settings ---
         //============================
 
         public double? DepthStepSize { get; set; }
@@ -77,6 +58,12 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
 
         public double? MinimumPressure { get; set; }
 
+        public double? MinimumFlowRate { get; set; }
+
+
+        public PVTDataInput PVT { get; set; } = new();
+
+        
 
     }
 }

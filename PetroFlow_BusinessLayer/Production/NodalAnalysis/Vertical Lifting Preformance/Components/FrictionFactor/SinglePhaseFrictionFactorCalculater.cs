@@ -16,6 +16,13 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
         }
 
 
+        public static double LaminarFrictionFactor(double reynoldsNumbe)
+        {
+
+            return 64 / reynoldsNumbe;
+
+        }
+
         public static double DrewKooMcAdams(double reynoldsNumber)
         {
 

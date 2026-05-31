@@ -78,5 +78,13 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation
 
         }
 
+        public static void NonNegativeNotMissing(double? value, string name)
+        {
+
+            Missing(value, name);
+            NonNegative(value.Value, name);
+
+        }
+
     }
 }

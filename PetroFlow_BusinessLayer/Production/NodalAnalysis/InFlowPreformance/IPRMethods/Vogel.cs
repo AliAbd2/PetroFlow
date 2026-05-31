@@ -23,10 +23,10 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
      * 
      */
 
-    public class clsVogel : IPRMethodBase
+    public class Vogel : IPRMethodBase
     {
 
-        public clsVogel()
+        public Vogel()
         {
 
         }

@@ -55,7 +55,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             Validation.GreaterThanZero(totalSuperficialVelocity, "total superficial velocity");
 
             if (reynoldsNumberNumerator < 2 || reynoldsNumberNumerator > 100)
-                validationResult.AddWarning($"The calculated Reynolds number numerator ({reynoldsNumberNumerator}) is outside "
+                validationResult.AddWarning($"The calculated Reynolds number numerator is outside "
                     + $"Baxendell and Thomas range [2, 100].");
 
         }

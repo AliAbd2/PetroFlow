@@ -47,12 +47,12 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
     // The class supports both saturated and under-saturated reservoirs,
     // with optional bubble-point pressure input.
 
-    public class clsFetkovich : IPRMethodBase, IFuturePredictable
+    public class Fetkovich : IPRMethodBase, IFuturePredictable
     {
 
 
 
-        public clsFetkovich()
+        public Fetkovich()
         {
 
   

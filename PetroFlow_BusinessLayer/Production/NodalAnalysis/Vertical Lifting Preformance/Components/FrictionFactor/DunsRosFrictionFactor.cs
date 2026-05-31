@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.VLPModels;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Constants;
 
 namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.Components.FrictionFactor
 {
@@ -14,15 +15,15 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
         protected override void ValidateRawData(VLPWorkingData input, VLPDerivedProperties derivedProperties, ref NodalAnalysisValidationResult validationResult)
         {
 
-            Validation.GreaterThanZeroNotMissing(input.LiquidDensity, "liquid density");
-            Validation.GreaterThanZeroNotMissing(input.LiquidSuperficialVelocity, "liquid superficial velocity");
-            Validation.GreaterThanZeroNotMissing(input.PipeInsideDiameter, "pipe inside diameter");
-            Validation.GreaterThanZeroNotMissing(input.LiquidViscosity, "liquid viscosity");
-            Validation.GreaterThanZeroNotMissing(input.PipeRelativeRoughness, "pipe relative roughness");
-            Validation.GreaterThanZeroNotMissing(input.PipeDiameterNumber, "pipe diameter number");
-            Validation.GreaterThanZeroNotMissing(input.GasSuperficialVelocity, "gas superficial velocity");
-            Validation.GreaterThanZeroNotMissing(input.LiquidSurfaceTension, "liquid surface tension");
-            Validation.GreaterThanZeroNotMissing(input.GasDensity, "gas density");
+            Validation.NonNegativeNotMissing(input.LiquidDensity, "liquid density");
+            Validation.NonNegativeNotMissing(input.LiquidSuperficialVelocity, "liquid superficial velocity");
+            Validation.NonNegativeNotMissing(input.PipeInsideDiameter, "pipe inside diameter");
+            Validation.NonNegativeNotMissing(input.LiquidViscosity, "liquid viscosity");
+            Validation.NonNegativeNotMissing(input.PipeRelativeRoughness, "pipe relative roughness");
+            Validation.NonNegativeNotMissing(input.PipeDiameterNumber, "pipe diameter number");
+            Validation.NonNegativeNotMissing(input.GasSuperficialVelocity, "gas superficial velocity");
+            Validation.NonNegativeNotMissing(input.LiquidSurfaceTension, "liquid surface tension");
+            Validation.NonNegativeNotMissing(input.GasDensity, "gas density");
 
         }
 
@@ -37,7 +38,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double liquidDensity = input.LiquidDensity.Value;
             double liquidSuperficialVelocity = input.LiquidSuperficialVelocity.Value;
             double pipeInsideDiameter = input.PipeInsideDiameter.Value;
-            double liquidViscoity = input.LiquidViscosity.Value;
+            double liquidViscoity = input.LiquidViscosity.Value * UnitConversionConstants.CentipoiseToLbPerFtSec;
 
             return (liquidDensity * liquidSuperficialVelocity * pipeInsideDiameter) / liquidViscoity;
 
@@ -46,6 +47,9 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
         private double _determineFirstDimensionlessFrictionFactorCoefficient(VLPWorkingData input
             ,double liquidReynoldsNumber)
         {
+
+            if (liquidReynoldsNumber < 2000)
+                return SinglePhaseFrictionFactorCalculator.LaminarFrictionFactor(liquidReynoldsNumber);
 
             return SinglePhaseFrictionFactorCalculator.Jain(input.PipeRelativeRoughness.Value
                 , liquidReynoldsNumber);
@@ -65,6 +69,9 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
                 validationResult.AddWarning(
                     "The parameter used to calculate the second Duns & Ros dimensionless friction factor " +
                     "is outside the recommended range [0.001, 1000]. The calculated friction factor may be unreliable.");
+
+            if (x == 0)
+                return 1;
 
             double logx = Math.Log10(x);
             double logx2 = logx * logx;

@@ -35,15 +35,15 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             ref NodalAnalysisValidationResult validationResult)
         {
 
-            Validation.GreaterThanZeroNotMissing(input.LiquidDensity, "liquid density");
-            Validation.GreaterThanZeroNotMissing(input.GasDensity, "gas density");
-            Validation.GreaterThanZeroNotMissing(input.LiquidSuperficialVelocity, "liquid superficial velocity");
-            Validation.GreaterThanZeroNotMissing(input.GasSuperficialVelocity, "gas superficial velocity");
-            Validation.GreaterThanZeroNotMissing(input.LiquidVelocityNumber, "liquid velocity number");
-            Validation.GreaterThanZeroNotMissing(input.GasVelocityNumber, "gas velocity number");
-            Validation.GreaterThanZeroNotMissing(input.GravityAcceleration, "gravity acceleration");
-            Validation.GreaterThanZeroNotMissing(input.PipeInsideDiameter, "pipe inside diameter");
-            Validation.GreaterThanZeroNotMissing(input.Pressure, "pressure");
+            Validation.NonNegativeNotMissing(input.LiquidDensity, "liquid density");
+            Validation.NonNegativeNotMissing(input.GasDensity, "gas density");
+            Validation.NonNegativeNotMissing(input.LiquidSuperficialVelocity, "liquid superficial velocity");
+            Validation.NonNegativeNotMissing(input.GasSuperficialVelocity, "gas superficial velocity");
+            Validation.NonNegativeNotMissing(input.LiquidVelocityNumber, "liquid velocity number");
+            Validation.NonNegativeNotMissing(input.GasVelocityNumber, "gas velocity number");
+            Validation.NonNegativeNotMissing(input.GravityAcceleration, "gravity acceleration");
+            Validation.NonNegativeNotMissing(input.PipeInsideDiameter, "pipe inside diameter");
+            Validation.NonNegativeNotMissing(input.PVT.PSIPressure, "pressure");
 
 
         }
@@ -197,7 +197,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double Vsl = input.LiquidSuperficialVelocity.Value;
             double Vsg = input.GasSuperficialVelocity.Value;
             double Vm = Vsl + Vsg;
-            double pressure = input.Pressure.Value;
+            double pressure = input.PVT.PSIPressure.Value;
 
 
             double NoSlipeTwoPhaseDensity = _determineNoSlipTowPhaseDensity(input);
@@ -257,7 +257,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double pressureGradient = x / y;
 
             return pressureGradient /
-                (UnitConversionConstants.NumberOfInchesFoot * UnitConversionConstants.NumberOfInchesFoot);
+                (UnitConversionConstants.NumberOfInchesFoot * UnitConversionConstants.NumberOfInchesFoot );
 
         }
 

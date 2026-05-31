@@ -18,50 +18,6 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             ref NodalAnalysisValidationResult validationResult, VLPDerivedProperties? derivedProperties = null)
         {
 
-            if (input.LiquidVelocityNumber.HasValue)
-                Validation.GreaterThanZero(input.LiquidVelocityNumber.Value, "liquid velocity number");
-            else
-            {
-                Validation.Missing(input.LiquidSuperficialVelocity, "liquid superficial velocity");
-                Validation.GreaterThanZero(input.LiquidSuperficialVelocity.Value,
-                    "liquid superficial velocity");
-            }
-
-
-            if (input.GasVelocityNumber.HasValue)
-                Validation.GreaterThanZero(input.GasVelocityNumber.Value, "gas velocity number");
-            else
-            {
-
-                Validation.Missing(input.GasSuperficialVelocity, "gas superficial velocity");
-                Validation.GreaterThanZero(input.GasSuperficialVelocity.Value,
-                    "gas superficial velocity");
-
-            }
-
-            if (input.PipeDiameterNumber.HasValue)
-                Validation.GreaterThanZero(input.PipeDiameterNumber.Value, "pipe diameter number");
-            else
-            {
-
-                Validation.Missing(input.PipeInsideDiameter, "pipe inside diameter");
-                Validation.GreaterThanZero(input.PipeInsideDiameter.Value,
-                    "pipe inside diameter");
-
-            }
-
-            if (!input.LiquidVelocityNumber.HasValue || !input.GasVelocityNumber.HasValue ||
-                !input.PipeDiameterNumber.HasValue)
-            {
-
-                Validation.Missing(input.LiquidDensity, "liquid density");
-                Validation.GreaterThanZero(input.LiquidDensity.Value, "liquid density");
-
-                Validation.Missing(input.LiquidSurfaceTension, "liquid surface tension");
-                Validation.GreaterThanZero(input.LiquidSurfaceTension.Value,
-                    "liquid surface tension");
-
-            }
 
         }
 
@@ -114,7 +70,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double gasVelocityNumber = VLPDimensionlessNumbers.DetermineGasVelocityNumber(input);
 
             double Ls = 50 + 36 * liquidVelocityNumber;
-            double Lm = 75 + 84 * Math.Pow(gasVelocityNumber, .75);
+            double Lm = 75 + 84 * Math.Pow(liquidVelocityNumber, .75);
 
             (double L1, double L2) = _determineFlowRegimeBoundaries(input, ref validationResult);
 

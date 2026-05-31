@@ -77,8 +77,8 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
 
             }
 
-            Validation.Missing(input.Pressure, "pressure");
-            Validation.GreaterThanZero(input.Pressure.Value, "pressure");
+            Validation.Missing(input.PVT.PSIPressure, "pressure");
+            Validation.GreaterThanZero(input.PVT.PSIPressure.Value, "pressure");
 
         }
 
@@ -135,7 +135,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
         {
 
             double x = (liquidVelocityNumber / Math.Pow(gasVelocityNumber, .575));
-            double y = Math.Pow(pressure / PhysicsConstants.StandardConditionPressure, .10);
+            double y = Math.Pow(pressure / PhysicsConstants.StandardPSIPressure, .10);
             double z = correctedViscosityNumber / pipeDiameterNumber;
 
             double a = x * y * z;
@@ -208,7 +208,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double correctedLiquidViscosityNumber = _determineViscosityNumberCorrected(
                 liquidViscosityNumber, ref validationResult);
 
-            double holdupFactor = _determineHoldupFactor(input.Pressure.Value,
+            double holdupFactor = _determineHoldupFactor(input.PVT.PSIPressure.Value,
                 liquidVelocityNumber, gasVelocityNumber, pipeDiameterNumber, correctedLiquidViscosityNumber,
                 ref validationResult);
 

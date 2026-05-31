@@ -14,7 +14,6 @@ namespace PetroFlow
     public partial class frmNodalAnalysis : Form
     {
 
-        private InFlowPreformanceRelationship _iPRRepository;
 
         private CurvePlotter _plotter;
 
@@ -80,6 +79,12 @@ namespace PetroFlow
                 return;
 
             PlotCurves();
+
+        }
+
+        private void SetTheme()
+        {
+
 
         }
 
@@ -271,15 +276,14 @@ namespace PetroFlow
             if (ReadDouble(txtFlowCoefficient, "Flow Coefficient", out double FlowCoefficient))
                 flowCoefficient = FlowCoefficient;
 
-            IPRInputData inputData = new IPRInputData(reservoirPressure,
-                bubblePointPressure, testData, testFlowEfficiency, wellExponent, flowCoefficient);
+            IPRInputData inputData = new();
 
             return inputData;
 
 
         }
 
-        private clsFutureIPRDataInput ReadFuturteIPRDataInput()
+        private void ReadFuturteIPRDataInput()
         {
 
             double? PresentOilRelativePermeability = null;
@@ -311,11 +315,7 @@ namespace PetroFlow
             if (ReadDouble(txtFutureOilFormationVolumeFactor, "Future Oil Formation Volume Factor", out double futureOilFormationVolumeFactor))
                 FutureOilFormationVolumeFactor = futureOilFormationVolumeFactor;
 
-            clsFutureIPRDataInput futureIPRDataInput = new(FutureReservoirPressure,
-                PresentOilRelativePermeability, PresentOilViscosity, PresentOilFormationVolumeFactor,
-                FutureOilRelativePermeability, FutureOilViscosity, FutureOilFormationVolumeFactor);
-
-            return futureIPRDataInput;
+            throw new NotImplementedException();
 
         }
 
@@ -328,115 +328,117 @@ namespace PetroFlow
 
         }
 
-        private clsIPRGenerationSettings SetGenerationSettings()
+        private void SetGenerationSettings()
         {
 
-            double MinimumPressure = (double)nudMinimumPressure.Value;
-            double PressueStepSize = (double)nudPressureStepSize.Value;
+            //double MinimumPressure = (double)nudMinimumPressure.Value;
+            //double PressueStepSize = (double)nudPressureStepSize.Value;
 
 
-            clsIPRGenerationSettings generationSettings = new(PressueStepSize, MinimumPressure);
+            //clsIPRGenerationSettings generationSettings = new(PressueStepSize, MinimumPressure);
 
-            return generationSettings;
+            //return generationSettings;
 
         }
 
         private bool AddCurve(ref string curveName)
         {
-            IPRMethodBase method;
-            IPRInputData inputData = ReadPresentIPRDataInput();
-            clsIPRGenerationSettings generationSettings = SetGenerationSettings();
+            //IPRMethodBase method;
+            //IPRInputData inputData = ReadPresentIPRDataInput();
+            //clsIPRGenerationSettings generationSettings = SetGenerationSettings();
 
-            if (rdoFutureIPR.Checked)
-            {
-                clsFutureIPRDataInput futureInputData = ReadFuturteIPRDataInput();
-            }
+            //if (rdoFutureIPR.Checked)
+            //{
+            //    clsFutureIPRDataInput futureInputData = ReadFuturteIPRDataInput();
+            //}
 
 
-            if (inputData == null)
-                return false;
+            //if (inputData == null)
+            //    return false;
 
-            NodalAnalysisValidationResult validationResult = new();
+            //NodalAnalysisValidationResult validationResult = new();
 
-            if (rdoStandingMethod.Checked)
-                method = new clsStanding();
-            else if (rdoFetkovich.Checked)
-                method = new clsFetkovich();
-            else if (rdoJones.Checked)
-                method = new clsJonesBlountGlaze();
-            else
-                method = new clsVogel();
+            //if (rdoStandingMethod.Checked)
+            //    method = new Standing();
+            //else if (rdoFetkovich.Checked)
+            //    method = new Fetkovich();
+            //else if (rdoJones.Checked)
+            //    method = new clsJonesBlountGlaze();
+            //else
+            //    method = new clsVogel();
 
-            try
-            {
+            //try
+            //{
 
-                validationResult = method.SetInputData(inputData);
-                method.CurvePlotSetting = GetPlotsetting(curveName);
-                method.GenerationSettings = generationSettings;
-                _iPRRepository.Add(method, ref curveName);
+            //    validationResult = method.SetInputData(inputData);
+            //    method.CurvePlotSetting = GetPlotsetting(curveName);
+            //    method.GenerationSettings = generationSettings;
+            //    _iPRRepository.Add(method, ref curveName);
 
-                SetWarnings(validationResult);
+            //    SetWarnings(validationResult);
 
-                return true;
+            //    return true;
 
-            }
-            catch (Exception ex)
-            {
+            //}
+            //catch (Exception ex)
+            //{
 
-                MessageBox.Show(ex.Message, "Data Reading Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+            //    MessageBox.Show(ex.Message, "Data Reading Error",
+            //        MessageBoxButtons.OK,
+            //        MessageBoxIcon.Error);
 
-                return false;
+            //    return false;
 
-            }
+            //}
+
+            return false;
 
         }
 
         private bool GenerateIPR(string curveName)
         {
 
-            var curve = _iPRRepository.Get(curveName);
+            //var curve = _iPRRepository.Get(curveName);
 
 
-            if (rdoCurrentIPR.Checked)
-            {
+            //if (rdoCurrentIPR.Checked)
+            //{
 
-                curve.GenerateIPR();
-                return true;
-            }
-
-
-            if (rdoFutureIPR.Checked && curve is IFuturePredictable future)
-            {
-
-                try
-                {
-                    future.GenerateFutureIPR(ReadFuturteIPRDataInput());
-                    return true;
-                }
-                catch (Exception ex)
-                {
-
-                    MessageBox.Show(ex.Message, "Data Reading Error",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
-                    return false;
+            //    curve.GenerateIPR();
+            //    return true;
+            //}
 
 
-                }
+            //if (rdoFutureIPR.Checked && curve is IFuturePredictable future)
+            //{
 
-            }
-            else
-            {
+            //    try
+            //    {
+            //        future.GenerateFutureIPR(ReadFuturteIPRDataInput());
+            //        return true;
+            //    }
+            //    catch (Exception ex)
+            //    {
 
-                MessageBox.Show(
-                    "The selected method is not compatible with the selected scenario.",
-                    "Method Selection Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+            //        MessageBox.Show(ex.Message, "Data Reading Error",
+            //            MessageBoxButtons.OK,
+            //            MessageBoxIcon.Error);
+            //        return false;
 
-            }
+
+            //    }
+
+            //}
+            //else
+            //{
+
+            //    MessageBox.Show(
+            //        "The selected method is not compatible with the selected scenario.",
+            //        "Method Selection Error",
+            //        MessageBoxButtons.OK,
+            //        MessageBoxIcon.Error);
+
+            //}
 
 
             return false;
@@ -445,27 +447,27 @@ namespace PetroFlow
         private void PlotCurves()
         {
 
-            List<IPRMethodBase> curves = _iPRRepository.GetAll();
+            //List<IPRMethodBase> curves = _iPRRepository.GetAll();
 
-            pltNodalAnalysis.Plot.Clear();
+            //pltNodalAnalysis.Plot.Clear();
 
-            foreach (IPRMethodBase curve in curves)
-            {
+            //foreach (IPRMethodBase curve in curves)
+            //{
 
-                List<double> flowrates = curve.GeneratedData.Select(x => x.FlowRate).ToList();
-                List<double> bottomHolePressures = curve.GeneratedData.Select(y => y.BottomHolePressure).ToList();
+            //    List<double> flowrates = curve.GeneratedData.Select(x => x.FlowRate).ToList();
+            //    List<double> bottomHolePressures = curve.GeneratedData.Select(y => y.BottomHolePressure).ToList();
 
-                _plotter.PlotScatter(flowrates, bottomHolePressures, curve.CurvePlotSetting, curve.Name);
+            //    _plotter.PlotScatter(flowrates, bottomHolePressures, curve.CurvePlotSetting, curve.Name);
 
-            }
+            //}
 
-            pltNodalAnalysis.Plot.Title(txtPlotTitle.Text);
-            pltNodalAnalysis.Plot.XLabel(txtXlabel.Text);
-            pltNodalAnalysis.Plot.YLabel(txtylabel.Text);
+            //pltNodalAnalysis.Plot.Title(txtPlotTitle.Text);
+            //pltNodalAnalysis.Plot.XLabel(txtXlabel.Text);
+            //pltNodalAnalysis.Plot.YLabel(txtylabel.Text);
 
-            pltNodalAnalysis.Plot.Axes.AutoScale();
+            //pltNodalAnalysis.Plot.Axes.AutoScale();
 
-            pltNodalAnalysis.Refresh();
+            //pltNodalAnalysis.Refresh();
 
         }
 
@@ -507,7 +509,6 @@ namespace PetroFlow
             cbLinePattern.SelectedIndex = 0;
             cbMarkerShape.SelectedIndex = 0;
 
-            _iPRRepository = new();
 
             SetDataGridViewRows();
 
@@ -517,25 +518,25 @@ namespace PetroFlow
         private void UpdatePlot(object sender, EventArgs e)
         {
 
-            if (cbSelectCurve.SelectedItem == "Add Curve" || cbSelectCurve.SelectedItem == null)
-                return;
+            //if (cbSelectCurve.SelectedItem == "Add Curve" || cbSelectCurve.SelectedItem == null)
+            //    return;
 
-            IPRMethodBase curve = _iPRRepository.Get(cbSelectCurve.SelectedItem.ToString());
+            //IPRMethodBase curve = _iPRRepository.Get(cbSelectCurve.SelectedItem.ToString());
 
-            CurvePlotSettings plotSettings = curve.CurvePlotSetting;
+            //CurvePlotSettings plotSettings = curve.CurvePlotSetting;
 
 
-            plotSettings.LegendText = txtLegendText.Text;
-            plotSettings.LineColor = ScottPlot.Color.FromColor(colorDialog1.Color);
-            plotSettings.LinePattern = GetLinePattern();
-            plotSettings.LineWidth = (int)nudLineWidth.Value;
-            plotSettings.MarkerShape = GetMarkerShape();
-            plotSettings.MarkerColor = ScottPlot.Color.FromColor(colorDialog1.Color);
-            plotSettings.MarkerSize = (int)nudMarkerSize.Value;
+            //plotSettings.LegendText = txtLegendText.Text;
+            //plotSettings.LineColor = ScottPlot.Color.FromColor(colorDialog1.Color);
+            //plotSettings.LinePattern = GetLinePattern();
+            //plotSettings.LineWidth = (int)nudLineWidth.Value;
+            //plotSettings.MarkerShape = GetMarkerShape();
+            //plotSettings.MarkerColor = ScottPlot.Color.FromColor(colorDialog1.Color);
+            //plotSettings.MarkerSize = (int)nudMarkerSize.Value;
 
-            curve.CurvePlotSetting = plotSettings;
+            //curve.CurvePlotSetting = plotSettings;
 
-            PlotCurves();
+            //PlotCurves();
 
         }
 
@@ -605,18 +606,18 @@ namespace PetroFlow
         private void cbSelectCurve_DropDown(object sender, EventArgs e)
         {
 
-            List<string> Curves = _iPRRepository.GetAllCurvesNames();
+            //List<string> Curves = _iPRRepository.GetAllCurvesNames();
 
-            cbSelectCurve.Items.Clear();
+            //cbSelectCurve.Items.Clear();
 
-            for (int i = 0; i < Curves.Count; i++)
-            {
+            //for (int i = 0; i < Curves.Count; i++)
+            //{
 
-                cbSelectCurve.Items.Add(Curves[i]);
+            //    cbSelectCurve.Items.Add(Curves[i]);
 
-            }
+            //}
 
-            cbSelectCurve.Items.Add("Add Curve");
+            //cbSelectCurve.Items.Add("Add Curve");
 
 
 
@@ -662,15 +663,13 @@ namespace PetroFlow
         {
 
 
-            if (cbSelectCurve.SelectedItem == "Add Curve" || cbSelectCurve.SelectedItem == null)
-                return;
+            //if (cbSelectCurve.SelectedItem == "Add Curve" || cbSelectCurve.SelectedItem == null)
+            //    return;
 
-            IPRMethodBase curve = _iPRRepository.Get(cbSelectCurve.SelectedItem.ToString());
+            //IPRMethodBase curve = _iPRRepository.Get(cbSelectCurve.SelectedItem.ToString());
 
-            txtReservoirPressure.Text = curve.ReservoirPressure.ToString();
-            txtBubblePointPressure.Text = curve.BubblePointPressure.ToString();
-
-
+            //txtReservoirPressure.Text = curve.ReservoirPressure.ToString();
+            //txtBubblePointPressure.Text = curve.BubblePointPressure.ToString();
 
 
         }
@@ -730,17 +729,17 @@ namespace PetroFlow
         private void btnDeleteCurve_Click(object sender, EventArgs e)
         {
 
-            if (cbSelectCurve.SelectedItem == "Add Curve")
-                return;
+            //if (cbSelectCurve.SelectedItem == "Add Curve")
+            //    return;
 
-            _iPRRepository.Remove(cbSelectCurve.SelectedItem.ToString());
+            //_iPRRepository.Remove(cbSelectCurve.SelectedItem.ToString());
 
-            if (_iPRRepository.GetAll().Count > 0)
-                PlotCurves();
-            else
-                pltNodalAnalysis.Plot.Clear();
+            //if (_iPRRepository.GetAll().Count > 0)
+            //    PlotCurves();
+            //else
+            //    pltNodalAnalysis.Plot.Clear();
 
-            pltNodalAnalysis.Refresh();
+            //pltNodalAnalysis.Refresh();
 
         }
 
@@ -817,5 +816,9 @@ namespace PetroFlow
 
         }
 
+        private void txtOilRelativePermeability_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

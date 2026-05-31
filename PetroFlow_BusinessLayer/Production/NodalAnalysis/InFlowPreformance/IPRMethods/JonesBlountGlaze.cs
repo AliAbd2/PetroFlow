@@ -35,11 +35,11 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
     // The oil flow rate (qo) can then be calculated using:
     //
     // qo = (-A + √(A² + 4B(Pr - Pwf))) / (2B)
-    public class clsJonesBlountGlaze : IPRMethodBase
+    public class JonesBlountGlaze : IPRMethodBase
     {
 
       
-        public clsJonesBlountGlaze()
+        public JonesBlountGlaze()
         {
 
 

@@ -31,8 +31,8 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             Validation.Missing(input.PipeInsideDiameter, "pipe inside diameter");
             Validation.GreaterThanZero(input.PipeInsideDiameter.Value, "pipe inside diameter");
 
-            Validation.Missing(input.GasLiquidRatio, "gas liquid ratio");
-            Validation.GreaterThanZero(input.GasLiquidRatio.Value, "gas liquid ratio");
+            Validation.Missing(input.PVT.GasOilRatio, "gas liquid ratio");
+            Validation.GreaterThanZero(input.PVT.GasOilRatio.Value, "gas liquid ratio");
 
         }
 
@@ -100,7 +100,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             ValidateDerivedData(reynoldsNumberNumerator, totalSuperficialVelocity, ref validationResult);
 
             double logreynoldsNumberNumerator = Math.Log10(reynoldsNumberNumerator);
-            double GLR = input.GasLiquidRatio.Value;
+            double GLR = input.PVT.GasOilRatio.Value;
 
             if (GLR > 1500 && GLR < 2250)
             {
