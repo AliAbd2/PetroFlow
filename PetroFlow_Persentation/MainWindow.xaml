@@ -1,0 +1,24 @@
+﻿<Window x:Class="PetroFlow_Persentation.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PetroFlow_Persentation"
+        xmlns:MyUserControl="clr-namespace:PetroFlow_Persentation.User_Control"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="1033" Width="1163" Icon="/Icons/PetroFlowIcon.png">
+    <Grid Background="{StaticResource Brush.Background}">
+        <TabControl>
+            <TabItem Header="IPR">
+                <MyUserControl:IPRScreen/>
+            </TabItem>
+            <TabItem Header="VLP">
+                <MyUserControl:VLPScreen/>
+            </TabItem>
+            <TabItem Header="Result">
+                <MyUserControl:ResultScreen/>
+            </TabItem>
+
+        </TabControl>
+    </Grid>
+</Window>

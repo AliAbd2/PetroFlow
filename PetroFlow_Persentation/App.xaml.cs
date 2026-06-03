@@ -2,7 +2,7 @@
 using System.Data;
 using System.Windows;
 
-namespace PetroFlow_
+namespace PetroFlow_Persentation
 {
     /// <summary>
     /// Interaction logic for App.xaml

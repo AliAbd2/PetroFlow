@@ -44,17 +44,16 @@ class Program
         List<InFlowDataRow> IPRDataRows = IPR.GenerateIPR(ref validationResult);
 
         VLPInputData input = new();
-        input.WellHeadPressure = 240;
+        input.WellHeadPressure = 240;//
         input.PVT.FahrenheitTemperature = 200;
-        input.PipeInsideDiameter = 0.249;
         input.GasViscosity = .018;
         input.LiquidViscosity = 18;
-        input.TotalDepth = 6000;
-        input.PipeInsideDiameter = .2;
+        input.TotalDepth = 6000;//
+        input.PipeInsideDiameter = .2;//
         input.DepthStepSize = 100;
         input.FlowRateStepSize = 1;
         input.SurfaceTension = 30;
-        input.PipeRelativeRoughness = 0.0006;
+        input.PipeRelativeRoughness = 0.0006;//
         input.GravityAcceleration = PhysicsConstants.EarthAcceleration;
         input.MinimumPressure = 10;
         input.PVT.GasOilRatio = 800;

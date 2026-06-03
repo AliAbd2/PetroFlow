@@ -9,7 +9,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Icons\plus.png" />
+    <None Remove="User Control\plus.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="ScottPlot.WPF" Version="5.1.58" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PetroFlow_BusinessLayer\PetroFlow_BusinessLayer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Icons\PetroFlowIcon.png" />
+    <Resource Include="Icons\plus.png" />
   </ItemGroup>
 
 </Project>
