@@ -22,6 +22,5 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis
         }
 
 
-
     }
 }

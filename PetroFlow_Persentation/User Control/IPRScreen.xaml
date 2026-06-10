@@ -5,17 +5,17 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PetroFlow_Persentation.User_Control"
              mc:Ignorable="d" 
-             d:DesignHeight="637.583" d:DesignWidth="1035.876">
+             d:DesignHeight="1089.25" d:DesignWidth="2258.801">
     <Grid Margin="0">
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.5*"/>
-            <RowDefinition Height="0.5*"/>
+            <RowDefinition Height="0.55*"/>
+            <RowDefinition Height="0.45*"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.5*"/>
-            <ColumnDefinition Width="0.5*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
         <!-- Top Left -->
@@ -35,10 +35,7 @@
                 <!-- Title -->
                 <TextBlock Name="ReservoirDataTitle"
                            Text="Reservoir Data"
-                           FontSize="20"
-                           FontWeight="Black"
-                           Foreground="{StaticResource Brush.Accent}"
-                           Height="Auto"/>
+                           Style="{StaticResource TitleLabel}"/>
 
                 <!-- Separator -->
                 <Border Grid.Row="1" Style="{StaticResource Separator}"/>
@@ -50,16 +47,18 @@
                                  Header="Present">
                         <Grid Name="PresentReservoirDataGrid">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
 
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
@@ -87,7 +86,7 @@
                             <TextBox Name="PresentReservoirPressureInput"
                                     Grid.Column="1"
                                     Grid.Row="0"
-                                    Margin="20,10,20,10"/>
+                                    Width="250"/>
                             <TextBox Name="BubblePoitPressureInput"
                                     Grid.Column="1" 
                                     Grid.Row="1" 
@@ -100,20 +99,20 @@
                                     Grid.Column="1" 
                                     Grid.Row="3" 
                                     Margin="20,10,20,10"/>
-                            <TextBox Name="PresnetOilFormationVolumeFactorInput"
+                            <TextBox Name="PresentOilFormationVolumeFactorInput"
                                     Grid.Column="1" 
                                     Grid.Row="4" 
                                     Margin="20,10,20,10"/>
 
-                            <ComboBox Name="PresentReservoiPressureUnit" 
+                            <ComboBox Name="PresentReservoirPressureUnit" 
                                           Grid.Column="2" 
                                           Grid.Row="0" 
-                                          Margin="20,10,20,10"/>
+                                          Width="250"/>
                             <ComboBox Name="BubblePointPressureUnit"
                                     Grid.Column="2" 
                                     Grid.Row="1" 
                                     Margin="20,10,20,10"/>
-                            <ComboBox Name="PresentOilFormationVolumeFactorUnit"
+                            <ComboBox Name="PresentOilRelativePermeabilityUnit"
                                     Grid.Column="2" 
                                     Grid.Row="2" 
                                     Margin="20,10,20,10"/>
@@ -121,7 +120,7 @@
                                     Grid.Column="2" 
                                     Grid.Row="3" 
                                     Margin="20,10,20,10"/>
-                            <ComboBox Name="PresnetOilFormationVolumeFactorUnit"
+                            <ComboBox Name="PresentOilFormationVolumeFactorUnit"
                                     Grid.Column="2" 
                                     Grid.Row="4" 
                                     Margin="20,10,20,10"/>
@@ -132,16 +131,17 @@
                         <Grid Name="FutureReservoirDataGrid">
 
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
 
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
@@ -165,24 +165,21 @@
                             <TextBox Name="FutureReservoirPressureInput"
                                     Grid.Column="1" 
                                     Grid.Row="0"
-                                    Margin="20,10,20,10"/>
+                                     Width="250"/>
                             <TextBox Name="FutureOilRelativePermeabilityInput"
                                     Grid.Column="1" 
-                                    Grid.Row="1" 
-                                    Margin="20,10,20,10"/>
+                                    Grid.Row="1"/>
                             <TextBox Name="FutureOilViscosityInput"
                                     Grid.Column="1" 
-                                    Grid.Row="2"
-                                    Margin="20,10,20,10"/>
+                                    Grid.Row="2"/>
                             <TextBox Name="FutureOilFormationVolumeFactorInput"
                                     Grid.Column="1" 
-                                    Grid.Row="3"
-                                    Margin="20,10,20,10"/>
+                                    Grid.Row="3"/>
 
                             <ComboBox Name="FutureReservoirPressureUnit"
                                     Grid.Column="2" 
                                     Grid.Row="0"
-                                    Margin="20,10,20,10"/>
+                                    Width="250"/>
                             <ComboBox Name="FutureOilRelativePermeabilityUnit"
                                     Grid.Column="2" 
                                     Grid.Row="1"
@@ -220,121 +217,172 @@
                 <!-- Title -->
                 <TextBlock Name="GeneralControlTitle"
                            Text="General IPR Control"
-                           FontSize="20"
-                           FontWeight="Black"
-                           Foreground="{StaticResource Brush.Accent}"/>
+                           Style="{StaticResource TitleLabel}"/>
 
                 <!-- Divider -->
                 <Border Grid.Row="1" Style="{StaticResource Separator}"/>
 
                 <!-- Content -->
-                <Grid Grid.Row="2">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
+                <TabControl Name="GenerationSettingTabControl"
+                    Grid.Row="2">
+                    <TabItem Name="IPRSettingTab"
+                        Header="IPR Settings">
+                        <Grid Grid.Row="2">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
 
-                    <Border Name="WellTypeBorder"
+                            <Border Name="WellTypeBorder"
                             Grid.Row="0"
                             Style="{StaticResource CardStyle}">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0">
-                            <TextBlock Name="ReseroirTypeLabel"
-                                       Text="Reservoir Type:" 
-                                       Foreground="{StaticResource Brush.Accent}" 
-                                       FontWeight="Bold" 
-                                       FontSize="18"
-                                       VerticalAlignment="Center"
-                                       Height="Auto"
-                                       Width="145"/>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0">
+                                    <TextBlock Name="ReseroirTypeLabel"
+                                               Text="Reservoir Type:"
+                                               Width="160"
+                                               FontSize="18"
+                                               Style="{StaticResource TitleLabel}"/>
 
-                            <RadioButton Name="ReserrvoirTypeOil"
-                                         Content="Oil" 
-                                         IsChecked="True" 
-                                         VerticalAlignment="Center"
-                                         Height="Auto"
-                                         Width="135"/>
+                                    <RadioButton Name="ReserrvoirTypeOil"
+                                                 Content="Oil" 
+                                                 IsChecked="True" 
+                                                 Height="Auto"
+                                                 Width="135"
+                                                 Click="AdjustUIBasedOnMethod"/>
 
-                            <RadioButton Name="ReservoirTypeGas"
-                                         Content="Gas" 
-                                         VerticalAlignment="Center"
-                                         Height="Auto"
-                                         Width="135"/>
-                        </StackPanel>
+                                    <RadioButton Name="ReservoirTypeGas"
+                                                 Content="Gas" 
+                                                 Height="Auto"
+                                                 Width="135"
+                                                 Click="AdjustUIBasedOnMethod"/>
+                                </StackPanel>
 
-                    </Border>
+                            </Border>
 
-                    <Border Name="IPRScenarioBorder"
+                            <Border Name="IPRScenarioBorder"
                             Grid.Row="1"
                             Style="{StaticResource CardStyle}">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0">
-                            <TextBlock Name="IPRScenarioLabel"
-                                       Text="IPR Scenario:" 
-                                       Foreground="{StaticResource Brush.Accent}" 
-                                       FontWeight="Bold" 
-                                       FontSize="18"
-                                       VerticalAlignment="Center"
-                                       Height="Auto"
-                                       Width="145"/>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0">
+                                    <TextBlock Name="IPRScenarioLabel"
+                                               Text="IPR Scenario:" 
+                                               Width="160"
+                                               FontSize="18"
+                                               Style="{StaticResource TitleLabel}"/>
 
-                            <RadioButton Name="IPRScenarioPresent"
-                                         Content="Present" 
-                                         IsChecked="True" 
-                                         VerticalAlignment="Center"
-                                         Height="Auto"
-                                         Width="135"/>
+                                    <RadioButton Name="IPRScenarioPresent"
+                                                 Content="Present" 
+                                                 IsChecked="True" 
+                                                 VerticalAlignment="Center"
+                                                 Height="Auto"
+                                                 Width="135"
+                                                 Click="AdjustUIBasedOnMethod"/>
 
-                            <RadioButton Name="IPRScenarioFuture"
-                                         Content="Future" 
-                                         VerticalAlignment="Center"
-                                         Height="Auto"
-                                         Width="135"/>
-                        </StackPanel>
+                                    <RadioButton Name="IPRScenarioFuture"
+                                                 Content="Future" 
+                                                 VerticalAlignment="Center"
+                                                 Height="Auto"
+                                                 Width="135"
+                                                 Click="AdjustUIBasedOnMethod"/>
+                                </StackPanel>
 
-                    </Border>
+                            </Border>
 
-                    <Border Name="IPRMethodSelectionBorder"
+                            <Border Name="IPRMethodSelectionBorder"
                             Grid.Row="2"
                             Style="{StaticResource CardStyle}">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0">
-                            <TextBlock Name="IPRMEthhodSelectionTitle"
-                                       Text="IPR Method:" 
-                                       Foreground="{StaticResource Brush.Accent}" 
-                                       FontWeight="Bold" 
-                                       FontSize="18"
-                                       VerticalAlignment="Center"
-                                       Height="30"
-                                       Width="145"/>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0">
+                                    <TextBlock Name="IPRMEthhodSelectionTitle"
+                                               Text="IPR Method:" 
+                                               Width="160"
+                                               FontSize="18"
+                                               Style="{StaticResource TitleLabel}"/>
 
-                            <RadioButton Name="IPRMethodSelectedVogel"
-                                         Content="Vogel" 
-                                         IsChecked="True"  
-                                         VerticalAlignment="Center"
-                                         Height="Auto"
-                                         Width="135"/>
+                                    <RadioButton Name="IPRMethodSelectedVogel"
+                                                 Content="Vogel" 
+                                                 IsChecked="True"  
+                                                 VerticalAlignment="Center"
+                                                 Height="Auto"
+                                                 Width="135"
+                                                 Click="AdjustUIBasedOnMethod"/>
 
-                            <RadioButton Name="IPRMethodSelectedStanding"
-                                         Content="Standing" 
-                                         VerticalAlignment="Center"
-                                         Height="Auto"
-                                         Width="135"/>
+                                    <RadioButton x:Name="IPRMethodSelectedStanding"
+                                                 Content="Standing" 
+                                                 VerticalAlignment="Center"
+                                                 Height="Auto"
+                                                 Width="135"
+                                                 Click="AdjustUIBasedOnMethod"/>
 
-                            <RadioButton Name="IPRMethodSelectedFetkovich"
-                                         Content="Fetkovich" 
-                                         VerticalAlignment="Center"
-                                         Height="Auto"
-                                         Width="135"/>
+                                    <RadioButton Name="IPRMethodSelectedFetkovich"
+                                                 Content="Fetkovich" 
+                                                 VerticalAlignment="Center"
+                                                 Height="Auto"
+                                                 Width="135"
+                                                 Click="AdjustUIBasedOnMethod"/>
 
-                            <RadioButton Name="IPRMethodSelectedJones"
-                                         Content="Jones, Blount and Glaze" 
-                                         VerticalAlignment="Center"
-                                         Height="Auto"
-                                         Width="Auto"/>
-                        </StackPanel>
+                                    <RadioButton Name="IPRMethodSelectedJones"
+                                                 Content="Jones-Blount-Glaze" 
+                                                 VerticalAlignment="Center"
+                                                 Height="Auto"
+                                                 Width="Auto"
+                                                 Click="AdjustUIBasedOnMethod"/>
 
-                    </Border>
+                                </StackPanel>
 
-                </Grid>
+                            </Border>
+
+                        </Grid>
+                    </TabItem>
+                    <TabItem Name="IPRGeneralSettingTab"
+                        Header="General Settings">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Name="IPRCurveLabelLabel"
+                                       Grid.Column="0"
+                                       Grid.Row="0"
+                                       Text="Curve Label:"/>
+                            <TextBlock Name="MinimumPressureLabel"
+                                       Grid.Column="0"
+                                       Grid.Row="1"
+                                       Text="Minimum Pressure:"/>
+                            <TextBlock Name="PressureStepSizeLabel"
+                                       Grid.Column="0"
+                                       Grid.Row="2"
+                                       Text="Pressure Step Size:"/>
+
+                            <TextBox Name="IPRCurveLabelInput"
+                                     Grid.Column="1"
+                                     Grid.Row="0"
+                                     Text="IPR"
+                                     Height="35"/>
+                            <TextBox Name="MinimumPressureInput"
+                                     Grid.Column="1"
+                                     Grid.Row="1"
+                                     Text="0"
+                                     Width="250"
+                                     Height="35"/>
+                            <TextBox Name="PressureStepSizeInput"
+                                     Grid.Column="1"
+                                     Grid.Row="2"
+                                     Text="10"
+                                     Height="35"/>
+
+                        </Grid>
+                    </TabItem>
+                </TabControl>
+
 
             </Grid>
         </Border>
@@ -356,10 +404,8 @@
 
                 <!-- Title -->
                 <TextBlock Name="TestDataTitle"
-                    Text="Test Data"
-                    FontSize="20"
-                    FontWeight="Black"
-                    Foreground="{StaticResource Brush.Accent}"/>
+                           Text="Test Data"
+                           Style="{StaticResource TitleLabel}"/>
 
                 <!-- Divider -->
                 <Border Grid.Row="1" Style="{StaticResource Separator}"/>
@@ -395,8 +441,8 @@
                                       ScrollViewer.CanContentScroll="True" 
                                       HeadersVisibility="Column">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Flow Rate (STB/D)" Width="*"/>
-                                    <DataGridTextColumn Header="Bottom Hole Pressure (psi)"  Width="*"/>
+                                    <DataGridTextColumn Header="Flow Rate (STB/day)" Width="*"/>
+                                    <DataGridTextColumn Header="Bottom hole Pressure (psi)"  Width="*"/>
                                 </DataGrid.Columns>
                             </DataGrid>
 
@@ -429,9 +475,10 @@
                             </Grid.RowDefinitions>
 
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition/>
-                                <ColumnDefinition/>
-                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
 
@@ -446,16 +493,16 @@
                             <TextBlock Name="WellExponentLabel"
                                        Grid.Column="0" 
                                        Grid.Row="3"
-                                       Text="Well Exponent:"/>
+                                       Text="Well Exponent (n):"/>
                             <TextBlock Name="FlowCoefficientLabel"
                                        Grid.Column="0" 
                                        Grid.Row="4"
-                                       Text="Flow coefficient:"/>
+                                       Text="Flow Coefficient (C):"/>
 
                             <TextBox Name="TestFlowEfficiecyInput"
                                      Grid.Column="1" 
                                      Grid.Row="0"
-                                     Margin="20,5,20,5"/>
+                                     Width="250"/>
                             <TextBox Name="NewFlowEfficiencyInput"
                                      Grid.Column="1" 
                                      Grid.Row="1"
@@ -472,7 +519,7 @@
                             <ComboBox Name="TestFlowEfficiencyUnit"
                                       Grid.Column="2" 
                                       Grid.Row="0"
-                                      Margin="20,5,20,5"/>
+                                      Width="250"/>
                             <ComboBox Name="NewFlowEfficincyUnit"
                                       Grid.Column="2" 
                                       Grid.Row="1"

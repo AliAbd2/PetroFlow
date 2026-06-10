@@ -1,5 +1,7 @@
-﻿using System;
+﻿using ScottPlot;
+using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,6 +23,18 @@ namespace PetroFlow_Persentation.User_Control
         public ResultScreen()
         {
             InitializeComponent();
+
+            ResultPlot.Plot.FigureBackground.Color = ScottPlot.Color.FromColor(System.Drawing.Color.Transparent);
+            ResultPlot.Plot.DataBackground.Color = ScottPlot.Color.FromHex("#111827");
+
+            ResultPlot.Plot.Axes.Color(ScottPlot.Color.FromHex("#C9D1D9"));
+
+            ResultPlot.Plot.Grid.MajorLineColor =
+                ScottPlot.Color.FromHex("#30363D");
+
         }
+
+
+
     }
 }

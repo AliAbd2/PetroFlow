@@ -44,23 +44,26 @@ class Program
         List<InFlowDataRow> IPRDataRows = IPR.GenerateIPR(ref validationResult);
 
         VLPInputData input = new();
+
         input.WellHeadPressure = 240;//
-        input.PVT.FahrenheitTemperature = 200;
-        input.GasViscosity = .018;
-        input.LiquidViscosity = 18;
+        input.PipeRelativeRoughness = 0.0006;//
         input.TotalDepth = 6000;//
         input.PipeInsideDiameter = .2;//
-        input.DepthStepSize = 100;
-        input.FlowRateStepSize = 1;
-        input.SurfaceTension = 30;
-        input.PipeRelativeRoughness = 0.0006;//
-        input.GravityAcceleration = PhysicsConstants.EarthAcceleration;
-        input.MinimumPressure = 10;
-        input.PVT.GasOilRatio = 800;
-        input.PVT.GasSpecificGravity = 0.65;
-        input.PVT.API = 25;
-        input.PVT.PSIBubblePointPressure = 1500;
-        input.MinimumFlowRate = 10;
+        input.GravityAcceleration = PhysicsConstants.EarthAcceleration;//
+
+        input.PVT.FahrenheitTemperature = 200;//
+        input.GasViscosity = .018;//
+        input.LiquidViscosity = 18;//
+        input.SurfaceTension = 30;//
+        input.PVT.GasOilRatio = 800;//
+        input.PVT.GasSpecificGravity = 0.65;//
+        input.PVT.API = 25;//
+        input.PVT.PSIBubblePointPressure = 1500;//
+
+        input.DepthStepSize = 100;//
+        input.MinimumFlowRate = 10;//
+        input.MinimumPressure = 10;//
+        input.FlowRateStepSize = 1;//
 
         NoSlipNoFlowRegime PoettmannCarpeter = new(new PoettmannCarpenterFrictionFactor());
         NoSlipNoFlowRegime BaxendellThomas = new(new BaxendellThomasFrictionFactor());

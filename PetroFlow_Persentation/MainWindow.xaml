@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:PetroFlow_Persentation"
         xmlns:MyUserControl="clr-namespace:PetroFlow_Persentation.User_Control"
         mc:Ignorable="d"
-        Title="MainWindow" Height="1033" Width="1163" Icon="/Icons/PetroFlowIcon.png">
+        Title="MainWindow" Height="1154" Width="2319" Icon="/Icons/PetroFlowIcon.png">
     <Grid Background="{StaticResource Brush.Background}">
         <TabControl>
             <TabItem Header="IPR">

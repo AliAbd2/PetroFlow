@@ -6,17 +6,146 @@
              xmlns:local="clr-namespace:PetroFlow_Persentation.User_Control"
              xmlns:scottplot="clr-namespace:ScottPlot.WPF;assembly=ScottPlot.WPF"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Background="{StaticResource Brush.Background}">
+             d:DesignHeight="540.667" d:DesignWidth="1156.667">
+    <Grid Name="MainResultGrid"
+        Background="{StaticResource Brush.Background}">
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="0.45*"/>
+            <ColumnDefinition Width="0.55*"/>
         </Grid.ColumnDefinitions>
 
-        <scottplot:WpfPlot Grid.Column="1">
-            
-        </scottplot:WpfPlot>
+        <Border Name="PlotCard"
+                Grid.Column="1"
+                Margin="10,0,0,0"
+                Style="{StaticResource CardStyle}">
+
+            <scottplot:WpfPlot Name="ResultPlot"/>
+
+        </Border>
+
+        <Grid Name="DataResultGrid"
+              Grid.Column="0">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.3*"/>
+                <RowDefinition Height="0.7*"/>
+            </Grid.RowDefinitions>
+
+            <Border Name="OperationPointCard"
+                    Grid.Row="0"
+                    Margin="0,0,10,10"
+                    Style="{StaticResource CardStyle}">
+
+                <Grid Name="OperationPointGrid">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Name="OperationPointTitle"
+                               Grid.Row="0"
+                               Style="{StaticResource TitleLabel}"
+                               Text="Operation Point"/>
+
+                    <Border Grid.Row="1"
+                            Style="{StaticResource Separator}"/>
+
+                    <Grid Grid.Row="2">
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Name="OperationPressureStackPanel"
+                                    Grid.Row="0"
+                                    Orientation="Horizontal">
+
+                            <TextBlock Name="OperationPressureLabel"
+                                       Text="Operation Pressure:"
+                                       Width="150"/>
+
+                            <TextBlock Name="OperationPressureValue"
+                                       Text="Unknown"
+                                       Width="100"/>
+
+                            <TextBlock Name="OperationPressureUnit"
+                                       Text="psi"
+                                       Width="Auto"/>
+
+                        </StackPanel>
+
+                        <StackPanel Name="OperationFlowRateStackPanel"
+                                    Grid.Row="1"
+                                    Orientation="Horizontal">
+
+                            <TextBlock Name="OperationFlowRateLabel"
+                                       Text="Operation Flow Rate:"
+                                       Width="150"/>
+
+                            <TextBlock Name="OperationFlowRateValue"
+                                       Text="Unknown"
+                                       Width="100"/>
+
+                            <TextBlock Name="OperationFlowRateUnit"
+                                       Text="STB/day"
+                                       Width="Auto"/>
+                            
+                        </StackPanel>
+
+                    </Grid>
+
+                </Grid>
+
+            </Border>
+
+            <Border Name="ResultDataCard"
+                    Grid.Row="1"
+                    Margin="0,10,10,0"
+                    Style="{StaticResource CardStyle}">
+
+                <Grid Name="ResultDataGrid">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Name="ResultDataTitle"
+                               Grid.Row="0"
+                               Text="Result Data"
+                               Style="{StaticResource TitleLabel}"/>
+
+                    <Border Grid.Row="1"
+                            Style="{StaticResource Separator}"/>
+
+                    <DataGrid Name="TestDataInput"
+                              Grid.Column="0"
+                              Grid.Row="2"
+                              Margin="15,5,15,15" 
+                              ScrollViewer.CanContentScroll="True" 
+                              HeadersVisibility="Column">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Flow Rate (STB/day)" 
+                                                Width="Auto"/>
+                            <DataGridTextColumn Header="IPR Bottom hole Pressure (psi)"  
+                                                Width="Auto"/>
+                            <DataGridTextColumn Header="VLP Bottom hole Pressure (psi)"  
+                                                Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                </Grid>
+
+            </Border>
+
+        </Grid>
+
 
     </Grid>
 </UserControl>
