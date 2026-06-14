@@ -14,23 +14,20 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance
 
         private readonly IPRMethodBase _method;
 
-        private readonly IPRInputData _input;
 
-        public InFlowPerformanceRelationship(IPRMethodBase method,
-            IPRInputData input)
+        public InFlowPerformanceRelationship(IPRMethodBase method)
         {
 
             _method = method;
-            _input = input;
 
         }
 
 
-        public List<InFlowDataRow> GenerateIPR(
+        public List<InFlowDataRow> GenerateIPR(IPRInputData input,
             ref NodalAnalysisValidationResult validationResult)
         {
 
-            return _method.GenerateIPR(_input, ref validationResult);
+            return _method.GenerateIPR(input, ref validationResult);
 
         }
 

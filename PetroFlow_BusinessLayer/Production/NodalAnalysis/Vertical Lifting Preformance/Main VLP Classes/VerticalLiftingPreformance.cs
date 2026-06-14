@@ -18,27 +18,28 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
 
         private readonly IVLPModel _model;
 
-        private readonly VLPInputData _inputData;
 
-        public VerticalLiftingPreformance(IVLPModel model, VLPInputData inputData)
+        public VerticalLiftingPreformance(IVLPModel model)
         {
 
             _model = model;
-            _inputData = inputData;
 
         }
 
-        private double _determinePressureAtFlowRate(VLPWorkingData workingData, double flowRate,
+        private double _determinePressureAtFlowRate(VLPInputData input,  VLPWorkingData workingData, double flowRate,
             ref NodalAnalysisValidationResult validationResult)
         {
 
-            workingData.PVT.PSIPressure = _inputData.WellHeadPressure;
+            if (input == null)
+                throw new InvalidOperationException("The VLP input data has not been provided.");
+
+            workingData.PVT.PSIPressure = input.WellHeadPressure;
             double pipeIsindeDiameter = workingData.PipeInsideDiameter.Value;
-            double gasLiquidRatio = _inputData.PVT.GasOilRatio.Value;
+            double gasLiquidRatio = input.PVT.GasOilRatio.Value;
 
 
-            for (double depth = 0; depth < _inputData.TotalDepth.Value; 
-                depth +=_inputData.DepthStepSize.Value)
+            for (double depth = 0; depth < input.TotalDepth.Value; 
+                depth += input.DepthStepSize.Value)
             {
 
                 double gasFormationVolumeFactor =
@@ -82,7 +83,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
                 double pressureGradient = _model.DeterminePressureGradient(workingData,
                     ref validationResult);
 
-                workingData.PVT.PSIPressure += pressureGradient * _inputData.DepthStepSize.Value;
+                workingData.PVT.PSIPressure += pressureGradient * input.DepthStepSize.Value;
 
             }
 
@@ -90,28 +91,31 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
 
         }
 
-        public List<OutFlowDataRow> GenerateOutFlow(double maxFlowRate, 
+        public List<InFlowDataRow> GenerateOutFlow(VLPInputData input,
             ref NodalAnalysisValidationResult validationResult)
         {
 
-            List<OutFlowDataRow> outFlowData = new();
+            if (input == null)
+                throw new InvalidOperationException("The VLP input data has not been provided.");
 
-            VLPWorkingData workingData = VLPRawDataProcessor.PrepareWorkingData(_inputData);
+            List<InFlowDataRow> outFlowData = new();
+
+            VLPWorkingData workingData = VLPRawDataProcessor.PrepareWorkingData(input);
 
             double pressure = 0;
 
-            double flowRateStepSize = _inputData.FlowRateStepSize.Value;
+            double flowRateStepSize = input.FlowRateStepSize.Value;
 
 
-            for (double flowRate = _inputData.MinimumFlowRate.Value; flowRate < maxFlowRate;
+            for (double flowRate = input.MinimumFlowRate.Value; flowRate < input.MaxFlowRate.Value;
                 flowRate += flowRateStepSize)
             {
 
 
-                pressure = _determinePressureAtFlowRate(workingData, flowRate,
+                pressure = _determinePressureAtFlowRate(input, workingData, flowRate,
                     ref validationResult);
 
-                outFlowData.Add(new OutFlowDataRow(pressure, flowRate));
+                outFlowData.Add(new InFlowDataRow(pressure, flowRate));
 
             }
 
@@ -119,27 +123,29 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
 
         }
 
-
-        public List<OutFlowDataRow> GenerateOutFlowForInFlow(List<InFlowDataRow> inFlowData,
+        public List<InFlowDataRow> GenerateOutFlowForInFlow(VLPInputData input, List<InFlowDataRow> inFlowData,
             ref NodalAnalysisValidationResult validationResult)
         {
 
-            List<OutFlowDataRow> outFlowData = new();
+            if (input == null)
+                throw new InvalidOperationException("The VLP input data has not been provided.");
 
-            VLPWorkingData workingData = VLPRawDataProcessor.PrepareWorkingData(_inputData);
+            List<InFlowDataRow> outFlowData = new();
+
+            VLPWorkingData workingData = VLPRawDataProcessor.PrepareWorkingData(input);
 
             double pressure = 0;
 
-            double flowRateStepSize = _inputData.FlowRateStepSize.Value;
+            double flowRateStepSize = input.FlowRateStepSize.Value;
 
 
             foreach (double flowRate in inFlowData.Select(x => x.FlowRate))
             {
 
-                pressure = _determinePressureAtFlowRate(workingData, flowRate,
+                pressure = _determinePressureAtFlowRate(input, workingData, flowRate,
                     ref validationResult);
 
-                outFlowData.Add(new OutFlowDataRow(pressure, flowRate));
+                outFlowData.Add(new InFlowDataRow(pressure, flowRate));
 
             }
 

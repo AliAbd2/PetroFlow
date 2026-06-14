@@ -1,4 +1,10 @@
-﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Interfaces;
+﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Interfaces;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Main_Classes;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.Data;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -9,16 +15,100 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis
     public class NodalAnalysis
     {
 
-        private IPRMethodBase _IPRMEthod;
+        private InFlowPerformanceRelationship? _IPR;
 
-        private IVLPModel _VLPModel;
+        private VerticalLiftingPreformance? _VLP;
 
-        public NodalAnalysis(IPRMethodBase iPRMethod, IVLPModel vLPModel)
+        public NodalAnalysis(IPRMethodBase? iPRMethod, IVLPModel? vLPModel)
         {
 
-            _IPRMEthod = iPRMethod;
-            _VLPModel = vLPModel;
+            _IPR = new(iPRMethod);
+            _VLP = new(vLPModel);
 
+
+        }
+
+        public List<InFlowDataRow> GenerateIPR(IPRInputData input, 
+            ref NodalAnalysisValidationResult validationResult)
+        {
+
+            return _IPR.GenerateIPR(input, ref validationResult);
+
+        }
+
+        public List<InFlowDataRow> GenerateFututreIPR(IPRInputData input, 
+            ref NodalAnalysisValidationResult validationResult)
+        {
+
+            return _IPR.GenerateFutureIPR(input, ref validationResult);
+
+        }
+
+
+        public List<InFlowDataRow> GenerateVLP(VLPInputData input,
+            ref NodalAnalysisValidationResult validationResult)
+        {
+
+            return _VLP.GenerateOutFlow(input, ref validationResult);
+
+        }
+
+        public List<InFlowDataRow> GeneraterVLPFromIPR(VLPInputData input, List<InFlowDataRow> iprData,
+            ref NodalAnalysisValidationResult validationResult)
+        {
+
+            return _VLP.GenerateOutFlowForInFlow(input, iprData, ref validationResult);
+
+        }
+
+
+        public static InFlowDataRow GetOperatingPoint(List<InFlowDataRow> IPR, List<InFlowDataRow> VLP)
+        {
+
+            double previousDifference = IPR[0].BottomHolePressure - VLP[0].BottomHolePressure;
+
+            for (int index = 1; index < IPR.Count; index++)
+            {
+                double currentDifference =
+                    IPR[index].BottomHolePressure - VLP[index].BottomHolePressure;
+
+
+                if (currentDifference == 0)
+                {
+                    return new InFlowDataRow(
+                        IPR[index].BottomHolePressure,
+                        IPR[index].FlowRate);
+                }
+
+
+                if (Math.Sign(previousDifference) != Math.Sign(currentDifference))
+                {
+                    double q1 = IPR[index - 1].FlowRate;
+                    double q2 = IPR[index].FlowRate;
+
+                    double fraction =
+                        Math.Abs(previousDifference) /
+                        (Math.Abs(previousDifference) + Math.Abs(currentDifference));
+
+                    double operatingFlowRate =
+                        q1 + fraction * (q2 - q1);
+
+                    double operatingPressure =
+                        IPR[index - 1].BottomHolePressure +
+                        fraction *
+                        (IPR[index].BottomHolePressure -
+                         IPR[index - 1].BottomHolePressure);
+
+                    return new InFlowDataRow(
+                        operatingPressure,
+                        operatingFlowRate);
+                }
+
+                previousDifference = currentDifference;
+            }
+
+            throw new InvalidOperationException(
+                "There is no Operating Point: the IPR and VLP curves do not intersect.");
         }
 
 

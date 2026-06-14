@@ -1,7 +1,6 @@
 ﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Exceptions;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Interfaces;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
-using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.ShearedData;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation;
 using System;
 using System.Collections.Generic;

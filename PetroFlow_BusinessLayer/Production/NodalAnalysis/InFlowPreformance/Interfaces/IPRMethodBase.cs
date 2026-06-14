@@ -1,6 +1,6 @@
 ﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Methods;
-using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.ShearedData;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation;
 using System;
 using System.Collections.Generic;

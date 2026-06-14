@@ -9,14 +9,19 @@
         Title="MainWindow" Height="1154" Width="2319" Icon="/Icons/PetroFlowIcon.png">
     <Grid Background="{StaticResource Brush.Background}">
         <TabControl>
+            
             <TabItem Header="IPR">
-                <MyUserControl:IPRScreen/>
+                <MyUserControl:IPRScreen x:Name="IPRScreen"/>
             </TabItem>
             <TabItem Header="VLP">
-                <MyUserControl:VLPScreen/>
+                <MyUserControl:VLPScreen x:Name="VLPScreen"/>
             </TabItem>
             <TabItem Header="Result">
-                <MyUserControl:ResultScreen/>
+                <MyUserControl:ResultScreen x:Name="ResultScreen"
+                    OnGeneratIPRButtonClick="GeneratIPR"
+                    OnGeneratVLPButtonClick="GeneratVLP"
+                    OnGetOperatingButtonClick="GetOperatingPoint"
+                    OnResetMenuButtonClick="ResetMenu"/>
             </TabItem>
 
         </TabControl>

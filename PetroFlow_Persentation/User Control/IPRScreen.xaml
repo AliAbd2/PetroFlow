@@ -55,75 +55,87 @@
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
 
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
+                            <StackPanel Name="PresentReservoirPressureStackPanel"
+                                        Orientation="Horizontal"
+                                        Grid.Row="0">
 
-                            <TextBlock Name="PresentReservoirPressureLabel"
-                                    Grid.Column="0" 
-                                    Grid.Row="0"
-                                    Text="Reservoir Pressure:" />
-                            <TextBlock Name="BubblePointPressureLabel"
-                                    Grid.Column="0" 
-                                    Grid.Row="1"
-                                    Text="Bubble Point Pressure:"/>
-                            <TextBlock Name="PresentOilRelativePremeabilityLabel"
-                                    Grid.Column="0" 
-                                    Grid.Row="2"
-                                    Text="Oil Relative Permeability:" />
-                            <TextBlock Name="PresentOilViscosityLabel"
-                                    Grid.Column="0" 
-                                    Grid.Row="3"
-                                    Text="Oil Viscosity:" />
-                            <TextBlock Name="PresentOilFormationVolumeFactorLabel"
-                                    Grid.Column="0" 
-                                    Grid.Row="4"
-                                    Text="Oil Formation Volume Factor:" />
+                                <TextBlock Name="PresentReservoirPressureLabel"
+                                           Width="220"
+                                           Text="Reservoir Pressure:"/>
+                                
+                                <TextBox Name="PresentReservoirPressureInput"
+                                         PreviewTextInput="Numeric_PreviewTextInput"
+                                         DataObject.Pasting="Numeric_Pasting"/>
+                                
+                                <ComboBox Name="PresentReservoirPressureUnit"/>
 
-                            <TextBox Name="PresentReservoirPressureInput"
-                                    Grid.Column="1"
-                                    Grid.Row="0"
-                                    Width="250"/>
-                            <TextBox Name="BubblePoitPressureInput"
-                                    Grid.Column="1" 
-                                    Grid.Row="1" 
-                                    Margin="20,10,20,10"/>
-                            <TextBox Name="PresentOilRelativePermeabilityInput"
-                                    Grid.Column="1" 
-                                    Grid.Row="2" 
-                                    Margin="20,10,20,10"/>
-                            <TextBox Name="PresentOilViscosityInput"
-                                    Grid.Column="1" 
-                                    Grid.Row="3" 
-                                    Margin="20,10,20,10"/>
-                            <TextBox Name="PresentOilFormationVolumeFactorInput"
-                                    Grid.Column="1" 
-                                    Grid.Row="4" 
-                                    Margin="20,10,20,10"/>
+                            </StackPanel>
+                            
+                            <StackPanel Name="BubblePointPressureStackPanel"
+                                        Orientation="Horizontal"
+                                        Grid.Row="1">
 
-                            <ComboBox Name="PresentReservoirPressureUnit" 
-                                          Grid.Column="2" 
-                                          Grid.Row="0" 
-                                          Width="250"/>
-                            <ComboBox Name="BubblePointPressureUnit"
-                                    Grid.Column="2" 
-                                    Grid.Row="1" 
-                                    Margin="20,10,20,10"/>
-                            <ComboBox Name="PresentOilRelativePermeabilityUnit"
-                                    Grid.Column="2" 
-                                    Grid.Row="2" 
-                                    Margin="20,10,20,10"/>
-                            <ComboBox Name="PresentOilViscosityUnit"
-                                    Grid.Column="2" 
-                                    Grid.Row="3" 
-                                    Margin="20,10,20,10"/>
-                            <ComboBox Name="PresentOilFormationVolumeFactorUnit"
-                                    Grid.Column="2" 
-                                    Grid.Row="4" 
-                                    Margin="20,10,20,10"/>
+                                <TextBlock Name="BubblePointPressureLabel"
+                                           Width="220"
+                                           Text="Bubble Point Pressure:"/>
+
+                                <TextBox Name="BubblePoitPressureInput"
+                                         PreviewTextInput="Numeric_PreviewTextInput"
+                                         DataObject.Pasting="Numeric_Pasting"/>
+                                
+                                <ComboBox Name="BubblePointPressureUnit"/>
+
+
+                            </StackPanel>
+                            
+                            <StackPanel Name="PresentOilRelativePermeabilityStackPanel"
+                                        Grid.Row="2"
+                                        Orientation="Horizontal">
+
+                                <TextBlock Name="PresentOilRelativePremeabilityLabel"
+                                           Width="220"
+                                           Text="Oil Relative Permeability:"/>
+                                
+                                <TextBox Name="PresentOilRelativePermeabilityInput"
+                                         PreviewTextInput="Numeric_PreviewTextInput"
+                                         DataObject.Pasting="Numeric_Pasting"/>
+                                
+                                <ComboBox Name="PresentOilRelativePermeabilityUnit"/>
+
+                            </StackPanel>
+                            
+                            <StackPanel Name="PresentOilViscosityStackPanel"
+                                        Orientation="Horizontal"
+                                        Grid.Row="3">
+
+                                <TextBlock Name="PresentOilViscosityLabel"
+                                           Text="Oil Viscosity:"
+                                           Width="220"/>
+                                
+                                <TextBox Name="PresentOilViscosityInput"
+                                         PreviewTextInput="Numeric_PreviewTextInput"
+                                         DataObject.Pasting="Numeric_Pasting"/>
+                                
+                                <ComboBox Name="PresentOilViscosityUnit"/>
+
+                            </StackPanel>
+                            
+                            <StackPanel Name="PresentOilFormationVolumeFactorStackPanel"
+                                        Orientation="Horizontal"
+                                        Grid.Row="4">
+
+                                <TextBlock Name="PresentOilFormationVolumeFactorLabel"
+                                           Text="Oil Formation Volume Factor:"
+                                           Width="220"/>
+                                
+                                <TextBox Name="PresentOilFormationVolumeFactorInput"
+                                         PreviewTextInput="Numeric_PreviewTextInput"
+                                         DataObject.Pasting="Numeric_Pasting"/>
+                                
+                                <ComboBox Name="PresentOilFormationVolumeFactorUnit"/>
+
+                            </StackPanel>
+
                         </Grid>
                     </TabItem>
                     <TabItem Name="FutureReservoirDataTab"
@@ -138,60 +150,71 @@
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
 
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
+                            <StackPanel Name="FutureReservoirPressureStackPanel"
+                                        Orientation="Horizontal"
+                                        Grid.Row="0">
 
-                            <TextBlock Name="FutureReservoirPressureLabel"
-                                    Grid.Column="0" 
-                                    Grid.Row="0"
-                                    Text="Reservoir Pressure:" />
-                            <TextBlock Name="FutureOilRelativePermeabilityLabel"
-                                    Grid.Column="0" 
-                                    Grid.Row="1"
-                                    Text="Oil Relative Permeability:" />
-                            <TextBlock Name="FutureOilViscosityLabel"
-                                    Grid.Column="0" 
-                                    Grid.Row="2"
-                                    Text="Oil Viscosity:" />
-                            <TextBlock Name="FutureOilFormationVolumeFactorLabel"
-                                    Grid.Column="0" 
-                                    Grid.Row="3"
-                                    Text="Oil Formation Volume Factor:" />
+                                <TextBlock Name="FutureReservoirPressureLabel"
+                                           Text="Reservoir Pressure:"
+                                           Width="220"/>
+                                
+                                <TextBox Name="FutureReservoirPressureInput"
+                                         PreviewTextInput="Numeric_PreviewTextInput"
+                                         DataObject.Pasting="Numeric_Pasting"/>
 
-                            <TextBox Name="FutureReservoirPressureInput"
-                                    Grid.Column="1" 
-                                    Grid.Row="0"
-                                     Width="250"/>
-                            <TextBox Name="FutureOilRelativePermeabilityInput"
-                                    Grid.Column="1" 
-                                    Grid.Row="1"/>
-                            <TextBox Name="FutureOilViscosityInput"
-                                    Grid.Column="1" 
-                                    Grid.Row="2"/>
-                            <TextBox Name="FutureOilFormationVolumeFactorInput"
-                                    Grid.Column="1" 
-                                    Grid.Row="3"/>
+                                <ComboBox Name="FutureReservoirPressureUnit"/>
 
-                            <ComboBox Name="FutureReservoirPressureUnit"
-                                    Grid.Column="2" 
-                                    Grid.Row="0"
-                                    Width="250"/>
-                            <ComboBox Name="FutureOilRelativePermeabilityUnit"
-                                    Grid.Column="2" 
-                                    Grid.Row="1"
-                                    Margin="20,10,20,10"/>
-                            <ComboBox Name="FutureOilViscosityUnit"
-                                    Grid.Column="2" 
-                                    Grid.Row="2"
-                                    Margin="20,10,20,10"/>
-                            <ComboBox Name="FutureOilFormationVolumeFactorUnit"
-                                    Grid.Column="2" 
-                                    Grid.Row="3"
-                                    Margin="20,10,20,10"/>
+                            </StackPanel>
+
+                            <StackPanel Name="FutureOilRelativePermeabilityStackPanel"
+                                        Orientation="Horizontal"
+                                        Grid.Row="1">
+
+                                <TextBlock Name="FutureOilRelativePermeabilityLabel"
+                                       Text="Oil Relative Permeability:"
+                                       Width="220"/>
+
+                                <TextBox Name="FutureOilRelativePermeabilityInput"
+                                         PreviewTextInput="Numeric_PreviewTextInput"
+                                         DataObject.Pasting="Numeric_Pasting"/>
+
+                                <ComboBox Name="FutureOilRelativePermeabilityUnit"/>
+
+                            </StackPanel>
+
+                            <StackPanel Name="FutureOilViscosityStackPanel"
+                                        Orientation="Horizontal"
+                                        Grid.Row="2">
+
+
+                                <TextBlock Name="FutureOilViscosityLabel"
+                                       Text="Oil Viscosity:"
+                                       Width="220"/>
+
+                                <TextBox Name="FutureOilViscosityInput"
+                                         PreviewTextInput="Numeric_PreviewTextInput"
+                                         DataObject.Pasting="Numeric_Pasting"/>
+
+                                <ComboBox Name="FutureOilViscosityUnit"/>
+
+                            </StackPanel>
+
+                            <StackPanel Name="FutureOilFormationVolumeFactorStackPanel"
+                                        Orientation="Horizontal"
+                                        Grid.Row="3">
+
+
+                                <TextBlock Name="FutureOilFormationVolumeFactorLabel"
+                                           Text="Oil Formation Volume Factor:"
+                                           Width="220"/>
+
+                                <TextBox Name="FutureOilFormationVolumeFactorInput"
+                                         PreviewTextInput="Numeric_PreviewTextInput"
+                                         DataObject.Pasting="Numeric_Pasting"/>
+
+                                <ComboBox Name="FutureOilFormationVolumeFactorUnit"/>
+
+                            </StackPanel>
 
                         </Grid>
                     </TabItem>
@@ -223,7 +246,7 @@
                 <Border Grid.Row="1" Style="{StaticResource Separator}"/>
 
                 <!-- Content -->
-                <TabControl Name="GenerationSettingTabControl"
+                <TabControl Name="GeneralIPRControlTabControl"
                     Grid.Row="2">
                     <TabItem Name="IPRSettingTab"
                         Header="IPR Settings">
@@ -244,7 +267,7 @@
                                                FontSize="18"
                                                Style="{StaticResource TitleLabel}"/>
 
-                                    <RadioButton Name="ReserrvoirTypeOil"
+                                    <RadioButton Name="ReservoirTypeOil"
                                                  Content="Oil" 
                                                  IsChecked="True" 
                                                  Height="Auto"
@@ -340,10 +363,12 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
 
                             <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
@@ -353,13 +378,17 @@
                                        Grid.Column="0"
                                        Grid.Row="0"
                                        Text="Curve Label:"/>
-                            <TextBlock Name="MinimumPressureLabel"
+                            <TextBlock Name="IPRCurveColoreLabel"
                                        Grid.Column="0"
                                        Grid.Row="1"
+                                       Text="Curve Color:"/>
+                            <TextBlock Name="MinimumPressureLabel"
+                                       Grid.Column="0"
+                                       Grid.Row="2"
                                        Text="Minimum Pressure:"/>
                             <TextBlock Name="PressureStepSizeLabel"
                                        Grid.Column="0"
-                                       Grid.Row="2"
+                                       Grid.Row="3"
                                        Text="Pressure Step Size:"/>
 
                             <TextBox Name="IPRCurveLabelInput"
@@ -367,17 +396,32 @@
                                      Grid.Row="0"
                                      Text="IPR"
                                      Height="35"/>
-                            <TextBox Name="MinimumPressureInput"
+                            <TextBox Name="IPRCurveColorInput"
                                      Grid.Column="1"
                                      Grid.Row="1"
-                                     Text="0"
-                                     Width="250"
-                                     Height="35"/>
-                            <TextBox Name="PressureStepSizeInput"
+                                     Text="blue"/>
+                            <TextBox Name="MinimumPressureInput"
                                      Grid.Column="1"
                                      Grid.Row="2"
+                                     Text="0"
+                                     Width="250"
+                                     Height="35"
+                                     PreviewTextInput="Numeric_PreviewTextInput"
+                                     DataObject.Pasting="Numeric_Pasting"/>
+                            <TextBox Name="PressureStepSizeInput"
+                                     Grid.Column="1"
+                                     Grid.Row="3"
                                      Text="10"
-                                     Height="35"/>
+                                     Height="35"
+                                     PreviewTextInput="Numeric_PreviewTextInput"
+                                     DataObject.Pasting="Numeric_Pasting"/>
+
+                            <Button Name="ShowColorDialog"
+                                    Grid.Column="2"
+                                    Grid.Row="1"
+                                    Content="Choose Color"
+                                    Height="35"
+                                    Click="OpenColorDialog"/>
 
                         </Grid>
                     </TabItem>
@@ -433,30 +477,44 @@
                                 <RowDefinition Height="0.7*"/>
                             </Grid.RowDefinitions>
 
-                            <DataGrid Name="TestDataInput"
+                            <DataGrid Name="TestDataDataGrid"
                                       Grid.Column="0"
                                       Grid.Row="0"
                                       Grid.RowSpan="3"
                                       Margin="15,5,15,15" 
                                       ScrollViewer.CanContentScroll="True" 
-                                      HeadersVisibility="Column">
+                                      HeadersVisibility="Column"
+                                      CanUserAddRows="False"
+                                      AutoGenerateColumns="False"
+                                      PreparingCellForEdit="DataGrid_PreparingCellForEdit">
+                                
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Flow Rate (STB/day)" Width="*"/>
-                                    <DataGridTextColumn Header="Bottom hole Pressure (psi)"  Width="*"/>
+
+                                    <DataGridTextColumn Header="Flow Rate (STB/day)" 
+                                                        Width="*"
+                                                        Binding="{Binding FlowRate}"
+                                                        />
+                                    <DataGridTextColumn Header="Bottom hole Pressure (psig)"  
+                                                        Width="*"
+                                                        Binding="{Binding BottomHolePressure}"/>
+                                    
                                 </DataGrid.Columns>
+                                
                             </DataGrid>
 
                             <Button Name="AddNewTestDataRowButton"
-                                Grid.Column="1" 
-                                Grid.Row="0"
-                                Margin="25,10,25,5">
+                                    Grid.Column="1" 
+                                    Grid.Row="0"
+                                    Margin="25,10,25,5"
+                                    Click="AddNewTestDataRow">
                                 <Image Source="/Icons/plus.png" Margin="10"/>
                             </Button>
 
                             <CheckBox Name="UseTestDataCheckBox"
                                       Grid.Column="1" Grid.Row="1"
                                       Content="Use Test Data"
-                                      Margin="25,5,5,5"/>
+                                      Margin="25,5,5,5"
+                                      Click="UseTestData"/>
 
                         </Grid>
 
@@ -466,6 +524,7 @@
                                 Background="{StaticResource Brush.Border}"/>
 
                         <Grid Grid.Column="2">
+                            
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
@@ -474,64 +533,70 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
+                            <StackPanel Name="TestFlowEfficiencyStackPanel"
+                                        Orientation="Horizontal"
+                                        Grid.Row="0">
 
+                                <TextBlock Name="TestFlowEfficiencyLabel"
+                                           Text="Test Flow Efficiency:"
+                                           Width="175"/>
 
-                            <TextBlock Name="TestFlowEfficiencyLabel"
-                                       Grid.Column="0" 
-                                       Grid.Row="0"
-                                       Text="Test Flow Efficiency:"/>
-                            <TextBlock Name="NewFlowEfficiencyLabel"
-                                       Grid.Column="0" 
-                                       Grid.Row="1"
-                                       Text="New Flow Efficiency:"/>
-                            <TextBlock Name="WellExponentLabel"
-                                       Grid.Column="0" 
-                                       Grid.Row="3"
-                                       Text="Well Exponent (n):"/>
-                            <TextBlock Name="FlowCoefficientLabel"
-                                       Grid.Column="0" 
-                                       Grid.Row="4"
-                                       Text="Flow Coefficient (C):"/>
+                                <TextBox Name="TestFlowEfficiecyInput"
+                                         Width="200"/>
 
-                            <TextBox Name="TestFlowEfficiecyInput"
-                                     Grid.Column="1" 
-                                     Grid.Row="0"
-                                     Width="250"/>
-                            <TextBox Name="NewFlowEfficiencyInput"
-                                     Grid.Column="1" 
-                                     Grid.Row="1"
-                                     Margin="20,5,20,5"/>
-                            <TextBox Name="WellExponentInput"
-                                     Grid.Column="1" 
-                                     Grid.Row="3"
-                                     Margin="20,5,20,5"/>
-                            <TextBox Name="FlowCoefficientInput"
-                                     Grid.Column="1" 
-                                     Grid.Row="4"
-                                     Margin="20,5,20,5"/>
+                                <ComboBox Name="TestFlowEfficiencyUnit"
+                                          Width="200"/>
 
-                            <ComboBox Name="TestFlowEfficiencyUnit"
-                                      Grid.Column="2" 
-                                      Grid.Row="0"
-                                      Width="250"/>
-                            <ComboBox Name="NewFlowEfficincyUnit"
-                                      Grid.Column="2" 
-                                      Grid.Row="1"
-                                      Margin="20,5,20,5"/>
-                            <ComboBox Name="WellWxponwntUnit"
-                                      Grid.Column="2" 
-                                      Grid.Row="3"
-                                      Margin="20,5,20,5"/>
-                            <ComboBox Name="FlowCoefficintUnit"
-                                      Grid.Column="2" 
-                                      Grid.Row="4"
-                                      Margin="20,5,20,5"/>
+                            </StackPanel>
+
+                            <StackPanel Name="NewFlowEfficiencyStackPanel"
+                                        Orientation="Horizontal"
+                                        Grid.Row="1">
+
+                                <TextBlock Name="NewFlowEfficiencyLabel"
+                                           Text="New Flow Efficiency:"
+                                           Width="175"/>
+
+                                <TextBox Name="NewFlowEfficiencyInput"
+                                         Width="200"/>
+
+                                <ComboBox Name="NewFlowEfficincyUnit"
+                                          Width="200"/>
+
+                            </StackPanel>
+
+                            <StackPanel Name="WellExponentStackPanel"
+                                        Orientation="Horizontal"
+                                        Grid.Row="3">
+
+                                <TextBlock Name="WellExponentLabel"
+                                           Text="Well Exponent (n):"
+                                           Width="175"/>
+
+                                <TextBox Name="WellExponentInput"
+                                         Width="200"/>
+
+                                <ComboBox Name="WellExponentUnit"
+                                          Width="200"/>
+
+                            </StackPanel>
+
+                            <StackPanel Name="FlowCoefficientStackPanel"
+                                        Orientation="Horizontal"
+                                        Grid.Row="4">
+
+                                <TextBlock Name="FlowCoefficientLabel"
+                                           Text="Flow Coefficient (C):"
+                                           Width="175"/>
+
+                                <TextBox Name="FlowCoefficientInput"
+                                         Width="200"/>
+
+                                <ComboBox Name="FlowCoefficientUnit"
+                                          Width="200"/>
+
+                            </StackPanel>
+
 
                         </Grid>
 

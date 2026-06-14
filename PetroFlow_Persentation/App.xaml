@@ -44,6 +44,7 @@
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="8,5"/>
             <Setter Property="Margin" Value="20,10,20,10"/>
+            <Setter Property="Width" Value="250"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="CaretBrush" Value="{StaticResource Brush.Card}"/>
@@ -98,11 +99,8 @@
                             <Trigger Property="IsMouseOver" Value="true">
                                 <Setter Property="Background" Value="{StaticResource Brush.SuccessHover}"/>
                             </Trigger>
-                            <Trigger Property="IsFocused" Value="true">
+                            <Trigger Property="IsPressed" Value="true">
                                 <Setter Property="Background" Value="{StaticResource Brush.SuccessPressed}"/>
-                            </Trigger>
-                            <Trigger Property="IsFocused" Value="False">
-                                <Setter Property="Background" Value="{StaticResource Brush.Success}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -263,6 +261,7 @@
             <Setter Property="BorderBrush" Value="{StaticResource Brush.Border}"/>
             <Setter Property="Padding" Value="0"/>
             <Setter Property="Margin" Value="20,10,20,10"/>
+            <Setter Property="Width" Value="250"/>
             <Setter Property="FontSize" Value="12"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="Template">
@@ -384,22 +383,30 @@
         <Style TargetType="DataGridCell">
             <Setter Property="Padding" Value="12,8"/>
             <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="{StaticResource Brush.TextPrimary}"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="DataGridCell">
                         <Border Padding="{TemplateBinding Padding}" 
-                        Background="{TemplateBinding Background}" 
-                        BorderBrush="{TemplateBinding BorderBrush}" 
-                        BorderThickness="{TemplateBinding BorderThickness}">
+                                Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}">
                             <ContentPresenter VerticalAlignment="Center"/>
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
             <Style.Triggers>
-                <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Background" Value="Transparent"/>
+                <Trigger Property="IsEditing" Value="True">
+                    <Setter Property="Background" Value="{StaticResource Brush.Accent}"/>
+                </Trigger>
+                <Trigger Property="IsEditing" Value="False">
+                    <Setter Property="Background" Value="{StaticResource Brush.Background}"/>
                     <Setter Property="Foreground" Value="{StaticResource Brush.TextPrimary}"/>
+                </Trigger>
+                <Trigger Property="IsMouseCaptured" Value="False">
+                    <Setter Property="Background" Value="{StaticResource Brush.Background}"/>
+                    <Setter Property="BorderBrush" Value="{StaticResource Brush.Border}"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -413,9 +420,13 @@
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Background" Value="{StaticResource Brush.Hover}"/>
                 </Trigger>
-
-                <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Background" Value="#1F6FEB"/>
+                <Trigger Property="IsEditing" Value="True">
+                    <Setter Property="Background" Value="{StaticResource Brush.AccentHover}"/>
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="BorderBrush" Value="{StaticResource Brush.Accent}"/>
+                </Trigger>
+                <Trigger Property="IsEditing" Value="False">
+                    <Setter Property="Background" Value="{StaticResource Brush.Background}"/>
                     <Setter Property="Foreground" Value="White"/>
                 </Trigger>
             </Style.Triggers>
@@ -487,6 +498,19 @@
             <Setter Property="Margin" Value="10"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="VerticalAlignment" Value="Stretch"/>
+        </Style>
+
+        <Style TargetType="ContextMenu">
+            <Setter Property="Background"
+            Value="{StaticResource Brush.Card}"/>
+
+            <Setter Property="Foreground"
+            Value="{StaticResource Brush.TextPrimary}"/>
+        </Style>
+
+        <Style TargetType="MenuItem">
+            <Setter Property="Foreground"
+            Value="{StaticResource Brush.TextPrimary}"/>
         </Style>
 
 

@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PetroFlow_Persentation.User_Control"
              mc:Ignorable="d" 
-             d:DesignHeight="813.183" d:DesignWidth="1788.202">
+             d:DesignHeight="1086.85" d:DesignWidth="1802.869">
     <Grid Margin="0">
 
         <!-- Row Definition -->
@@ -83,20 +83,30 @@
                     <TextBox Name="WellHeadPressureInput"
                              Grid.Column="1"
                              Grid.Row="0"
-                             Width="250"/>
+                             Width="250"
+                             PreviewTextInput="Numeric_PreviewTextInput"
+                             DataObject.Pasting="Numeric_Pasting"/>
                     <TextBox Name="TotalDepthInput"
                              Grid.Column="1"
-                             Grid.Row="1"/>
+                             Grid.Row="1"
+                             PreviewTextInput="Numeric_PreviewTextInput"
+                             DataObject.Pasting="Numeric_Pasting"/>
                     <TextBox Name="TubingSizeInput"
                              Grid.Column="1"
-                             Grid.Row="2"/>
+                             Grid.Row="2"
+                             PreviewTextInput="Numeric_PreviewTextInput"
+                             DataObject.Pasting="Numeric_Pasting"/>
                     <TextBox Name="PipeRelativeRoughnessInput"
                              Grid.Column="1"
-                             Grid.Row="3"/>
+                             Grid.Row="3"
+                             PreviewTextInput="Numeric_PreviewTextInput"
+                             DataObject.Pasting="Numeric_Pasting"/>
                     <TextBox Name="GravityAccelerationInput"
                              Grid.Column="1"
                              Grid.Row="4"
-                             Text="32.2"/>
+                             Text="32.2"
+                             PreviewTextInput="Numeric_PreviewTextInput"
+                             DataObject.Pasting="Numeric_Pasting"/>
 
                     <ComboBox Name="WellHeadPressureUnit"
                               Grid.Column="2"
@@ -231,7 +241,7 @@
 
 
                                 </Grid>
-                                
+
 
                             </Border>
 
@@ -325,6 +335,7 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
@@ -353,6 +364,10 @@
                                        Grid.Column="0"
                                        Grid.Row="4"
                                        Text="Minimum Flow Rate:"/>
+                            <TextBlock Name="MaximumFlowRateLabel"
+                                       Grid.Column="0"
+                                       Grid.Row="5"
+                                       Text="Maximum Flow Rate:"/>
 
                             <TextBox Name="CurveLabelInput"
                                      Grid.Column="1"
@@ -363,23 +378,37 @@
                                      Grid.Column="1"
                                      Grid.Row="1"
                                      Text="10"
-                                     Width="250"/>
+                                     Width="250"
+                                     PreviewTextInput="Numeric_PreviewTextInput"
+                                     DataObject.Pasting="Numeric_Pasting"/>
                             <TextBox Name="FlowRateStepSizeInput"
                                      Grid.Column="1"
                                      Grid.Row="2"
-                                     Text="10"/>
+                                     Text="10"
+                                     PreviewTextInput="Numeric_PreviewTextInput"
+                                     DataObject.Pasting="Numeric_Pasting"/>
                             <TextBox Name="MinimumPressureInput"
                                      Grid.Column="1"
                                      Grid.Row="3"
-                                     Text="10"/>
+                                     Text="10"
+                                     PreviewTextInput="Numeric_PreviewTextInput"
+                                     DataObject.Pasting="Numeric_Pasting"/>
                             <TextBox Name="MinimumFlowRateInput"
                                      Grid.Column="1"
                                      Grid.Row="4"
-                                     Text="10"/>
+                                     Text="10"
+                                     PreviewTextInput="Numeric_PreviewTextInput"
+                                     DataObject.Pasting="Numeric_Pasting"/>
+                            <TextBox Name="MaximumFlowRateInput"
+                                     Grid.Column="1"
+                                     Grid.Row="5"
+                                     Text="1000"
+                                     PreviewTextInput="Numeric_PreviewTextInput"
+                                     DataObject.Pasting="Numeric_Pasting"/>
 
 
                         </Grid>
-                        
+
                     </TabItem>
 
                 </TabControl>
@@ -448,11 +477,13 @@
 
                         <TextBox Name="ReservoirTemperatureInput"
                                  Width="150"
-                                 Height="35"/>
+                                 Height="40"
+                                 PreviewTextInput="Numeric_PreviewTextInput"
+                                 DataObject.Pasting="Numeric_Pasting"/>
 
                         <ComboBox Name="ReserovirTemperatureUnit"
                                   Width="150"
-                                  Height="35"/>
+                                  Height="40"/>
 
                     </StackPanel>
 
@@ -467,11 +498,13 @@
 
                         <TextBox Name="BubblePointPressureInput"
                                  Width="150"
-                                 Height="35"/>
+                                 Height="40"
+                                 PreviewTextInput="Numeric_PreviewTextInput"
+                                 DataObject.Pasting="Numeric_Pasting"/>
 
                         <ComboBox Name="BubblePointPressureUnit"
                                   Width="150"
-                                  Height="35"/>
+                                  Height="40"/>
 
                     </StackPanel>
 
@@ -487,11 +520,13 @@
 
                         <TextBox Name="OilAPISInput"
                                  Width="150"
-                                 Height="35"/>
+                                 Height="40"
+                                 PreviewTextInput="Numeric_PreviewTextInput"
+                                 DataObject.Pasting="Numeric_Pasting"/>
 
                         <ComboBox Name="OilAPISUnit"
                                   Width="150"
-                                  Height="35"/>
+                                  Height="40"/>
 
                     </StackPanel>
 
@@ -507,11 +542,13 @@
 
                         <TextBox Name="LiquidViscosityInput"
                                  Width="150"
-                                 Height="35"/>
+                                 Height="40"
+                                 PreviewTextInput="Numeric_PreviewTextInput"
+                                 DataObject.Pasting="Numeric_Pasting"/>
 
                         <ComboBox Name="LiquidViscosityUnit"
                                   Width="150"
-                                  Height="35"/>
+                                  Height="40"/>
 
                     </StackPanel>
 
@@ -527,11 +564,13 @@
 
                         <TextBox Name="SurfaceTensionInput"
                                  Width="150"
-                                 Height="35"/>
+                                 Height="40"
+                                 PreviewTextInput="Numeric_PreviewTextInput"
+                                 DataObject.Pasting="Numeric_Pasting"/>
 
                         <ComboBox Name="SurfaceTensionUnit"
                                   Width="150"
-                                  Height="35"/>
+                                  Height="40"/>
 
                     </StackPanel>
 
@@ -547,11 +586,13 @@
 
                         <TextBox Name="GasSpecificGravityInput"
                                  Width="150"
-                                 Height="35"/>
+                                 Height="40"
+                                 PreviewTextInput="Numeric_PreviewTextInput"
+                                 DataObject.Pasting="Numeric_Pasting"/>
 
                         <ComboBox Name="GasSpecificGravityUnit"
                                   Width="150"
-                                  Height="35"/>
+                                  Height="40"/>
 
                     </StackPanel>
 
@@ -567,11 +608,13 @@
 
                         <TextBox Name="GasViscosityInput"
                                  Width="150"
-                                 Height="35"/>
+                                 Height="40"
+                                 PreviewTextInput="Numeric_PreviewTextInput"
+                                 DataObject.Pasting="Numeric_Pasting"/>
 
                         <ComboBox Name="GasViscosityUnit"
                                   Width="150"
-                                  Height="35"/>
+                                  Height="40"/>
 
                     </StackPanel>
 
@@ -582,16 +625,18 @@
                                 Margin="15,5,5,5">
 
                         <TextBlock Name="GasOilRatioLabel"
-                                   Text="Gas Viscosity:"
+                                   Text="Gas Liquid Ratio:"
                                    Width="150"/>
 
                         <TextBox Name="GasOilRatioInput"
                                  Width="150"
-                                 Height="35"/>
+                                 Height="40"
+                                 PreviewTextInput="Numeric_PreviewTextInput"
+                                 DataObject.Pasting="Numeric_Pasting"/>
 
                         <ComboBox Name="GasOilRatioUnit"
                                   Width="150"
-                                  Height="35"/>
+                                  Height="40"/>
 
                     </StackPanel>
 

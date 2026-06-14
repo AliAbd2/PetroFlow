@@ -1,4 +1,14 @@
-﻿using System;
+﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.Data;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.Interfaces;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.Models;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.VLPComponents.VLPFrictionFactor;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.VLPComponents.VLPHoldup;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.VLPData;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.VLPMethod.VLPFrictionFactorMethods;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.VLPMethods;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.VLPModels;
+using PetroFlow_PersentationLayer.Utility;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -22,7 +32,148 @@ namespace PetroFlow_Persentation.User_Control
         {
             InitializeComponent();
 
+            ResetMenu();
+
+        }
+
+        public void ResetMenu()
+        {
+
+            VLPModelSelectedNoSlipNoFlowRegime.IsChecked = true;
+
+            WellHeadPressureInput.Text = "";
+            WellHeadPressureUnit.Items.Add("psia");
+            WellHeadPressureUnit.SelectedIndex = 0;
+
+            TotalDepthInput.Text = "";
+            TotalDepthUnit.Items.Add("ft");
+            TotalDepthUnit.SelectedIndex = 0;
+
+            TubingSizeInput.Text = "";
+            TubingSizeUnit.Items.Add("ft");
+            TubingSizeUnit.SelectedIndex = 0;
+
+            PipeRelativeRoughnessInput.Text = "";
+            PipeRelativeRoughnessUnit.Items.Add("dimensionless");
+            PipeRelativeRoughnessUnit.SelectedIndex = 0;
+
+            GravityAccelerationInput.Text = "32.2";
+            GravityAccelerationUnit.Items.Add("ft/sec²");
+            GravityAccelerationUnit.SelectedIndex = 0;
+
+
+            ReservoirTemperatureInput.Text = "";
+            ReserovirTemperatureUnit.Items.Add("°F");
+            ReserovirTemperatureUnit.SelectedIndex = 0;
+
+            BubblePointPressureInput.Text = "";
+            BubblePointPressureUnit.Items.Add("psig");
+            BubblePointPressureUnit.SelectedIndex = 0;
+
+            OilAPISInput.Text = "";
+            OilAPISUnit.Items.Add("API");
+            OilAPISUnit.SelectedIndex = 0;
+
+            LiquidViscosityInput.Text = "";
+            LiquidViscosityUnit.Items.Add("cp");
+            LiquidViscosityUnit.SelectedIndex = 0;
+
+            SurfaceTensionInput.Text = "";
+            SurfaceTensionUnit.Items.Add("dynes/cm");
+            SurfaceTensionUnit.SelectedIndex = 0;
+
+            GasSpecificGravityInput.Text = "";
+            GasSpecificGravityUnit.Items.Add("dimensionless");
+            GasSpecificGravityUnit.SelectedIndex = 0;
+
+            GasViscosityInput.Text = "";
+            GasViscosityUnit.Items.Add("cp");
+            GasViscosityUnit.SelectedIndex = 0;
+
+            GasOilRatioInput.Text = "";
+            GasOilRatioUnit.Items.Add("SCF/STB");
+            GasOilRatioUnit.SelectedIndex = 0;
+
+            CurveLabelInput.Text = "VLP";
+            DepthStepSizeInput.Text = "10";
+            FlowRateStepSizeInput.Text = "10";
+            MinimumFlowRateInput.Text = "10";
+            MaximumFlowRateInput.Text = "1000";
+
+            VLPGeneratControlTabControl.SelectedIndex = 0;
+
             _adjustUIBasedOnMethod();
+
+
+        }
+
+        public IVLPModel GetVLPMethod()
+        {
+
+            if (VLPModelSelectedNoSlipNoFlowRegime.IsChecked.Value)
+            {
+
+                if (PoettamnnCarpenterVLPSelectedMethod.IsChecked.Value)
+                    return new NoSlipNoFlowRegime(new PoettmannCarpenterFrictionFactor());
+
+                if (BaxendellThomasVLPSelectedMethod.IsChecked.Value)
+                    return new NoSlipNoFlowRegime(new BaxendellThomasFrictionFactor());
+
+                if (FancherBrownVLPSelectedMethod.IsChecked.Value)
+                    return new NoSlipNoFlowRegime(new FancherBrownFrictionFactor());
+
+
+            }
+
+            if (VLPModelSelectedSlipNoFlowRegime.IsChecked.Value)
+            {
+
+                if (HagedornBrownVLPSelectedMethod.IsChecked.Value)
+                    return new SlipNoFlowRegime(new HagedornBrownFrictionFactor(),
+                        new HagedornBrownHoldupCalculator());
+
+            }
+
+            if (VLPModelSelectedSlipFlowRegime.IsChecked.Value)
+            {
+
+                if (DunsRosVLPSelectedMethod.IsChecked.Value)
+                    return new DunsRos();
+
+            }
+
+            throw new Exception("No VLP Method has been selected.");
+
+        }
+
+        public VLPInputData ReadVLPInput()
+        {
+
+            VLPInputData dataInput = new();
+
+            dataInput.WellHeadPressure = GeneralMethods.ReadDouble(WellHeadPressureInput);
+            dataInput.TotalDepth = GeneralMethods.ReadDouble(TotalDepthInput);
+            dataInput.PipeInsideDiameter = GeneralMethods.ReadDouble(TubingSizeInput);
+            dataInput.PipeRelativeRoughness = GeneralMethods.ReadDouble(PipeRelativeRoughnessInput);
+            dataInput.GravityAcceleration = GeneralMethods.ReadDouble(GravityAccelerationInput);
+
+            dataInput.PVT.FahrenheitTemperature = GeneralMethods.ReadDouble(ReservoirTemperatureInput);
+            dataInput.PVT.PSIBubblePointPressure = GeneralMethods.ReadDouble(BubblePointPressureInput);
+            dataInput.PVT.API = GeneralMethods.ReadDouble(OilAPISInput);
+            dataInput.LiquidViscosity = GeneralMethods.ReadDouble(LiquidViscosityInput);
+            dataInput.SurfaceTension = GeneralMethods.ReadDouble(SurfaceTensionInput);
+            dataInput.PVT.GasSpecificGravity = GeneralMethods.ReadDouble(GasSpecificGravityInput);
+            dataInput.GasViscosity = GeneralMethods.ReadDouble(GasViscosityInput);
+            dataInput.PVT.GasOilRatio = GeneralMethods.ReadDouble(GasOilRatioInput);
+
+            dataInput.MinimumPressure = GeneralMethods.ReadDouble(MinimumPressureInput);
+            dataInput.MinimumFlowRate = GeneralMethods.ReadDouble(MinimumFlowRateInput);
+            dataInput.DepthStepSize = GeneralMethods.ReadDouble(DepthStepSizeInput);
+            dataInput.FlowRateStepSize = GeneralMethods.ReadDouble(FlowRateStepSizeInput);
+            dataInput.MaxFlowRate = GeneralMethods.ReadDouble(MaximumFlowRateInput);
+
+
+            return dataInput;
 
         }
 
@@ -89,6 +240,46 @@ namespace PetroFlow_Persentation.User_Control
 
             _adjustUIBasedOnMethod();
 
+        }
+
+        private void Numeric_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            TextBox textBox = (TextBox)sender;
+
+            char c = e.Text[0];
+
+            if (char.IsDigit(c))
+                return;
+
+            if (c == '.')
+            {
+                e.Handled = textBox.Text.Contains('.');
+                return;
+            }
+
+            if (c == '-')
+            {
+                e.Handled = textBox.CaretIndex != 0 ||
+                            textBox.Text.Contains('-');
+                return;
+            }
+
+            e.Handled = true;
+        }
+
+        private void Numeric_Pasting(object sender, DataObjectPastingEventArgs e)
+        {
+            if (e.DataObject.GetDataPresent(typeof(string)))
+            {
+                string text = (string)e.DataObject.GetData(typeof(string));
+
+                if (!double.TryParse(text, out _))
+                    e.CancelCommand();
+            }
+            else
+            {
+                e.CancelCommand();
+            }
         }
 
     }

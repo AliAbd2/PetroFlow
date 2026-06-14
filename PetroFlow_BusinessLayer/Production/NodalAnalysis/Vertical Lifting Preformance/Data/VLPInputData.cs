@@ -60,6 +60,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
 
         public double? MinimumFlowRate { get; set; }
 
+        public double? MaxFlowRate { get; set; }
 
         public PVTDataInput PVT { get; set; } = new();
 
