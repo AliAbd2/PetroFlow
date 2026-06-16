@@ -2,9 +2,7 @@
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Exceptions;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using PetroFlow_BusinessLayer.General_Utility.Validation;
 
 namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance
 {
@@ -43,8 +41,8 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance
 
             }
 
-            throw new UnsupportedIPROperationException(
-                "The selected method does not support future IPR generation.");
+            throw new UnsupportedIPROperationException(new ErrorMessage("Unsupported Scenario",
+                "The selected method does not support future IPR generation."));
 
         }
 

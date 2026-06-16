@@ -1,5 +1,6 @@
 ﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Exceptions;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Interfaces;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPR_Utility;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation;
 using System;
@@ -44,44 +45,34 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         }
 
-        protected override void ValidateRawData(IPRInputData inputData,
+        protected override void ValidateRawData(IPRInputData input,
             ref NodalAnalysisValidationResult validationResult)
         {
 
             //=============================
             // --- Reservoir Pressure ---
             //=============================
-            if (inputData.ReservoirPressure == null)
-                throw new MissingRequiredInputException(
-                    "Cannot generate IPR: Reservoir pressure has not been provided.");
-
-            if (inputData.ReservoirPressure <= 0)
-                throw new InvalidParameterException(
-                    "Invalid reservoir pressure: A positive value greater than zero is required.");
+            Validation.IsGreaterThanZero(input.ReservoirPressure, "Reservoir Pressure");
 
 
             //=====================
             // --- Test Data ---
             //=====================
-            if (inputData.TestsData == null)
-                throw new MissingRequiredInputException(
-                    "Cannot generate IPR: Test data has not been provided.");
+            if (input.TestsData == null)
+                throw new MissingRequiredInputException(IPRErrorMessages.MissingTestData);
 
-            if (inputData.TestsData.Count < 2)
-                throw new InvalidParameterException(
-                    "Invalid test data: At least two test data rows is required.");
+            if (input.TestsData.Count < 3 && input.WellExponent == null)
+                throw new InvalidParameterException(IPRErrorMessages.InvalidTestDataCount("Jones", 2));
 
-            if (inputData.TestsData.Any(x => x.FlowRate <= 0))
-                throw new InvalidParameterException(
-                    "Invalid test data: One or more flow rates are zero or negative.");
+            if (input.TestsData.Any(x => x.FlowRate <= 0))
+                throw new InvalidParameterException(IPRErrorMessages.InvalidTestDataFlowRate);
 
-            if (inputData.TestsData.Any(x => x.BottomHolePressure <= 0))
-                throw new InvalidParameterException(
-                    "Invalid test data: One or more bottom hole pressures are zero or negative.");
+            if (input.TestsData.Any(x => x.BottomHolePressure <= 0))
+                throw new InvalidParameterException(IPRErrorMessages.InvalidTestDataBottomHolePressure);
 
-            if (inputData.TestsData.Any(x => x.BottomHolePressure >= inputData.ReservoirPressure))
+            if (input.TestsData.Any(x => x.BottomHolePressure >= input.ReservoirPressure))
                 throw new InvalidParameterException(
-                    "Bottom-hole pressure must be less than reservoir pressure.");
+                    IPRErrorMessages.InvalidTestDataBottomHolePressureGreaterThanReservoirPressure);
 
 
         }

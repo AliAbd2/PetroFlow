@@ -1,4 +1,5 @@
-﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Constants;
+﻿using PetroFlow_BusinessLayer.General_Utility.Validation;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Constants;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.VLPAbstractClasses;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.VLPData;
@@ -59,8 +60,9 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
         {
 
             if (liquidViscosityNumber < 0.002 || liquidViscosityNumber > .5)
-                validationResult.AddWarning("Liquid Viscosity Number is out of range [0.002, 0.5], " +
-                    "Unrealistic result is expected");
+                validationResult.AddWarning(new ErrorMessage("Out of Range Warning",
+                    "Liquid Viscosity Number is out of range [0.002, 0.5], " +
+                    "Unrealistic result is expected"));
 
             double logNl = Math.Log10(liquidViscosityNumber);
             double logNl2 = logNl * logNl;
@@ -85,8 +87,9 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double a = x * y * z;
 
             if (a < 2e-6 || a > 5e-3)
-                validationResult.AddWarning("The factor that is used to determine" +
-                    " holdup factor is out of range [2e-6, 5e-3], Unrealistic result is expected");
+                validationResult.AddWarning(new ErrorMessage("Out of Rang Warning",
+                    "The factor that is used to determine" +
+                    " holdup factor is out of range [2e-6, 5e-3], Unrealistic result is expected"));
 
 
             double loga = Math.Log10(a);
@@ -121,8 +124,9 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
                 Math.Pow(pipeDiameterNumber, 2.14);
 
             if (x < 0.1 || x > 0.9)
-                validationResult.AddWarning("The factor that is used to correct" +
-                    " holdup is out of range [0.1, 0.9], Unrealistic result is expected");
+                validationResult.AddWarning(new ErrorMessage("Out of Rang Warning",
+                    "The factor that is used to correct" +
+                    " holdup is out of range [0.1, 0.9], Unrealistic result is expected"));
 
             if (x < 0.1)
                 return 1;

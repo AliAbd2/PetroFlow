@@ -1,4 +1,5 @@
-﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Exceptions;
+﻿using PetroFlow_BusinessLayer.General_Utility.Validation;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Exceptions;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Constants;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.AbstractClasses.Holdup;
@@ -17,13 +18,14 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             ref NodalAnalysisValidationResult validationResult, VLPDerivedProperties? derivedProperties = null)
         {
 
-            Validation.NonNegativeNotMissing(input.LiquidVelocityNumber, "liquid velocity number");
-            Validation.NonNegativeNotMissing(input.GasVelocityNumber, "gas velocity number");
-            Validation.NonNegativeNotMissing(input.LiquidDensity, "liquid density");
-            Validation.NonNegativeNotMissing(input.LiquidSurfaceTension, "liquid surface tension");
+            Validation.IsNonNegative(input.LiquidVelocityNumber, "liquid velocity number");
+            Validation.IsNonNegative(input.GasVelocityNumber, "gas velocity number");
+            Validation.IsNonNegative(input.LiquidDensity, "liquid density");
+            Validation.IsNonNegative(input.LiquidSurfaceTension, "liquid surface tension");
 
             if (derivedProperties?.FlowRegime == null)
-                throw new MissingRequiredInputException("Flow regime is required for Duns & Ros holdup calculation.");
+                throw new MissingRequiredInputException(new ErrorMessage("Flow Regime Detection Error", 
+                    "Flow regime is required for Duns & Ros holdup calculation."));
 
         }
 
@@ -38,9 +40,9 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double Nl = input.LiquidViscosityNumber.Value;
 
             if (Nl < 2e-3 || Nl > 2)
-                validationResult.AddWarning(
+                validationResult.AddWarning(new ErrorMessage("Out of Range Warning",
                 "Liquid velocity number (Nl) is outside the recommended Duns & Ros range [0.002, 2]. " +
-                "The calculated first slip velocity number (F1) may be unreliable.");
+                "The calculated first slip velocity number (F1) may be unreliable."));
 
 
             double logNl = Math.Log10(Nl);
@@ -67,9 +69,9 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double Nl = input.LiquidViscosityNumber.Value;
 
             if (Nl < 2e-3 || Nl > 2)
-                validationResult.AddWarning(
+                validationResult.AddWarning(new ErrorMessage("Out of Range Warning",
                 "Liquid velocity number (Nl) is outside the recommended Duns & Ros range [0.002, 2]. " +
-                "The calculated second slip velocity number (F2) may be unreliable.");
+                "The calculated second slip velocity number (F2) may be unreliable."));
 
             double logNl = Math.Log10(Nl);
             double logNl2 = logNl * logNl;
@@ -98,9 +100,9 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double Nl = input.LiquidViscosityNumber.Value;
 
             if (Nl < 2e-3 || Nl > 2)
-                validationResult.AddWarning(
+                validationResult.AddWarning(new ErrorMessage("Out of Range Warning",
                 "Liquid velocity number (Nl) is outside the recommended Duns & Ros range [0.002, 2]. " +
-                "The calculated third slip velocity number (F3) may be unreliable.");
+                "The calculated third slip velocity number (F3) may be unreliable."));
 
             double logNl = Math.Log10(Nl);
             double logNl2 = logNl * logNl;
@@ -129,9 +131,9 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double Nl = input.LiquidViscosityNumber.Value;
 
             if (Nl < 2e-3 || Nl > 2)
-                validationResult.AddWarning(
+                validationResult.AddWarning(new ErrorMessage("Out of Range Warning",
                 "Liquid velocity number (Nl) is outside the recommended Duns & Ros range [0.002, 2]. " +
-                "The calculated fourth slip velocity number (F4) may be unreliable.");
+                "The calculated fourth slip velocity number (F4) may be unreliable."));
 
             double logNl = Math.Log10(Nl);
             double logNl2 = logNl * logNl;
@@ -190,9 +192,9 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double Nl = input.LiquidViscosityNumber.Value;
 
             if (Nl < 2e-3 || Nl > 2)
-                validationResult.AddWarning(
+                validationResult.AddWarning(new ErrorMessage("Out of Range Warning",
                 "Liquid velocity number (Nl) is outside the recommended Duns & Ros range [0.002, 2]. " +
-                "The calculated fifth slip velocity number (F5) may be unreliable.");
+                "The calculated fifth slip velocity number (F5) may be unreliable."));
 
             double logNl = Math.Log10(Nl);
             double logNl2 = logNl * logNl;
@@ -225,9 +227,9 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double Nl = input.LiquidViscosityNumber.Value;
 
             if (Nl < 2e-3 || Nl > 2)
-                validationResult.AddWarning(
+                validationResult.AddWarning(new ErrorMessage("Out of Rang Warning",
                 "Liquid velocity number (Nl) is outside the recommended Duns & Ros range [0.002, 2]. " +
-                "The calculated sixth slip velocity number (F6) may be unreliable.");
+                "The calculated sixth slip velocity number (F6) may be unreliable."));
 
             double logNl = Math.Log10(Nl);
             double logNl2 = logNl * logNl;
@@ -257,9 +259,9 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double Nl = input.LiquidViscosityNumber.Value;
 
             if (Nl < 2e-3 || Nl > 2)
-                validationResult.AddWarning(
+                validationResult.AddWarning(new ErrorMessage("Out of Rang Warning",
                 "Liquid velocity number (Nl) is outside the recommended Duns & Ros range [0.002, 2]. " +
-                "The calculated seventh slip velocity number (F7) may be unreliable.");
+                "The calculated seventh slip velocity number (F7) may be unreliable."));
 
             double logNl = Math.Log10(Nl);
             double logNl2 = logNl * logNl;

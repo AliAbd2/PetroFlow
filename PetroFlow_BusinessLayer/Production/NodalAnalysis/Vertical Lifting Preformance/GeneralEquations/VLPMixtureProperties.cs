@@ -16,13 +16,13 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double gasCompressibilityFactor, double temperature)
         {
 
-            Validation.GreaterThanZero(gasCompressibilityFactor, "Gas compressibility factor (Z-Factor)");
+            Validation.IsGreaterThanZero(gasCompressibilityFactor, "Gas compressibility factor (Z-Factor)");
 
-            Validation.GreaterThanZero(temperature, "Temperature");
+            Validation.IsGreaterThanZero(temperature, "Temperature");
 
-            Validation.GreaterThanZero(pressure, "Pressure");
+            Validation.IsGreaterThanZero(pressure, "Pressure");
 
-            Validation.GreaterThanZero(gasGravity, "Gas gravity");
+            Validation.IsGreaterThanZero(gasGravity, "Gas gravity");
 
             return (2.7 * pressure * gasGravity) / (gasCompressibilityFactor * temperature);
 
@@ -32,13 +32,13 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double oilFormationVolumeFactor)
         {
 
-            Validation.GreaterThanZero(oilGravity, "Oil gravity");
+            Validation.IsGreaterThanZero(oilGravity, "Oil gravity");
 
-            Validation.NonNegative(gasGravity, "Gas gravity");
+            Validation.IsNonNegative(gasGravity, "Gas gravity");
 
-            Validation.NonNegative(gasOilRatio, "Gas oil ratio");
+            Validation.IsNonNegative(gasOilRatio, "Gas oil ratio");
 
-            Validation.GreaterThanZero(oilFormationVolumeFactor, "Oil formation volume factor");
+            Validation.IsGreaterThanZero(oilFormationVolumeFactor, "Oil formation volume factor");
 
             return (350.4 * oilGravity + 0.0764 * gasGravity * gasOilRatio) / (5.615 * oilFormationVolumeFactor);
 
@@ -48,10 +48,10 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double waterFraction)
         {
 
-            Validation.NonNegative(oilDensity, "Oil density");
-            Validation.NonNegative(waterDensity, "Water density");
-            Validation.Range(oilFraction, 0, 1, "Oil fraction");
-            Validation.Range(waterFraction, 0, 1, "Oil fraction");
+            Validation.IsNonNegative(oilDensity, "Oil density");
+            Validation.IsNonNegative(waterDensity, "Water density");
+            Validation.IsInRange(oilFraction, 0, 1, "Oil fraction");
+            Validation.IsInRange(waterFraction, 0, 1, "Oil fraction");
 
 
             return oilDensity * oilFraction + waterDensity * waterFraction;
@@ -61,10 +61,10 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double gasDensity, double gasholdup)
         {
 
-            Validation.NonNegative(liquidDensity, "Liquid density");
-            Validation.NonNegative(gasDensity, "Gas density");
-            Validation.Range(liquidholdup, 0, 1, "Liquid holdup");
-            Validation.Range(gasholdup, 0, 1, "Gas holdup");
+            Validation.IsNonNegative(liquidDensity, "Liquid density");
+            Validation.IsNonNegative(gasDensity, "Gas density");
+            Validation.IsInRange(liquidholdup, 0, 1, "Liquid holdup");
+            Validation.IsInRange(gasholdup, 0, 1, "Gas holdup");
 
             return liquidDensity * liquidholdup + gasDensity * gasholdup;
         }
@@ -73,13 +73,13 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double gasDensity, double noSlipGasholdup)
         {
 
-            Validation.NonNegative(liquidDensity, "Liquid density");
+            Validation.IsNonNegative(liquidDensity, "Liquid density");
 
-            Validation.NonNegative(gasDensity, "Gas density");
+            Validation.IsNonNegative(gasDensity, "Gas density");
 
-            Validation.Range(noSlipGasholdup, 0, 1, "No slip gas holdup");
+            Validation.IsInRange(noSlipGasholdup, 0, 1, "No slip gas holdup");
 
-            Validation.Range(noSlipLiquidholdup, 0, 1, "No slip liquid holdup");
+            Validation.IsInRange(noSlipLiquidholdup, 0, 1, "No slip liquid holdup");
 
             return liquidDensity * noSlipLiquidholdup + gasDensity * noSlipGasholdup;
         }
@@ -88,21 +88,21 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double liquidHoldup, double gasDensity, double noSlipGasHoldup, double gasHoldup)
         {
 
-            Validation.GreaterThanZero(liquidHoldup, "Liquid holdup");
+            Validation.IsGreaterThanZero(liquidHoldup, "Liquid holdup");
 
-            Validation.GreaterThanZero(gasHoldup, "Gas holdup");
+            Validation.IsGreaterThanZero(gasHoldup, "Gas holdup");
 
-            Validation.NonNegative(liquidDensity, "Liquid density");
+            Validation.IsNonNegative(liquidDensity, "Liquid density");
 
-            Validation.NonNegative(gasDensity, "Gas density");
+            Validation.IsNonNegative(gasDensity, "Gas density");
 
-            Validation.Range(liquidHoldup, 0, 1, "Liquid holdup");
+            Validation.IsInRange(liquidHoldup, 0, 1, "Liquid holdup");
 
-            Validation.Range(gasHoldup, 0, 1, "Gas holdup");
+            Validation.IsInRange(gasHoldup, 0, 1, "Gas holdup");
 
-            Validation.Range(noSlipLiquidHoldup, 0, 1, "No slip liquid holdup");
+            Validation.IsInRange(noSlipLiquidHoldup, 0, 1, "No slip liquid holdup");
 
-            Validation.Range(noSlipGasHoldup, 0, 1, "No slip gas holdup");
+            Validation.IsInRange(noSlipGasHoldup, 0, 1, "No slip gas holdup");
 
             return (liquidDensity * noSlipLiquidHoldup * noSlipLiquidHoldup) / liquidHoldup +
                 (gasDensity * noSlipGasHoldup * noSlipGasHoldup) / gasHoldup;
@@ -116,13 +116,13 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
         public static double CalculateOilFraction(double oilFlowrate, double waterFlowrate)
         {
 
-            Validation.NonNegative(oilFlowrate, "Oil flow rate");
+            Validation.IsNonNegative(oilFlowrate, "Oil flow rate");
 
-            Validation.NonNegative(waterFlowrate, "Water flow rate");
+            Validation.IsNonNegative(waterFlowrate, "Water flow rate");
 
             double TotalFlowrate = oilFlowrate + waterFlowrate;
 
-            Validation.GreaterThanZero(TotalFlowrate, "Total Flow rate");
+            Validation.IsGreaterThanZero(TotalFlowrate, "Total Flow rate");
 
             return oilFlowrate / (oilFlowrate + waterFlowrate);
         }
@@ -131,11 +131,11 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double waterFormationVolumeFactor)
         {
 
-            Validation.NonNegative(waterOilRatio, "Water oil ratio");
+            Validation.IsNonNegative(waterOilRatio, "Water oil ratio");
 
-            Validation.NonNegative(waterFormationVolumeFactor, "Water formation volume factor");
+            Validation.IsNonNegative(waterFormationVolumeFactor, "Water formation volume factor");
 
-            Validation.GreaterThanZero(oilFormationVolumeFactor, "Oil formation volume factor");
+            Validation.IsGreaterThanZero(oilFormationVolumeFactor, "Oil formation volume factor");
 
             return 1 / (1 + waterOilRatio * (waterFormationVolumeFactor / oilFormationVolumeFactor));
         }
@@ -143,7 +143,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
         public static double CalculateOilFractionByWaterFraction(double waterFraction)
         {
 
-            Validation.Range(waterFraction, 0, 1, "Water fraction");
+            Validation.IsInRange(waterFraction, 0, 1, "Water fraction");
 
             return 1 - waterFraction;
         }
@@ -151,13 +151,13 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
         public static double CalculateWaterFractionByWaterFlowrate(double waterFlowrate, double oilFlowrate)
         {
 
-            Validation.NonNegative(waterFlowrate, "Water flow rate");
+            Validation.IsNonNegative(waterFlowrate, "Water flow rate");
 
-            Validation.NonNegative(oilFlowrate, "Oil flow rate");
+            Validation.IsNonNegative(oilFlowrate, "Oil flow rate");
 
             double TotalFlowrate = oilFlowrate + waterFlowrate;
 
-            Validation.GreaterThanZero(TotalFlowrate, "Total Flow rate");
+            Validation.IsGreaterThanZero(TotalFlowrate, "Total Flow rate");
 
             return waterFlowrate / (oilFlowrate + waterFlowrate);
         }
@@ -165,7 +165,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
         public static double CalculateWaterFraction(double oilFraction)
         {
 
-            Validation.Range(oilFraction, 0, 1, "Oil fraction");
+            Validation.IsInRange(oilFraction, 0, 1, "Oil fraction");
 
             return 1 - oilFraction;
         }
@@ -178,10 +178,9 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double oilFraction, double waterFraction)
         {
 
-            Validation.Range(oilFraction, 0, 1, "Oil fraction");
-            Validation.Range(waterFraction, 0, 1, "Water fraction");
-            Validation.SumApproximatelyOne(oilFraction, waterFraction, 
-                "Oil fraction", "Water fraction");
+            Validation.IsInRange(oilFraction, 0, 1, "Oil fraction");
+            Validation.IsInRange(waterFraction, 0, 1, "Water fraction");
+
 
 
             return oilSurfaceTension * oilFraction + waterSurfaceTension * waterFraction;

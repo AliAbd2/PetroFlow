@@ -1,32 +1,25 @@
-﻿using System;
+﻿using PetroFlow_BusinessLayer.General_Utility.Validation;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation
 {
-    public class NodalAnalysisValidationResult
+    public sealed class NodalAnalysisValidationResult
     {
+        public IReadOnlyList<ErrorMessage> Warnings => _warnings;
 
-        public List<string> Warnings { get; } = new();
+        private readonly List<ErrorMessage> _warnings = new();
 
-        private HashSet<string> _uniqueWarnings = new();
+        private readonly HashSet<ErrorMessage> _uniqueWarnings = new();
 
-        public NodalAnalysisValidationResult()
+        public void AddWarning(ErrorMessage warning)
         {
-
-        }
-
-        public void AddWarning(string warning)
-        {
-
             if (_uniqueWarnings.Add(warning))
             {
-                Warnings.Add(warning);
+                _warnings.Add(warning);
             }
-
         }
-
     }
-
 
 }

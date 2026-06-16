@@ -15,14 +15,11 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             if (input.LiquidVelocityNumber.HasValue)
                 return input.LiquidVelocityNumber.Value;
 
-            Validation.Missing(input.LiquidDensity, "liquid density");
-            Validation.GreaterThanZero(input.LiquidDensity.Value, "liquid density");
+            Validation.IsGreaterThanZero(input.LiquidDensity.Value, "liquid density");
 
-            Validation.Missing(input.LiquidSurfaceTension, "liquid surface tension");
-            Validation.GreaterThanZero(input.LiquidSurfaceTension.Value, "liquid surface tension");
+            Validation.IsGreaterThanZero(input.LiquidSurfaceTension.Value, "liquid surface tension");
 
-            Validation.Missing(input.LiquidSuperficialVelocity, "liquid superficial velocity");
-            Validation.GreaterThanZero(input.LiquidSuperficialVelocity.Value, "liquid superficial velocity");
+            Validation.IsGreaterThanZero(input.LiquidSuperficialVelocity.Value, "liquid superficial velocity");
 
             double x = input.LiquidDensity.Value / input.LiquidSurfaceTension.Value;
 
@@ -36,14 +33,11 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             if (input.GasVelocityNumber.HasValue)
                 return input.GasVelocityNumber.Value;
 
-            Validation.Missing(input.LiquidDensity, "liquid density");
-            Validation.GreaterThanZero(input.LiquidDensity.Value, "liquid density");
+            Validation.IsGreaterThanZero(input.LiquidDensity.Value, "liquid density");
 
-            Validation.Missing(input.LiquidSurfaceTension, "liquid surface tension");
-            Validation.GreaterThanZero(input.LiquidSurfaceTension.Value, "liquid surface tension");
+            Validation.IsGreaterThanZero(input.LiquidSurfaceTension.Value, "liquid surface tension");
 
-            Validation.Missing(input.GasSuperficialVelocity, "gas superficial velocity");
-            Validation.GreaterThanZero(input.GasSuperficialVelocity.Value, "gas superficial velocity");
+            Validation.IsGreaterThanZero(input.GasSuperficialVelocity.Value, "gas superficial velocity");
 
             double x = input.LiquidDensity.Value / input.LiquidSurfaceTension.Value;
 
@@ -57,14 +51,11 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             if (input.PipeDiameterNumber.HasValue)
                 return input.PipeDiameterNumber.Value;
 
-            Validation.Missing(input.LiquidDensity, "liquid density");
-            Validation.GreaterThanZero(input.LiquidDensity.Value, "liquid density");
+            Validation.IsGreaterThanZero(input.LiquidDensity.Value, "liquid density");
 
-            Validation.Missing(input.LiquidSurfaceTension, "liquid surface tension");
-            Validation.GreaterThanZero(input.LiquidSurfaceTension.Value, "liquid surface tension");
+            Validation.IsGreaterThanZero(input.LiquidSurfaceTension.Value, "liquid surface tension");
 
-            Validation.Missing(input.PipeInsideDiameter, "pipe inside diameter");
-            Validation.GreaterThanZero(input.PipeInsideDiameter.Value, "pipe inside diameter");
+            Validation.IsGreaterThanZero(input.PipeInsideDiameter.Value, "pipe inside diameter");
 
             double x = input.LiquidDensity.Value / input.LiquidSurfaceTension.Value;
 
@@ -78,14 +69,11 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             if (input.LiquidViscosityNumber.HasValue)
                 return input.LiquidViscosityNumber.Value;
 
-            Validation.Missing(input.LiquidDensity, "liquid density");
-            Validation.GreaterThanZero(input.LiquidDensity.Value, "liquid density");
+            Validation.IsGreaterThanZero(input.LiquidDensity.Value, "liquid density");
 
-            Validation.Missing(input.LiquidSurfaceTension, "liquid surface tension");
-            Validation.GreaterThanZero(input.LiquidSurfaceTension.Value, "liquid surface tension");
+            Validation.IsGreaterThanZero(input.LiquidSurfaceTension.Value, "liquid surface tension");
 
-            Validation.Missing(input.LiquidViscosity, "liquid viscosity");
-            Validation.GreaterThanZero(input.LiquidViscosity.Value, "liquid viscosity");
+            Validation.IsGreaterThanZero(input.LiquidViscosity.Value, "liquid viscosity");
 
             double x = 1 / (input.LiquidDensity.Value * Math.Pow(input.LiquidSurfaceTension.Value, 3));
             double liquidViscosityNumber = 0.15726 * input.LiquidViscosity.Value * Math.Pow(x, .25);

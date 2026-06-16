@@ -1,11 +1,12 @@
-﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation;
+﻿using PetroFlow_BusinessLayer.General_Utility.Validation;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Constants;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.AbstractClasses.FrictionFactor;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.VLPData;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.VLPModels;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.VLPModels;
-using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Constants;
 
 namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.Components.FrictionFactor
 {
@@ -15,15 +16,15 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
         protected override void ValidateRawData(VLPWorkingData input, VLPDerivedProperties derivedProperties, ref NodalAnalysisValidationResult validationResult)
         {
 
-            Validation.NonNegativeNotMissing(input.LiquidDensity, "liquid density");
-            Validation.NonNegativeNotMissing(input.LiquidSuperficialVelocity, "liquid superficial velocity");
-            Validation.NonNegativeNotMissing(input.PipeInsideDiameter, "pipe inside diameter");
-            Validation.NonNegativeNotMissing(input.LiquidViscosity, "liquid viscosity");
-            Validation.NonNegativeNotMissing(input.PipeRelativeRoughness, "pipe relative roughness");
-            Validation.NonNegativeNotMissing(input.PipeDiameterNumber, "pipe diameter number");
-            Validation.NonNegativeNotMissing(input.GasSuperficialVelocity, "gas superficial velocity");
-            Validation.NonNegativeNotMissing(input.LiquidSurfaceTension, "liquid surface tension");
-            Validation.NonNegativeNotMissing(input.GasDensity, "gas density");
+            Validation.IsNonNegative(input.LiquidDensity, "liquid density");
+            Validation.IsNonNegative(input.LiquidSuperficialVelocity, "liquid superficial velocity");
+            Validation.IsNonNegative(input.PipeInsideDiameter, "pipe inside diameter");
+            Validation.IsNonNegative(input.LiquidViscosity, "liquid viscosity");
+            Validation.IsNonNegative(input.PipeRelativeRoughness, "pipe relative roughness");
+            Validation.IsNonNegative(input.PipeDiameterNumber, "pipe diameter number");
+            Validation.IsNonNegative(input.GasSuperficialVelocity, "gas superficial velocity");
+            Validation.IsNonNegative(input.LiquidSurfaceTension, "liquid surface tension");
+            Validation.IsNonNegative(input.GasDensity, "gas density");
 
         }
 
@@ -66,9 +67,9 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
 
 
             if (x < 1e-3 || x > 1e+3)
-                validationResult.AddWarning(
+                validationResult.AddWarning(new ErrorMessage("Out of Range Warning",
                     "The parameter used to calculate the second Duns & Ros dimensionless friction factor " +
-                    "is outside the recommended range [0.001, 1000]. The calculated friction factor may be unreliable.");
+                    "is outside the recommended range [0.001, 1000]. The calculated friction factor may be unreliable."));
 
             if (x == 0)
                 return 1;
@@ -225,10 +226,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
                 case SlipFlowRegime.enFlowRegime.MistFlow:
                     return _determineFrictionFactorMistFlow(input);
                 default:
-                    validationResult.AddWarning("The system could not identify the flow regime," +
-                        "The flow regime will be assumed bubble.");
-                    return _determineFrictionFactorBubbleFlow(input, derivedProperties,
-                        ref validationResult);
+                    throw new InvalidOperationException("Could not detect Flow Rwgime");
 
 
             }

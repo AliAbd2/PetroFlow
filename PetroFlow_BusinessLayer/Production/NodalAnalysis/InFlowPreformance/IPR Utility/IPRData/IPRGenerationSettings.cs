@@ -1,4 +1,5 @@
 ﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Exceptions;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,13 +14,10 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPR
 
         public IPRGenerationSettings(double stepSize, double minPressure)
         {
-            if (stepSize <= 0)
-                throw new InvalidParameterException(
-                    "Pressure step size must be greater than zero.");
 
-            if (minPressure < 0)
-                throw new InvalidParameterException(
-                    "Minimum pressure cannot be negative.");
+            Validation.IsGreaterThanZero(stepSize, "Pressure Step Size");
+
+            Validation.IsNonNegative(minPressure, "Minimum Pressure");
 
             PressureStepSize = stepSize;
             MinimumPressure = minPressure;

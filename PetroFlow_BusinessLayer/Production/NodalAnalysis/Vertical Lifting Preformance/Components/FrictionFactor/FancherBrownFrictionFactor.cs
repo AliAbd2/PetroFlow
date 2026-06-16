@@ -1,4 +1,5 @@
-﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation;
+﻿using PetroFlow_BusinessLayer.General_Utility.Validation;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.Interfaces;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.VLPData;
 using System;
@@ -40,12 +41,13 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double totalSuperficialVelocity, ref NodalAnalysisValidationResult validationResult)
         {
 
-            Validation.GreaterThanZero(reynoldsNumberNumerator, "Reynold number numerator");
-            Validation.GreaterThanZero(totalSuperficialVelocity, "total superficial velocity");
+            Validation.IsGreaterThanZero(reynoldsNumberNumerator, "Reynold number numerator");
+            Validation.IsGreaterThanZero(totalSuperficialVelocity, "total superficial velocity");
 
             if (reynoldsNumberNumerator < 2 || reynoldsNumberNumerator > 80)
-                validationResult.AddWarning($"The calculated Reynolds number numerator ({reynoldsNumberNumerator}) is outside "
-                    + $"Fancher and Brown range [2, 100].");
+                validationResult.AddWarning(new ErrorMessage("Out of Range Warning",
+                    $"The calculated Reynolds number numerator ({reynoldsNumberNumerator}) is outside "
+                    + $"Fancher and Brown range [2, 100]."));
 
         }
 

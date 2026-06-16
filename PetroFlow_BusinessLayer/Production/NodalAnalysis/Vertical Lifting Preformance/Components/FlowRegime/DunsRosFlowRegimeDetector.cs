@@ -3,11 +3,7 @@ using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preforma
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.VLPData;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.VLPGeneralEquations;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.VLPModels;
-using System;
-using System.Collections.Generic;
-using System.Reflection.Metadata.Ecma335;
-using System.Runtime.CompilerServices;
-using System.Text;
+using PetroFlow_BusinessLayer.General_Utility.Validation;
 
 namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.Components.FlowRegime
 {
@@ -28,12 +24,16 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double pipeDiameterNumber = VLPDimensionlessNumbers.DeterminePipeDiameterNumber(input);
 
             if (pipeDiameterNumber < 15 || pipeDiameterNumber > 300)
-                validationResult.AddWarning("The pipe diameter number is out of range:" +
-                    "The result of the second flow regime number (L2) may be unrealistic.");
+                validationResult.AddWarning(new ErrorMessage("Out of Range Parameter",
+                    "The pipe diameter number is out of range:" +
+                    "The result of the second flow regime number (L2) may be unrealistic."));
 
             if (pipeDiameterNumber < 10 || pipeDiameterNumber > 300)
-                validationResult.AddWarning("The pipe diameter number is out of range:" +
-                    "The result of the first flow regime number (L1) may be unrealistic.");
+                validationResult.AddWarning(new ErrorMessage("Out of Range Parameter",
+                    "The pipe diameter number is out of range:" +
+                    "The result of the first flow regime number (L1) may be unrealistic."));
+
+            //  The following equation is 
 
             double logNd = Math.Log10(pipeDiameterNumber);
             double logNd2 = logNd * logNd;
@@ -85,12 +85,9 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
 
             if (Lm < gasVelocityNumber)
                 return SlipFlowRegime.enFlowRegime.MistFlow;
-
-
-            // This need better solution later :).
-            validationResult.AddWarning("Flow regime can't be detected, Bubble flow is assumed.");
-
-            return SlipFlowRegime.enFlowRegime.BubbleFlow;
+            
+            // this exception need better handling :)
+            throw new InvalidOperationException();
 
             
         }

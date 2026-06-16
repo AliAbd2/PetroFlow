@@ -1,9 +1,7 @@
 ﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.Interfaces;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.VLPData;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using PetroFlow_BusinessLayer.General_Utility.Validation;
 
 namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.VLPMethod.VLPFrictionFactorMethods
 {
@@ -39,12 +37,12 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double totalSuperficialVelocity, ref NodalAnalysisValidationResult validationResult)
         {
 
-            Validation.GreaterThanZero(reynoldsNumberNumerator, "Reynold number numerator");
-            Validation.GreaterThanZero(totalSuperficialVelocity, "total superficial velocity");
+            Validation.IsGreaterThanZero(reynoldsNumberNumerator, "Reynold number numerator");
+            Validation.IsGreaterThanZero(totalSuperficialVelocity, "total superficial velocity");
 
             if (reynoldsNumberNumerator < 2 || reynoldsNumberNumerator > 100)
-                validationResult.AddWarning($"The calculated Reynolds number numerator is outside "
-                    + $"Baxendell and Thomas range [2, 100].");
+                validationResult.AddWarning(new ErrorMessage("Out of Range Warning", $"The calculated Reynolds number numerator is outside "
+                    + $"Baxendell and Thomas range [2, 100]."));
 
         }
 

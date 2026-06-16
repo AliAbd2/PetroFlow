@@ -35,12 +35,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
         {
 
 
-            Validation.Missing(inputData.TotalMassFlowRate, "total mass flow rate");
-            Validation.Missing(inputData.PipeInsideDiameter, "pipe inside diameter");
-            Validation.Missing(inputData.GasDensity, "gas density");
-            Validation.Missing(inputData.LiquidDensity, "liquid density");
-            Validation.Missing(inputData.GasSuperficialVelocity, "gas superficial velocity");
-            Validation.Missing(inputData.LiquidSuperficialVelocity, "liquid superficial velocity");
+
 
         }
 

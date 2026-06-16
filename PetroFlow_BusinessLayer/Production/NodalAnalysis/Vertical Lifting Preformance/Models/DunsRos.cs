@@ -1,4 +1,6 @@
-﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Constants;
+﻿using PetroFlow_BusinessLayer.General_Utility.Validation;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Exceptions;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Constants;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.AbstractClasses.FlowRegime;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.AbstractClasses.FrictionFactor;
@@ -8,7 +10,6 @@ using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preforma
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.Components.Holdup;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.VLPData;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.VLPModels;
-using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Exceptions;
 
 namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.Models
 {
@@ -35,15 +36,15 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             ref NodalAnalysisValidationResult validationResult)
         {
 
-            Validation.NonNegativeNotMissing(input.LiquidDensity, "liquid density");
-            Validation.NonNegativeNotMissing(input.GasDensity, "gas density");
-            Validation.NonNegativeNotMissing(input.LiquidSuperficialVelocity, "liquid superficial velocity");
-            Validation.NonNegativeNotMissing(input.GasSuperficialVelocity, "gas superficial velocity");
-            Validation.NonNegativeNotMissing(input.LiquidVelocityNumber, "liquid velocity number");
-            Validation.NonNegativeNotMissing(input.GasVelocityNumber, "gas velocity number");
-            Validation.NonNegativeNotMissing(input.GravityAcceleration, "gravity acceleration");
-            Validation.NonNegativeNotMissing(input.PipeInsideDiameter, "pipe inside diameter");
-            Validation.NonNegativeNotMissing(input.PVT.PSIPressure, "pressure");
+            Validation.IsNonNegative(input.LiquidDensity, "liquid density");
+            Validation.IsNonNegative(input.GasDensity, "gas density");
+            Validation.IsNonNegative(input.LiquidSuperficialVelocity, "liquid superficial velocity");
+            Validation.IsNonNegative(input.GasSuperficialVelocity, "gas superficial velocity");
+            Validation.IsNonNegative(input.LiquidVelocityNumber, "liquid velocity number");
+            Validation.IsNonNegative(input.GasVelocityNumber, "gas velocity number");
+            Validation.IsNonNegative(input.GravityAcceleration, "gravity acceleration");
+            Validation.IsNonNegative(input.PipeInsideDiameter, "pipe inside diameter");
+            Validation.IsNonNegative(input.PVT.PSIPressure, "pressure");
 
 
         }
@@ -85,7 +86,8 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
                     return liquidDensity * liquidHoldup.Value + gasDensity * (1 - liquidHoldup.Value);
 
                 default:
-                    throw new InvalidParameterException("Unsupported flow regime");
+                    throw new InvalidParameterException(new ErrorMessage("Flow Regime Detection Error", 
+                        "Unsupported flow regime"));
 
 
             }
@@ -120,7 +122,8 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
                     twoPhaseDensity = _determineSlipTwoPhaseDensity(input, flowRegime, liquidHoldup);
                     break;
                 default:
-                    throw new InvalidParameterException("Unsupported flow regime");
+                    throw new InvalidParameterException(new ErrorMessage("Flow Regime Detection Error", 
+                        "Unsupported flow regime"));
 
 
             }
@@ -188,7 +191,8 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
 
             }
 
-            throw new InvalidParameterException("Unsupported flow regime");
+            throw new InvalidParameterException(new ErrorMessage("Flow Regime Detection Error",
+                "Unsupported flow regime"));
 
         }
 
@@ -251,8 +255,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
 
             double y = 1 - _determineAccelerationTerm(input);
 
-            if (y <= 0)
-                throw new InvalidParameterException("Duns and Ros acceleration factor should be less than 1 and positive.");
+            Validation.IsInRange(y, 0, 1, "Duns and Ros acceleration factor");
 
             double pressureGradient = x / y;
 
@@ -273,14 +276,15 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double denominator = (Lm - Ls);
 
             if (Math.Abs(denominator) < 1e-6)
-                throw new InvalidParameterException("Invalid transition region: Lm equals Ls.");
+                throw new InvalidParameterException(new ErrorMessage("Flow Regime Detection Error",
+                    "Invalid transition region: Lm equals Ls."));
 
             double A = (Lm - Ngv) / denominator;
 
             if (A < 0 || A > 1)
-                throw new InvalidParameterException(
+                throw new InvalidParameterException(new ErrorMessage("Flow Regime Detection Error",
                     "Invalid transition flow region: the calculated interpolation factor is outside the valid range. " +
-                    "Please verify the liquid and gas velocity numbers.");
+                    "Please verify the liquid and gas velocity numbers."));
 
             double B = 1 - A;
 
@@ -310,7 +314,8 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
                     return _determinePressureGradientTransitionFlow(input, ref validationResult);
 
                 default:
-                    throw new InvalidParameterException("Unsupported flow regime");
+                    throw new InvalidParameterException(new ErrorMessage("Flow Regime Detection Error",
+                        "Unsupported flow regime"));
 
             }
 

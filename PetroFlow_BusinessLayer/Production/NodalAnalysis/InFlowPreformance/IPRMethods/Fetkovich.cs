@@ -1,5 +1,7 @@
-﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Exceptions;
+﻿using PetroFlow_BusinessLayer.General_Utility.Validation;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Exceptions;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Interfaces;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPR_Utility;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation;
@@ -66,13 +68,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             //=============================
             // --- Reservoir Pressure ---
             //=============================
-            if (input.ReservoirPressure == null)
-                throw new MissingRequiredInputException(
-                    "Cannot generate IPR: Reservoir pressure has not been provided.");
-
-            if (input.ReservoirPressure <= 0)
-                throw new InvalidParameterException(
-                    "Invalid reservoir pressure: A positive value greater than zero is required.");
+            Validation.IsGreaterThanZero(input.ReservoirPressure, "Reservoir Pressure");
 
             //=========================
             // --- Well Exponent ---
@@ -80,52 +76,47 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             if (input.WellExponent.HasValue)
             {
 
-                if (input.WellExponent < 0.568 ||
-                    input.WellExponent > 1)
+                const double MinRecommendedExponent = 0.568;
+                const double MaxRecommendedExponent = 1.0;
+
+                if (input.WellExponent < MinRecommendedExponent ||
+                    input.WellExponent > MaxRecommendedExponent)
+                {
                     validationResult.AddWarning(
-                        "Well exponent is outside the recommended range for the Fetkovich model (0.568–1.0).");
+                        new ErrorMessage(
+                            "Outside Recommended Range",
+                            $"Well exponent is outside the recommended range for the Fetkovich model ({MinRecommendedExponent}–{MaxRecommendedExponent})."));
+                }
 
 
             }
-
-            //==========================
-            // --- Flow Coefficient ---
-            //==========================
-
-
 
             //=====================
             // --- Test Data ---
             //=====================
             if (input.TestsData == null)
-                throw new MissingRequiredInputException(
-                    "Cannot generate IPR: Test data has not been provided.");
+                throw new MissingRequiredInputException(IPRErrorMessages.MissingTestData);
 
             if (input.TestsData.Count < 3 && input.WellExponent == null)
-                throw new InvalidParameterException(
-                    "Invalid test data: At least three test data rows is required.");
+                throw new InvalidParameterException(IPRErrorMessages.InvalidTestDataCount("Fetkovich", 3));
 
             if (input.TestsData.Count < 1 &&
                 input.WellExponent != null &&
                 input.PresentFlowCoefficient == null)
-                throw new InvalidParameterException(
-                    "Invalid test data: At least one test data row is required.");
+                throw new InvalidParameterException(IPRErrorMessages.InvalidTestDataCount("Fetkovich", 1));
 
             if (input.TestsData.Any(x => x.FlowRate <= 0))
-                throw new InvalidParameterException(
-                    "Invalid test data: One or more flow rates are zero or negative.");
+                throw new InvalidParameterException(IPRErrorMessages.InvalidTestDataFlowRate);
 
             if (input.TestsData.Any(x => x.BottomHolePressure <= 0))
-                throw new InvalidParameterException(
-                    "Invalid test data: One or more bottom hole pressures are zero or negative.");
+                throw new InvalidParameterException(IPRErrorMessages.InvalidTestDataBottomHolePressure);
 
             if (input.TestsData.Any(x => x.BottomHolePressure >= input.ReservoirPressure))
                 throw new InvalidParameterException(
-                    "Bottom-hole pressure must be less than reservoir pressure.");
+                    IPRErrorMessages.InvalidTestDataBottomHolePressureGreaterThanReservoirPressure);
 
             if (input.TestsData.Count > 1 && input.WellExponent == null)
-                validationResult.AddWarning(
-                    "Multiple test data rows were provided. Only the first row will be used.");
+                validationResult.AddWarning(IPRErrorMessages.OnlyOneTestDataPointWillBeUsedWarning);
 
 
             //================================
@@ -133,21 +124,12 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             //================================
             if (input.BubblePointPressure == null)
             {
-                validationResult.AddWarning(
-                    "Bubble point pressure was not provided. Reservoir will be assumed saturated.");
+                validationResult.AddWarning(IPRErrorMessages.BubblePointPressureNotProvidedWarning);
             }
             else
             {
 
-                if (input.BubblePointPressure <= 0)
-                    throw new InvalidParameterException(
-                        "Invalid bubble point pressure: A positive value greater than zero is required.");
-
-                if (input.BubblePointPressure.Value > input.ReservoirPressure.Value)
-                {
-                    validationResult.AddWarning(
-                        "Bubble point pressure is greater than reservoir pressure. Reservoir will behave as saturated.");
-                }
+                Validation.IsGreaterThanZero(input.BubblePointPressure, "Bubble Point Pressure");
 
             }
 
@@ -359,19 +341,10 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             //=====================================
             // --- Future Reservoir Pressure ---
             //=====================================
-            if (input.FutureReservoirPressure == null)
-                throw new MissingRequiredInputException(
-                    "Cannot generate Future IPR: Future Reservoir pressure has not been provided.");
+            Validation.IsGreaterThanZero(input.FutureReservoirPressure, "Future Reservoir Pressure");
 
-            if (input.FutureReservoirPressure <= 0)
-                throw new InvalidParameterException(
-                    "Invalid future reservoir pressure: A positive value greater than zero is required.");
-
-            if (input.FutureReservoirPressure > input.ReservoirPressure)
-                throw new InvalidParameterException(
-                    "Invalid future reservoir pressure:" +
-                    " future reservoir pressure must be less than present reservoir pressure.");
-
+            Validation.IsGreaterThan(input.ReservoirPressure, input.FutureReservoirPressure,
+                "Future Reservoir Pressure", "Reservoir Pressure");
 
         }
 

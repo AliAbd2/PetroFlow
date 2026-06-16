@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Production\NodalAnalysis\Utility\ShearedData\" />
+    <Folder Include="Production\NodalAnalysis\Utility\VLP Exceptions\" />
   </ItemGroup>
 
 </Project>
