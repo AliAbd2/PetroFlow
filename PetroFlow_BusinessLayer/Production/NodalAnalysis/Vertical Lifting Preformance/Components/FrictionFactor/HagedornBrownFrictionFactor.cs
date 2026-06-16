@@ -20,29 +20,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             ref NodalAnalysisValidationResult validationResult)
         {
 
-            Validation.Missing(input.LiquidSuperficialVelocity, "liquid superficial velocity");
-            Validation.GreaterThanZero(input.LiquidSuperficialVelocity.Value, "liquid superficial velocity");
 
-            Validation.Missing(input.GasSuperficialVelocity, "gas superficial velocity");
-            Validation.GreaterThanZero(input.GasSuperficialVelocity.Value, "gas superficial velocity");
-
-            Validation.Missing(input.LiquidDensity, "liquid density");
-            Validation.GreaterThanZero(input.LiquidDensity.Value, "liquid density");
-
-            Validation.Missing(input.GasDensity, "gas density");
-            Validation.GreaterThanZero(input.GasDensity.Value, "gas density");
-
-            Validation.Missing(input.PipeInsideDiameter, "pipe inside diameter");
-            Validation.GreaterThanZero(input.PipeInsideDiameter.Value, "pipe inside diameter");
-
-            Validation.Missing(input.PipeRelativeRoughness, "pipe relative roughness");
-            Validation.GreaterThanZero(input.PipeRelativeRoughness.Value, "pipe relative roughness");
-
-            Validation.Missing(derivedProperties.SlipMixtureViscosity, "slip mixture viscosity");
-            Validation.GreaterThanZero(derivedProperties.SlipMixtureViscosity.Value, "slip mixture viscosity");
-
-            Validation.Missing(derivedProperties.NoSlipMixtureDensity, "no slip mixture density");
-            Validation.GreaterThanZero(derivedProperties.NoSlipMixtureDensity.Value, "no slip mixture density");
 
         }
 

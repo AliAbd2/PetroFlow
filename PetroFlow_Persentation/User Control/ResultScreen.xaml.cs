@@ -83,8 +83,39 @@ namespace PetroFlow_Persentation.User_Control
                 for (int i = 0; i < iPR.Count; i++)
                 {
 
-                    nodalAnalysisResult.Add(new NodalAnalysisDataRow(Math.Round(iPR[i].FlowRate),
-                        Math.Round(iPR[i].BottomHolePressure), Math.Round(vLP[i].BottomHolePressure)));
+                    if (i < iPR.Count && i < vLP.Count)
+                    {
+
+                        nodalAnalysisResult.Add(new NodalAnalysisDataRow(Math.Round(iPR[i].FlowRate),
+                             Math.Round(iPR[i].BottomHolePressure), Math.Round(vLP[i].BottomHolePressure)));
+
+                        continue;
+
+                    }
+
+
+                    if (i < iPR.Count)
+                    {
+
+                        nodalAnalysisResult.Add(new NodalAnalysisDataRow(Math.Round(iPR[i].FlowRate),
+                            Math.Round(iPR[i].BottomHolePressure), 0));
+
+                        continue;
+
+                    }
+
+
+                    if (i < vLP.Count)
+                    {
+
+                        nodalAnalysisResult.Add(new NodalAnalysisDataRow(Math.Round(vLP[i].FlowRate),
+                            0, Math.Round(vLP[i].BottomHolePressure)));
+
+                        continue;
+
+                    }
+
+
 
                 }
 

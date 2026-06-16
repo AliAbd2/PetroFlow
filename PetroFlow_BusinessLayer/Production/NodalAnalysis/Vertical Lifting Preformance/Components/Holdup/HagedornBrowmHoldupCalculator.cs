@@ -22,63 +22,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             VLPDerivedProperties? derivedProperties = null)
         {
 
-            if (input.LiquidVelocityNumber.HasValue)
-                Validation.GreaterThanZero(input.LiquidVelocityNumber.Value, "liquid velocity number");
-            else
-            {
-                Validation.Missing(input.LiquidSuperficialVelocity, "liquid superficial velocity");
-                Validation.GreaterThanZero(input.LiquidSuperficialVelocity.Value,
-                    "liquid superficial velocity");
-            }
 
-
-            if (input.GasVelocityNumber.HasValue)
-                Validation.GreaterThanZero(input.GasVelocityNumber.Value, "gas velocity number");
-            else
-            {
-
-                Validation.Missing(input.GasSuperficialVelocity, "gas superficial velocity");
-                Validation.GreaterThanZero(input.GasSuperficialVelocity.Value,
-                    "gas superficial velocity");
-
-            }
-
-            if (input.PipeDiameterNumber.HasValue)
-                Validation.GreaterThanZero(input.PipeDiameterNumber.Value, "pipe diameter number");
-            else
-            {
-
-                Validation.Missing(input.PipeInsideDiameter, "pipe inside diameter");
-                Validation.GreaterThanZero(input.PipeInsideDiameter.Value, 
-                    "pipe inside diameter");
-
-            }
-
-            if (input.LiquidViscosityNumber.HasValue)
-                Validation.GreaterThanZero(input.LiquidViscosityNumber.Value, "liquid viscosity number");
-            else
-            {
-                Validation.Missing(input.LiquidViscosity, "liquid viscosity");
-                Validation.GreaterThanZero(input.LiquidViscosity.Value, "liquid viscosity");
-
-            }
-
-
-            if (!input.LiquidVelocityNumber.HasValue || !input.GasVelocityNumber.HasValue ||
-                !input.PipeDiameterNumber.HasValue || !input.LiquidViscosityNumber.HasValue)
-            {
-
-                Validation.Missing(input.LiquidDensity, "liquid density");
-                Validation.GreaterThanZero(input.LiquidDensity.Value, "liquid density");
-
-                Validation.Missing(input.LiquidSurfaceTension, "liquid surface tension");
-                Validation.GreaterThanZero(input.LiquidSurfaceTension.Value,
-                    "liquid surface tension");
-
-            }
-
-            Validation.Missing(input.PVT.PSIPressure, "pressure");
-            Validation.GreaterThanZero(input.PVT.PSIPressure.Value, "pressure");
 
         }
 

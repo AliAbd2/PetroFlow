@@ -163,7 +163,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             // slope = (n * sum(x*y) - sum(x) * sum(y)) / (n * sum(x^2) - sum(x)^2)
             // where n is the number of records.
 
-            if (input.WellExponent != null)
+            if (input.WellExponent.HasValue && input.FlowCoefficient.HasValue)
                 return (input.WellExponent.Value,
                     input.FlowCoefficient.Value);
 

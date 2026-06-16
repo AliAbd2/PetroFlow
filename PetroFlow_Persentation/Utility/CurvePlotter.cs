@@ -21,7 +21,7 @@ namespace PetroFlow_PresentationLayer
 
             Scatter plot = _plot.Add.Scatter(x, y);
 
-            plot.LegendText = settings.LegendText;
+            plot.LegendText = name;
             plot.LinePattern = ScottPlot.LinePattern.Solid;
             plot.LineWidth = 2;
             plot.MarkerShape = ScottPlot.MarkerShape.FilledCircle;

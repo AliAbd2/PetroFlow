@@ -42,59 +42,125 @@ namespace PetroFlow_Persentation.User_Control
             VLPModelSelectedNoSlipNoFlowRegime.IsChecked = true;
 
             WellHeadPressureInput.Text = "";
-            WellHeadPressureUnit.Items.Add("psia");
-            WellHeadPressureUnit.SelectedIndex = 0;
+            if (WellHeadPressureUnit.Items.Count == 0)
+            {
+
+                WellHeadPressureUnit.Items.Add("psia");
+                WellHeadPressureUnit.SelectedIndex = 0;
+
+            }
 
             TotalDepthInput.Text = "";
-            TotalDepthUnit.Items.Add("ft");
-            TotalDepthUnit.SelectedIndex = 0;
+            if (TotalDepthUnit.Items.Count == 0)
+            {
+
+                TotalDepthUnit.Items.Add("ft");
+                TotalDepthUnit.SelectedIndex = 0;
+
+            }
 
             TubingSizeInput.Text = "";
-            TubingSizeUnit.Items.Add("ft");
-            TubingSizeUnit.SelectedIndex = 0;
+            if (TubingSizeUnit.Items.Count == 0)
+            {
+
+                TubingSizeUnit.Items.Add("ft");
+                TubingSizeUnit.SelectedIndex = 0;
+
+            }
 
             PipeRelativeRoughnessInput.Text = "";
-            PipeRelativeRoughnessUnit.Items.Add("dimensionless");
-            PipeRelativeRoughnessUnit.SelectedIndex = 0;
+            if (PipeRelativeRoughnessUnit.Items.Count == 0)
+            {
+
+                PipeRelativeRoughnessUnit.Items.Add("dimensionless");
+                PipeRelativeRoughnessUnit.SelectedIndex = 0;
+
+            }
 
             GravityAccelerationInput.Text = "32.2";
-            GravityAccelerationUnit.Items.Add("ft/sec²");
-            GravityAccelerationUnit.SelectedIndex = 0;
+            if (GravityAccelerationUnit.Items.Count == 0)
+            {
+
+                GravityAccelerationUnit.Items.Add("ft/sec²");
+                GravityAccelerationUnit.SelectedIndex = 0;
+
+            }
 
 
             ReservoirTemperatureInput.Text = "";
-            ReserovirTemperatureUnit.Items.Add("°F");
-            ReserovirTemperatureUnit.SelectedIndex = 0;
+            if (ReserovirTemperatureUnit.Items.Count == 0)
+            {
+
+                ReserovirTemperatureUnit.Items.Add("°F");
+                ReserovirTemperatureUnit.SelectedIndex = 0;
+
+            }
 
             BubblePointPressureInput.Text = "";
-            BubblePointPressureUnit.Items.Add("psig");
-            BubblePointPressureUnit.SelectedIndex = 0;
+            if (BubblePointPressureUnit.Items.Count == 0)
+            {
+
+                BubblePointPressureUnit.Items.Add("psig");
+                BubblePointPressureUnit.SelectedIndex = 0;
+
+            }
 
             OilAPISInput.Text = "";
-            OilAPISUnit.Items.Add("API");
-            OilAPISUnit.SelectedIndex = 0;
+            BubblePointPressureInput.Text = "";
+            if (OilAPISUnit.Items.Count == 0)
+            {
+
+                OilAPISUnit.Items.Add("API");
+                OilAPISUnit.SelectedIndex = 0;
+
+            }
 
             LiquidViscosityInput.Text = "";
-            LiquidViscosityUnit.Items.Add("cp");
-            LiquidViscosityUnit.SelectedIndex = 0;
+            if (LiquidViscosityUnit.Items.Count == 0)
+            {
+
+                LiquidViscosityUnit.Items.Add("cp");
+                LiquidViscosityUnit.SelectedIndex = 0;
+
+            }
 
             SurfaceTensionInput.Text = "";
-            SurfaceTensionUnit.Items.Add("dynes/cm");
-            SurfaceTensionUnit.SelectedIndex = 0;
+            if (SurfaceTensionUnit.Items.Count == 0)
+            {
+
+                SurfaceTensionUnit.Items.Add("dynes/cm");
+                SurfaceTensionUnit.SelectedIndex = 0;
+
+            }
 
             GasSpecificGravityInput.Text = "";
-            GasSpecificGravityUnit.Items.Add("dimensionless");
-            GasSpecificGravityUnit.SelectedIndex = 0;
+            if (GasSpecificGravityUnit.Items.Count == 0)
+            {
+
+                GasSpecificGravityUnit.Items.Add("dimensionless");
+                GasSpecificGravityUnit.SelectedIndex = 0;
+
+            }
 
             GasViscosityInput.Text = "";
-            GasViscosityUnit.Items.Add("cp");
-            GasViscosityUnit.SelectedIndex = 0;
+            if (GasViscosityUnit.Items.Count == 0)
+            {
+
+                GasViscosityUnit.Items.Add("cp");
+                GasViscosityUnit.SelectedIndex = 0;
+
+            }
 
             GasOilRatioInput.Text = "";
-            GasOilRatioUnit.Items.Add("SCF/STB");
-            GasOilRatioUnit.SelectedIndex = 0;
+            if (GasOilRatioUnit.Items.Count == 0)
+            {
 
-            CurveLabelInput.Text = "VLP";
+                GasOilRatioUnit.Items.Add("SCF/STB");
+                GasOilRatioUnit.SelectedIndex = 0;
+
+            }
+
+            VLPCurveLabelInput.Text = "VLP";
             DepthStepSizeInput.Text = "10";
             FlowRateStepSizeInput.Text = "10";
             MinimumFlowRateInput.Text = "10";

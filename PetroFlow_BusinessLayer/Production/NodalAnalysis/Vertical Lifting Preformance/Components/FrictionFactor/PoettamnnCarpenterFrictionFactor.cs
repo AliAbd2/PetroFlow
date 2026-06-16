@@ -19,20 +19,9 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
         protected override void ValidateRawData(VLPWorkingData input,
             VLPDerivedProperties derivedProperties,
             ref NodalAnalysisValidationResult validationResult)
-
         {
 
-            Validation.Missing(input.GasSuperficialVelocity, "gas superficial velocity");
-            Validation.NonNegative(input.GasSuperficialVelocity.Value, "gas superficial velocity");
 
-            Validation.Missing(input.LiquidSuperficialVelocity, "liquid superficial velocity");
-            Validation.NonNegative(input.LiquidSuperficialVelocity.Value, "liquid superficial velocity");
-
-            Validation.Missing(derivedProperties.NoSlipMixtureDensity, "no slip mixture density");
-            Validation.GreaterThanZero(derivedProperties.NoSlipMixtureDensity.Value, "no slip mixture density");
-
-            Validation.Missing(input.PipeInsideDiameter, "pipe inside diameter");
-            Validation.GreaterThanZero(input.PipeInsideDiameter.Value, "pipe inside diameter");
 
         }
 
@@ -53,8 +42,6 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double totalSuperficialVelocity, ref NodalAnalysisValidationResult validationResult)
         {
 
-            Validation.GreaterThanZero(reynoldsNumberNumerator, "Reynold number numerator");
-            Validation.GreaterThanZero(totalSuperficialVelocity, "total superficial velocity");
 
             reynoldsNumberNumerator = Math.Clamp(reynoldsNumberNumerator, 2, 100);
 

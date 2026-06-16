@@ -10,6 +10,6 @@
   </Project>
   <Project Path="PetroFlow_Persentation/PetroFlow_PersentationLayer.csproj" Id="5c808f14-7555-4b0b-8e8d-8e62b5fe6d19">
     <Platform Solution="*|x64" Project="x64" />
-    <Platform Solution="Debug|x86" Project="x86" />
+    <Platform Solution="*|x86" Project="x86" />
   </Project>
 </Solution>

@@ -78,7 +78,7 @@ namespace PetroFlow_Persentation
 
             ResultScreen.LoadNodalAnalysisResult(IPR, VLP);
 
-            ResultScreen.Plot(IPR, "test", ScottPlot.Color.FromColor(System.Drawing.Color.Blue));
+            ResultScreen.Plot(IPR, IPRScreen.IPRCurveLabelInput.Text, ScottPlot.Color.FromColor(System.Drawing.Color.Blue));
 
         }
 
@@ -122,7 +122,8 @@ namespace PetroFlow_Persentation
 
             ResultScreen.LoadNodalAnalysisResult(IPR, VLP);
 
-            ResultScreen.Plot(VLP, "test", ScottPlot.Color.FromColor(System.Drawing.Color.Blue));
+            ResultScreen.Plot(VLP, VLPScreen.VLPCurveLabelInput.Text,
+                ScottPlot.Color.FromColor(System.Drawing.Color.Red));
 
         }
 

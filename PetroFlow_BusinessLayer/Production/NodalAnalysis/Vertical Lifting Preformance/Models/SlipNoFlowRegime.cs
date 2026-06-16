@@ -43,26 +43,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             ref NodalAnalysisValidationResult validationResult)
         {
 
-            Validation.Missing(input.LiquidDensity, "liquid density");
-            Validation.GreaterThanZero(input.LiquidDensity.Value, "liquid density");
 
-            Validation.Missing(input.GasDensity, "gas density");
-            Validation.GreaterThanZero(input.GasDensity.Value, "gas density");
-
-            Validation.Missing(input.LiquidViscosity, "liquid viscosity");
-            Validation.GreaterThanZero(input.LiquidViscosity.Value, "liquid viscosity");
-
-            Validation.Missing(input.GasViscosity, "gas viscosity");
-            Validation.GreaterThanZero(input.GasViscosity.Value, "gas viscosity");
-
-            Validation.Missing(input.GravityAcceleration, "gravity acceleration");
-            Validation.GreaterThanZero(input.GravityAcceleration.Value, "gravity acceleration");
-
-            Validation.Missing(input.LiquidSuperficialVelocity, "liquid superficial velocity");
-            Validation.GreaterThanZero(input.LiquidSuperficialVelocity.Value, "liquid superficial velocity");
-
-            Validation.Missing(input.GasSuperficialVelocity, "gas superficial velocity");
-            Validation.GreaterThanZero(input.GasSuperficialVelocity.Value, "gas superficial velocity");
 
 
 

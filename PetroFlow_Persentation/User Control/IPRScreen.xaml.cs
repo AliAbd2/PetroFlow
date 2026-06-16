@@ -71,7 +71,7 @@ namespace PetroFlow_Persentation.User_Control
             inputData.PresentOilFormationVolumeFactor = GeneralMethods.ReadDouble(PresentOilFormationVolumeFactorInput);
 
             inputData.FutureReservoirPressure = GeneralMethods.ReadDouble(FutureReservoirPressureInput);
-            inputData.FutureOilRelativePermeability = GeneralMethods.ReadDouble(FutureReservoirPressureInput);
+            inputData.FutureOilRelativePermeability = GeneralMethods.ReadDouble(FutureOilRelativePermeabilityInput);
             inputData.FutureOilViscosity = GeneralMethods.ReadDouble(FutureOilViscosityInput);
             inputData.FutureOilFormationVolumeFactor = GeneralMethods.ReadDouble(FutureOilFormationVolumeFactorInput);
 
@@ -96,56 +96,123 @@ namespace PetroFlow_Persentation.User_Control
             TestDataDataGrid.ItemsSource = _testData;
 
             PresentReservoirPressureInput.Text = "";
-            PresentReservoirPressureUnit.Items.Add("psig");
-            PresentReservoirPressureUnit.SelectedIndex = 0;
+            if (PresentReservoirPressureUnit.Items.Count == 0)
+            {
+
+                PresentReservoirPressureUnit.Items.Add("psig");
+                PresentReservoirPressureUnit.SelectedIndex = 0;
+
+            }
 
             BubblePoitPressureInput.Text = "";
-            BubblePointPressureUnit.Items.Add("psig");
-            BubblePointPressureUnit.SelectedIndex = 0;
+            if (BubblePointPressureUnit.Items.Count == 0)
+            {
+
+                BubblePointPressureUnit.Items.Add("psig");
+                BubblePointPressureUnit.SelectedIndex = 0;
+
+            }
 
             PresentOilRelativePermeabilityInput.Text = "";
-            PresentOilRelativePermeabilityUnit.Items.Add("fraction");
-            PresentOilRelativePermeabilityUnit.SelectedIndex = 0;
+            if (PresentOilRelativePermeabilityUnit.Items.Count == 0)
+            {
+
+                PresentOilRelativePermeabilityUnit.Items.Add("fraction");
+                PresentOilRelativePermeabilityUnit.SelectedIndex = 0;
+
+            }
 
             PresentOilViscosityInput.Text = "";
-            PresentOilViscosityUnit.Items.Add("cp");
-            PresentOilViscosityUnit.SelectedIndex = 0;
+            if (PresentOilViscosityUnit.Items.Count == 0)
+            {
+
+                PresentOilViscosityUnit.Items.Add("cp");
+                PresentOilViscosityUnit.SelectedIndex = 0;
+
+            }
 
             PresentOilFormationVolumeFactorInput.Text = "";
-            PresentOilFormationVolumeFactorUnit.Items.Add("bbl/STB");
-            PresentOilFormationVolumeFactorUnit.SelectedIndex = 0;
+            if (PresentOilFormationVolumeFactorUnit.Items.Count == 0)
+            {
+
+                PresentOilFormationVolumeFactorUnit.Items.Add("bbl/STB");
+                PresentOilFormationVolumeFactorUnit.SelectedIndex = 0;
+
+            }
 
             FutureReservoirPressureInput.Text = "";
-            FutureReservoirPressureUnit.Items.Add("psig");
-            FutureReservoirPressureUnit.SelectedIndex = 0;
+            if (FutureReservoirPressureUnit.Items.Count == 0)
+            {
+
+                FutureReservoirPressureUnit.Items.Add("psig");
+                FutureReservoirPressureUnit.SelectedIndex = 0;
+
+            }
 
             FutureOilRelativePermeabilityInput.Text = "";
-            FutureOilRelativePermeabilityUnit.Items.Add("fraction");
-            FutureOilRelativePermeabilityUnit.SelectedIndex = 0;
+            if (FutureOilRelativePermeabilityUnit.Items.Count == 0)
+            {
+
+                FutureOilRelativePermeabilityUnit.Items.Add("fraction");
+                FutureOilRelativePermeabilityUnit.SelectedIndex = 0;
+
+            }
 
             FutureOilViscosityInput.Text = "";
-            FutureOilViscosityUnit.Items.Add("cp");
-            FutureOilViscosityUnit.SelectedIndex = 0;
+            if (FutureOilViscosityUnit.Items.Count == 0)
+            {
+
+                FutureOilViscosityUnit.Items.Add("cp");
+                FutureOilViscosityUnit.SelectedIndex = 0;
+
+            }
 
             FutureOilFormationVolumeFactorInput.Text = "";
-            FutureOilFormationVolumeFactorUnit.Items.Add("bbl/STB");
-            FutureOilFormationVolumeFactorUnit.SelectedIndex = 0;
+            if (FutureOilFormationVolumeFactorUnit.Items.Count == 0)
+            {
+
+                FutureOilFormationVolumeFactorUnit.Items.Add("bbl/STB");
+                FutureOilFormationVolumeFactorUnit.SelectedIndex = 0;
+
+            }
 
             TestFlowEfficiecyInput.Text = "";
-            TestFlowEfficiencyUnit.Items.Add("dimensionless");
-            TestFlowEfficiencyUnit.SelectedIndex = 0;
+            if (TestFlowEfficiencyUnit.Items.Count == 0)
+            {
+
+                TestFlowEfficiencyUnit.Items.Add("dimensionless");
+                TestFlowEfficiencyUnit.SelectedIndex = 0;
+
+            }
 
             NewFlowEfficiencyInput.Text = "";
-            NewFlowEfficincyUnit.Items.Add("dimensionless");
-            NewFlowEfficincyUnit.SelectedIndex = 0;
+            if (NewFlowEfficincyUnit.Items.Count == 0)
+            {
+
+                NewFlowEfficincyUnit.Items.Add("dimensionless");
+                NewFlowEfficincyUnit.SelectedIndex = 0;
+
+            }
 
             WellExponentInput.Text = "";
-            WellExponentUnit.Items.Add("dimensionless");
-            WellExponentUnit.SelectedIndex = 0;
+            if (WellExponentUnit.Items.Count == 0)
+            {
+
+                WellExponentUnit.Items.Add("dimensionless");
+                WellExponentUnit.SelectedIndex = 0;
+
+            }
+
 
             FlowCoefficientInput.Text = "";
-            FlowCoefficientUnit.Items.Add("STB/(day·psiaⁿ)");
-            FlowCoefficientUnit.SelectedIndex = 0;
+            if (FlowCoefficientUnit.Items.Count == 0)
+            {
+
+                FlowCoefficientUnit.Items.Add("STB/(day·psiaⁿ)");
+                FlowCoefficientUnit.SelectedIndex = 0;
+
+            }
+
 
 
             IPRCurveLabelInput.Text = "IPR";
@@ -211,7 +278,8 @@ namespace PetroFlow_Persentation.User_Control
                 GeneralMethods.EnableControl(FutureOilViscosityStackPanel);
                 GeneralMethods.EnableControl(FutureOilFormationVolumeFactorStackPanel);
 
-                GeneralMethods.DisableControl(TestFlowEfficiencyStackPanel);
+                GeneralMethods.EnableControl(TestFlowEfficiencyStackPanel);
+                TestFlowEfficiecyInput.Text = "1";
                 GeneralMethods.DisableControl(NewFlowEfficiencyStackPanel);
 
             }

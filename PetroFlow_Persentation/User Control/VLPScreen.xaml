@@ -369,7 +369,7 @@
                                        Grid.Row="5"
                                        Text="Maximum Flow Rate:"/>
 
-                            <TextBox Name="CurveLabelInput"
+                            <TextBox Name="VLPCurveLabelInput"
                                      Grid.Column="1"
                                      Grid.Row="0"
                                      Text="VLP"
