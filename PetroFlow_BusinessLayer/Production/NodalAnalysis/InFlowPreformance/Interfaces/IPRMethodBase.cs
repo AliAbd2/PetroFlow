@@ -12,6 +12,10 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Int
     public abstract class IPRMethodBase
     {
 
+        public abstract IPRMethodType MethodType { get; }
+
+        public abstract string DisplayName { get; }
+
         public List<InFlowDataRow> GenerateIPR(IPRInputData inputData,
             ref NodalAnalysisValidationResult validationResult)
         {

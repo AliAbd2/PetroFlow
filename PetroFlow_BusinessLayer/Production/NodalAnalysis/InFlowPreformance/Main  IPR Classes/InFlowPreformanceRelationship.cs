@@ -6,6 +6,16 @@ using PetroFlow_BusinessLayer.General_Utility.Validation;
 
 namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance
 {
+
+    public enum IPRMethodType
+    {
+        LinearProductivityIndex,
+        Vogel,
+        Standing,
+        Fetkovich,
+        Jones_Blount_Glaze
+    }
+
     public class InFlowPerformanceRelationship
     {
 

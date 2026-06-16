@@ -24,5 +24,17 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             return productivityIndex * (reservoirPressure - flowingPressure);
         }
 
+        public static double CalculateVogelTerm(
+            double pressureRatio)
+        {
+
+            double vogelLinearCoefficient = 0.2;
+            double vogelQuadraticCoefficient = 0.8;
+
+            return 1
+                - vogelLinearCoefficient * pressureRatio
+                - vogelQuadraticCoefficient * pressureRatio * pressureRatio;
+        }
+
     }
 }

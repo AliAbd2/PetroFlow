@@ -4,34 +4,20 @@ using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Interfa
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPR_Utility;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation;
-using System.ComponentModel.DataAnnotations;
 
 
 namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Methods
 {
 
-    // A class that represents Standing's method for IPR.
-    //
-    // Standing's method is a modification of Vogel's method that handles
-    // non-zero skin factor scenarios.
-    //
-    // Standing introduced the Flow Efficiency (FE) concept as a factor that
-    // represents the effect of changes in skin factor on the flowing bottom-hole pressure (Pwf).
-    //
-    // The Flow Efficiency concept can be used to evaluate the effect of increasing FE
-    // through stimulation.
-    //
-    // Therefore, this class is designed to store test values as objects and to provide
-    // methods that calculate the effect of changing FE.
-
-    public class Standing : IPRMethodBase, IFuturePredictable
+    internal class Standing : IPRMethodBase, IFuturePredictable
     {
-        public Standing()
-        {
 
+        public override IPRMethodType MethodType => IPRMethodType.Standing;
 
-        }
+        public override string DisplayName => "Standing";
 
+        const double StandingLinearCoefficient = 1.8;
+        const double StandingQuadraticCoefficient = 0.8;
 
         protected override void ValidateRawData(IPRInputData input, 
             ref NodalAnalysisValidationResult validationResult)
@@ -41,7 +27,6 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             // --- Reservoir Pressure ---
             //=============================
             Validation.IsGreaterThanZero(input.ReservoirPressure, "Reservoir Pressure");
-
 
             //=====================
             // --- Test Data ---
@@ -66,7 +51,6 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
                 validationResult.AddWarning(
                     IPRErrorMessages.OnlyOneTestDataPointWillBeUsedWarning);
 
-
             //===============================
             // --- Test Flow Efficiency ---
             //===============================
@@ -86,17 +70,11 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             // --- Bubble Point Pressure ---
             //================================
             if (input.BubblePointPressure == null)
-            {
                 validationResult.AddWarning(
                     IPRErrorMessages.BubblePointPressureNotProvidedWarning);
-            }
             else
-            {
-
                 Validation.IsGreaterThanZero(input.BubblePointPressure, "Bubble Point Pressure");
 
-
-            }
 
         }
 
@@ -106,13 +84,17 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             // Calculate the maximum flowrate at FE = 1(e.g. zero skin factor) using the following equation:
             // qo(max)(FE = 1) = qo / [ 1.8 * FE * (1 - (pwf / pr)) - 0.8 * (FE^2) * (1 - (pwf / pr))^2 ]
 
-            double ReservoirPressure = input.ReservoirPressure.Value;
-            double flowEfficiency = input.TestFlowEfficiency.Value;
+            double pr = input.ReservoirPressure.Value;
+            double FE = input.TestFlowEfficiency.Value;
+            double pwf = input.TestsData[0].BottomHolePressure;
+            double qTest = input.TestsData[0].FlowRate;
 
-            double x = 1 - input.TestsData[0].BottomHolePressure / ReservoirPressure; // 1 - pwf / pr
-            double y = 1.8 * flowEfficiency * (x) - 0.8 * Math.Pow(flowEfficiency, 2) * Math.Pow(x, 2);
+            double pressureRatio = 1 - pwf / pr;
+            double standingTerm = StandingLinearCoefficient * FE * pressureRatio 
+                - StandingQuadraticCoefficient * pressureRatio * pressureRatio
+                * pressureRatio * FE;
 
-            return input.TestsData[0].FlowRate / y;
+            return qTest / standingTerm;
 
 
         }
@@ -126,23 +108,29 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             // Calculate the productivity index using: J = qo / (Pr - Pwf),
             // otherwise: J = qo / {(pr - pb) + pb/1.8 * [1.8 * (1 - pwf / pb) - 0.8 * (FE) * (1 - (pwf / pb))^2]}.
 
-            double BubblePointPressure = input.BubblePointPressure.Value;
-            double ReservoirPressure = input.ReservoirPressure.Value;
-            double TestFlowEfficiency = input.TestFlowEfficiency.Value;
+            double pb = input.BubblePointPressure.Value;
+            double pr = input.ReservoirPressure.Value;
+            double FE = input.TestFlowEfficiency.Value;
+            double pwf = input.TestsData[0].BottomHolePressure;
+            double qTest = input.TestsData[0].FlowRate;
             double ProductivityIndex;
 
-            Validation.IsGreaterThanZero(BubblePointPressure, "Bubble Point Pressure");
 
-            if (input.TestsData[0].BottomHolePressure >= BubblePointPressure)
-                ProductivityIndex = IPRGeneralFunctions.ProductivityIndex(input.TestsData[0].FlowRate,
-                    ReservoirPressure, input.TestsData[0].BottomHolePressure);
+            Validation.IsGreaterThanZero(pb, "Bubble Point Pressure");
+
+            if (pwf >= pb)
+                ProductivityIndex = IPRGeneralFunctions.ProductivityIndex(qTest,
+                    pr, pwf);
             else
             {
 
-                double x = 1 - input.TestsData[0].BottomHolePressure / BubblePointPressure;// (1 - pwf / pb)
-                double y = 1.8 * x - 0.8 * (TestFlowEfficiency) * Math.Pow(x, 2);
-                ProductivityIndex = input.TestsData[0].FlowRate /
-                    ((ReservoirPressure - BubblePointPressure) + (BubblePointPressure / 1.8 * y));
+                double pressureRatio = 1 - pwf / pb;
+
+                double standingTerm = StandingLinearCoefficient * pressureRatio 
+                    - StandingQuadraticCoefficient * FE * pressureRatio * pressureRatio;
+
+                ProductivityIndex = qTest /
+                    ((pr - pb) + (pb / StandingLinearCoefficient * standingTerm));
             }
 
             return ProductivityIndex;
@@ -157,39 +145,48 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
             List<InFlowDataRow> data = new List<InFlowDataRow>(); // A list to store the data.
 
-            double flowEfficiency = input.TestFlowEfficiency.Value;
+            double FE = input.TestFlowEfficiency.Value;
+            double pr = input.ReservoirPressure.Value;
+            double minimumPressure = input.GenerationSettings.MinimumPressure;
+            double pressureStepSize = input.GenerationSettings.PressureStepSize;
 
-            double TestPresentMaxFlowRate = CalculateTestPresentMaxFlowRate(input);
-
-            IPRGenerationSettings GenerationSettings = new(input.GenerationSettings.PressureStepSize,
-                input.GenerationSettings.MinimumPressure);
-            double ReservoirPressure = input.ReservoirPressure.Value;
+            double testMaxFlowRate = CalculateTestPresentMaxFlowRate(input);
 
             // Standing's equation to generate the IPR has a limit and only valid if:
             // pwf >= pr(1 - (1 / FE )) so we need to add a minimum value of pwf
             // and since the minimum bottom hole pressure will shift from 0 we need to calculate the qo (max) using:
             // qo(max) = qo(max)(from test) * (0.624 + 0.376 * FE)
-            if (flowEfficiency > 1)
+            if (FE > 1)
             {
 
-                GenerationSettings.MinimumPressure = Math.Floor(ReservoirPressure * (1 - (1 / flowEfficiency))) + 1;
+                double standingFlowRateCorrectionCoefficient1 = 0.624;
+                double standingFlowRateCorrectionCoefficient2 = 0.376;
 
-                double maxFlowRate = TestPresentMaxFlowRate * (0.624 + 0.376 * flowEfficiency);
+                minimumPressure = Math.Floor(pr * (1 - (1 / FE))) + 1;
+
+                double maxFlowRate = testMaxFlowRate *
+                    (standingFlowRateCorrectionCoefficient1 
+                    + standingFlowRateCorrectionCoefficient2 * FE);
 
                 // adding the qo max to the data.
                 data.Add(new InFlowDataRow(0, maxFlowRate));
 
             }
 
+
+
             // Generating the IPR:
-            for (double pressure = GenerationSettings.MinimumPressure; pressure <= ReservoirPressure; 
-                pressure += GenerationSettings.PressureStepSize)
+            for (double pressure = minimumPressure; pressure <= pr; 
+                pressure += pressureStepSize)
             {
 
                 // the equation is: qo = qo(max) * [ 1.8 * (FE) * (1 - (pwf/pr)) - 0.8 * (FE)^2 * (1-(pwf/pr))^2 ]
-                double x = 1 - pressure / ReservoirPressure;// (1 - (pwf/pr))
-                double y = 1.8 * (flowEfficiency) * x - 0.8 * Math.Pow(flowEfficiency, 2) * Math.Pow(x, 2);
-                double flowrate = TestPresentMaxFlowRate * y;
+                double pressureRatio = 1 - pressure / pr;
+
+                double standingTerm = StandingLinearCoefficient * (FE) * pressureRatio
+                    - StandingQuadraticCoefficient * FE * FE * pressureRatio * pressureRatio;
+
+                double flowrate = testMaxFlowRate * standingTerm;
 
                 data.Add(new InFlowDataRow(pressure, flowrate));
 
@@ -216,30 +213,32 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
             List<InFlowDataRow> data = new List<InFlowDataRow>();
 
-            double ProductivityIndex = CalculateProductivityIndex(input);
-            IPRGenerationSettings GenerationSettings = new(input.GenerationSettings.PressureStepSize,
-                input.GenerationSettings.MinimumPressure);
-            double BubblePointPressure = input.BubblePointPressure.Value;
-            double ReservoirPressure = input.ReservoirPressure.Value;
+            double productivityIndex = CalculateProductivityIndex(input);
+            double minimumPressure = input.GenerationSettings.MinimumPressure;
+            double pressureStepSize = input.GenerationSettings.PressureStepSize;
+            double pb = input.BubblePointPressure.Value;
+            double pr = input.ReservoirPressure.Value;
             double flowEfficiency = input.TestFlowEfficiency.Value;
 
             // Generate the IPR:
-            for (double pressure = GenerationSettings.MinimumPressure; pressure <= ReservoirPressure; 
-                pressure += GenerationSettings.PressureStepSize)
+            for (double pressure = minimumPressure; pressure <= pr; 
+                pressure += pressureStepSize)
             {
 
                 double qo = 0;
 
-                if (pressure >= BubblePointPressure)
-                    qo = ProductivityIndex * (ReservoirPressure - pressure);
+                if (pressure >= pb)
+                    qo = productivityIndex * (pr - pressure);
                 else
                 {
                     // qo = J * (pr - pb) + ( J * Pb / 1.8) * [1.8 * (1 - pwf / pb) - 0.8 * (FE) * (1 - (pwf / pb))^2].
-                    double x = 1 - pressure / BubblePointPressure; // (1 - pwf / pb)
-                    double y = 1.8 * x - 0.8 * (flowEfficiency) * Math.Pow(x, 2); // [1.8 * (1 - pwf / pb) - 0.8 * (FE) * (1 - (pwf / pb))^2]
-                    double z = ProductivityIndex * (ReservoirPressure - BubblePointPressure); // J * (pr - pb)
+                    double pressureRatio = 1 - pressure / pb;
 
-                    qo = z + (ProductivityIndex * (double)BubblePointPressure / 1.8) * y;
+                    double standingTerm = StandingLinearCoefficient * pressureRatio
+                        - StandingQuadraticCoefficient * (flowEfficiency) * pressureRatio * pressureRatio;
+
+                    qo = productivityIndex * (pr - pb) 
+                        + productivityIndex * pb / StandingLinearCoefficient * standingTerm;
 
                 }
 
@@ -251,27 +250,16 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         }
 
-        /// <summary>
-        /// Generates the inflow performance relationship (IPR) data rows for the current reservoir conditions.
-        /// </summary>
-        /// <remarks>The method selects the appropriate calculation based on whether the reservoir is
-        /// saturated or undersaturated. Use the returned data to analyze well performance under the current reservoir
-        /// state.</remarks>
-        /// <returns>A list of <see cref="InFlowDataRow"/> objects representing the calculated IPR data. The list reflects
-        /// either saturated or undersaturated reservoir conditions, depending on the current state.</returns>
-
         protected override List<InFlowDataRow> ComputeIPR(IPRInputData input)
         {
-            bool IsSaturated;
+
             // Indicates whether the reservoir is saturated (i.e., Pr ≤ Pb).
             // If the bubble point pressure is not provided, the reservoir is treated as saturated.
-            if (input.BubblePointPressure.HasValue)
-                IsSaturated = input.ReservoirPressure.Value <=
-                    input.BubblePointPressure.Value;
-            else
-                IsSaturated = true;
+            bool isSaturated =
+                !input.BubblePointPressure.HasValue ||
+                input.ReservoirPressure!.Value <= input.BubblePointPressure.Value;
 
-            if (IsSaturated)
+            if (isSaturated)
                 return GenerateIPR_SaturatedReservoir(input);
             else
                 return GenerateIPR_UnderSaturatedReservoir(input);
@@ -320,24 +308,25 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             // 2. using the fluid properties calcuate the future max flowrate using the following eqution:
             // qo(max)F = qo(max)P * [ (PrF * (KroF / (μoF * BoF))) / (PrP * (KroP / (μoP * BoP)))]
 
-
-
             double TestPresentMaxFlowRate = CalculateTestPresentMaxFlowRate(input);
 
-            double FutureReservoirPressure = input.FutureReservoirPressure.Value;
-            double FutureOilReleativePremeability = input.FutureOilRelativePermeability.Value;
-            double FutureOilViscosity = input.FutureOilViscosity.Value;
-            double FutureOilFomationVoilumeFactor = input.FutureOilFormationVolumeFactor.Value;
+            double prp = input.ReservoirPressure.Value;
+            double prf = input.FutureReservoirPressure.Value;
+            double krop = input.PresentOilRelativePermeability.Value;
+            double krof = input.FutureOilRelativePermeability.Value;
+            double muop = input.PresentOilViscosity.Value;
+            double muf = input.FutureOilViscosity.Value;
+            double bop = input.PresentOilFormationVolumeFactor.Value;
+            double bof = input.FutureOilFormationVolumeFactor.Value;
 
-            double PresentPressureFunction = input.PresentOilRelativePermeability.Value /
-                (input.PresentOilViscosity.Value * input.PresentOilFormationVolumeFactor.Value);
+            double PresentPressureFunction = krop / (muop * bop);
 
-            double FuturePressureFunction = FutureOilReleativePremeability / (FutureOilViscosity * FutureOilFomationVoilumeFactor);
+            double FuturePressureFunction = krof / (muf * bof);
              
-            double x = (FutureReservoirPressure * FuturePressureFunction) 
-                / (input.ReservoirPressure.Value * PresentPressureFunction);// [ (PrF * (KroF / (μoF * BoF))) / (PrP * (KroP / (μoP * BoP)))]
+            double pressureFunctonRation = (prf * FuturePressureFunction) 
+                / (prp * PresentPressureFunction);
 
-            return TestPresentMaxFlowRate * x;
+            return TestPresentMaxFlowRate * pressureFunctonRation;
 
         }
 
@@ -351,24 +340,24 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
             List<InFlowDataRow> Data = new List<InFlowDataRow>();
 
-            double FutureReservoirPressure = input.FutureReservoirPressure.Value;
-            double FutureOilReleativePremeability = input.FutureOilRelativePermeability.Value;
-            double FutureOilViscosity = input.FutureOilViscosity.Value;
-            double FutureOilFomationVoilumeFactor = input.FutureOilFormationVolumeFactor.Value;
-            IPRGenerationSettings GenerationSettings = input.GenerationSettings;
+            double prf = input.FutureReservoirPressure.Value;
+            double minimumPressure = input.GenerationSettings.MinimumPressure;
+            double pressureStepSize = input.GenerationSettings.PressureStepSize;
 
             double futureMaxFlowrate = CalcualtFutureMaxFlowrate(input);
 
             // Genrate the IPR using the followin equation:
             // qoF = qo(max)F * [ 1 - 0.2 (Pwf/Pr) - 0.8(Pwf / Pr)^2 ]
 
-            for (double Pressure = GenerationSettings.MinimumPressure; Pressure <= FutureReservoirPressure; 
-                Pressure += GenerationSettings.PressureStepSize)
+            for (double Pressure = minimumPressure; Pressure <= prf; 
+                Pressure += pressureStepSize)
             {
 
-                double x = Pressure / FutureReservoirPressure;// (Pwf/Pr)
-                double y = 1 - 0.2 * x - 0.8 * x * x; // [ 1 - 0.2 (Pwf/Pr) - 0.8(Pwf / Pr)^2 ]
-                double oilFlowrate = futureMaxFlowrate * y;
+                double pressureRatio = Pressure / prf;
+
+                double vogelTerm = IPRGeneralFunctions.CalculateVogelTerm(pressureRatio);
+
+                double oilFlowrate = futureMaxFlowrate * vogelTerm;
 
                 Data.Add(new InFlowDataRow(Pressure, oilFlowrate));
 
