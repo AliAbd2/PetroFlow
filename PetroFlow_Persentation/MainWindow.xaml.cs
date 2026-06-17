@@ -7,6 +7,7 @@ using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preforma
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.Interfaces;
 using System.Windows;
 using PetroFlow_BusinessLayer.General_Utility.Exceptions;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility;
 
 
 namespace PetroFlow_Persentation
@@ -17,8 +18,8 @@ namespace PetroFlow_Persentation
     public partial class MainWindow : Window
     {
 
-        private List<InFlowDataRow> IPR;
-        private List<InFlowDataRow> VLP;
+        private List<FlowDataRow> IPR;
+        private List<FlowDataRow> VLP;
 
         public MainWindow()
         {
@@ -133,7 +134,7 @@ namespace PetroFlow_Persentation
                 return;
             }
 
-            InFlowDataRow OperatingPoint = new(0, 0);
+            FlowDataRow OperatingPoint = new(0, 0);
 
             try
             {

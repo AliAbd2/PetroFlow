@@ -1,5 +1,5 @@
-﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
-using PetroFlow_BusinessLayer.Production.NodalAnalysis.Main_Classes;
+﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.Main_Classes;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.ShearedData;
 using PetroFlow_PersentationLayer.Utility;
 using PetroFlow_PresentationLayer;
@@ -55,7 +55,7 @@ namespace PetroFlow_Persentation.User_Control
 
         }
 
-        public void Plot(List<InFlowDataRow> data, string curveName, ScottPlot.Color color)
+        public void Plot(List<FlowDataRow> data, string curveName, ScottPlot.Color color)
         {
 
             List<double> x = data.Select(x => x.FlowRate).ToList();
@@ -72,7 +72,7 @@ namespace PetroFlow_Persentation.User_Control
 
         }
 
-        public void LoadNodalAnalysisResult(List<InFlowDataRow>? iPR, List<InFlowDataRow>? vLP)
+        public void LoadNodalAnalysisResult(List<FlowDataRow>? iPR, List<FlowDataRow>? vLP)
         {
 
             nodalAnalysisResult.Clear();

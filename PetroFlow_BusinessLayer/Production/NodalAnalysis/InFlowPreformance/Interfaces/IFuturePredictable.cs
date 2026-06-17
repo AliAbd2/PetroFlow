@@ -1,4 +1,5 @@
 ﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Int
         void ValidateFutureRawDataInput(IPRInputData Input,
             ref NodalAnalysisValidationResult validationResult);
 
-        List<InFlowDataRow> GenerateFutureIPR(IPRInputData Input,
+        List<FlowDataRow> GenerateFutureIPR(IPRInputData Input,
             ref NodalAnalysisValidationResult validationResult);
 
     }

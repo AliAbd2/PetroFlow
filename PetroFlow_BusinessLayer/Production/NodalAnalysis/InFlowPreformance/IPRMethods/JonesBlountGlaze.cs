@@ -2,10 +2,9 @@
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Interfaces;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPR_Utility;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using static PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPR_Utility.IPRData.IPRMetadata;
 
 namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Methods
 {
@@ -42,11 +41,9 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         public override string DisplayName => "Jones-Blount-Glaze";
 
-        public JonesBlountGlaze()
-        {
-
-
-        }
+        public override IPRMethodFeatures Features =>
+            IPRMethodFeatures.Oil
+            | IPRMethodFeatures.VerticalWell;
 
         protected override void ValidateRawData(IPRInputData input,
             ref NodalAnalysisValidationResult validationResult)
@@ -89,7 +86,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             // Intercept = (sum(y) - Slope * sum(x)) / n
             // where n is the number of records.
 
-            List<InFlowDataRow> TestsData = inputData.TestsData.ToList();
+            List<FlowDataRow> TestsData = inputData.TestsData.ToList();
             double ReservoirPressure = inputData.ReservoirPressure.Value;
 
             int n = TestsData.Count;
@@ -112,7 +109,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         }
 
-        protected override List<InFlowDataRow> ComputeIPR(IPRInputData input)
+        protected override List<FlowDataRow> ComputeIPR(IPRInputData input)
         {
 
             // A method to generate the IPR using Jones, Blount, and Glaze method.
@@ -128,7 +125,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             // B  : Slope.
 
 
-            List<InFlowDataRow> DataRows = new List<InFlowDataRow>();
+            List<FlowDataRow> DataRows = new List<FlowDataRow>();
 
             double flowRate = 0;
 
@@ -154,7 +151,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
                 flowRate = x / (2 * Slope);
 
-                DataRows.Add(new InFlowDataRow(Pressure, flowRate));
+                DataRows.Add(new FlowDataRow(Pressure, flowRate));
 
             }
 

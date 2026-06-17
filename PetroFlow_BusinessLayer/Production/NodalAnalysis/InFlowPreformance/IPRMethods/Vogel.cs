@@ -2,7 +2,9 @@
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Interfaces;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPR_Utility;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation;
+using static PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPR_Utility.IPRData.IPRMetadata;
 
 namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Methods
 {
@@ -13,6 +15,10 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
         public override IPRMethodType MethodType => IPRMethodType.Vogel;
 
         public override string DisplayName => "Vogel";
+
+        public override IPRMethodFeatures Features => 
+            IPRMethodFeatures.Oil
+            | IPRMethodFeatures.VerticalWell;
 
         const double VogelDivisor = 1.8;
 
@@ -32,7 +38,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
                 throw new MissingRequiredInputException(IPRErrorMessages.MissingTestData);
 
             if (input.TestsData.Count < 1)
-                throw new InvalidParameterException(IPRErrorMessages.InvalidTestDataCount("Vogel", 1));
+                throw new InvalidParameterException(IPRErrorMessages.InvalidTestDataCount(DisplayName, 1));
 
             if (input.TestsData.Any(x => x.FlowRate <= 0))
                 throw new InvalidParameterException(IPRErrorMessages.InvalidTestDataFlowRate);
@@ -64,8 +70,8 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             // A method to calcualte the max flow rate.
 
             double pr = input.ReservoirPressure!.Value;
-            double pwf = input.TestsData[0].BottomHolePressure;
-            double qTest = input.TestsData[0].FlowRate;
+            double qTest = input.TestsData!.First().FlowRate;
+            double pwf = input.TestsData!.First().BottomHolePressure; ;
 
             double pressureRatio = pwf / pr;
 
@@ -80,9 +86,9 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             // Vogel undersaturated reservoir formulation.
 
             double pr = input.ReservoirPressure!.Value;
-            double pb = input.BubblePointPressure.Value;
-            double qTest = input.TestsData[0].FlowRate;
-            double pwf = input.TestsData[0].BottomHolePressure;
+            double pb = input.BubblePointPressure!.Value;
+            double qTest = input.TestsData!.First().FlowRate;
+            double pwf = input.TestsData!.First().BottomHolePressure;
 
             if (pwf >= input.BubblePointPressure.Value)
                 // calculating J using linear productivity index equation: J = qo / (Pr - Pwf).
@@ -104,12 +110,12 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         }
 
-        private List<InFlowDataRow> GenerateIPR_SaturatedReservoir(IPRInputData input)
+        private List<FlowDataRow> GenerateIPR_SaturatedReservoir(IPRInputData input)
         {
 
             // A method to generate the IPR data for a saturated reservoir using vogel's method.
 
-            List<InFlowDataRow> dataRows = new(); // a list to store the IPR data.
+            List<FlowDataRow> dataRows = new(); // a list to store the IPR data.
 
             // Calculate max flow rate:
             double maxFlowRate = CalculateMaxFlowRate(input);
@@ -129,7 +135,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
                 double flowRate = maxFlowRate
                     * IPRGeneralFunctions.CalculateVogelTerm(pressureRatio);
 
-                dataRows.Add(new InFlowDataRow(pressure, flowRate));
+                dataRows.Add(new FlowDataRow(pressure, flowRate));
 
 
             }
@@ -139,12 +145,12 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         }
 
-        private List<InFlowDataRow> GenerateIPR_UndersaturatedReservoir(IPRInputData input)
+        private List<FlowDataRow> GenerateIPR_UndersaturatedReservoir(IPRInputData input)
         {
 
             // A fuction to generate the IPR data for an undersaturated reservoir using vogel's method.
 
-            List<InFlowDataRow> data = new();
+            List<FlowDataRow> data = new();
 
             // Calculte Productivity Index:
             double productivityIndex = CalculateProductivityIndex(input);
@@ -184,7 +190,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
                 }
 
-                data.Add(new InFlowDataRow(pressure, flowrate));
+                data.Add(new FlowDataRow(pressure, flowrate));
             
             }
 
@@ -193,7 +199,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
         }
 
-        protected override List<InFlowDataRow> ComputeIPR(IPRInputData input)
+        protected override List<FlowDataRow> ComputeIPR(IPRInputData input)
         {
 
             // Indicates whether the reservoir is saturated (i.e., Pr ≤ Pb).

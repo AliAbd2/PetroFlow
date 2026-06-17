@@ -1,6 +1,7 @@
 ﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Interfaces;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Methods;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility;
 using PetroFlow_PersentationLayer.Utility;
 using System;
 using System.Collections.Generic;
@@ -25,7 +26,7 @@ namespace PetroFlow_Persentation.User_Control
     public partial class IPRScreen : System.Windows.Controls.UserControl
     {
 
-        private ObservableCollection<InFlowDataRow> _testData;
+        private ObservableCollection<FlowDataRow> _testData;
 
         public IPRScreen()
         {
@@ -40,19 +41,7 @@ namespace PetroFlow_Persentation.User_Control
         public IPRMethodBase GetIPRMethod()
         {
 
-            if (IPRMethodSelectedVogel.IsChecked.Value)
-                return new Vogel();
 
-            if (IPRMethodSelectedStanding.IsChecked.Value)
-                return new Standing();
-
-            if (IPRMethodSelectedFetkovich.IsChecked.Value)
-                return new Fetkovich();
-
-            if (IPRMethodSelectedJones.IsChecked.Value)
-                return new JonesBlountGlaze();
-
-            return null;
 
         }
 
@@ -491,7 +480,7 @@ namespace PetroFlow_Persentation.User_Control
         private void AddNewTestDataRow(object sender, RoutedEventArgs e)
         {
 
-            _testData.Add(new InFlowDataRow(0,0));
+            _testData.Add(new FlowDataRow(0,0));
 
         }
 

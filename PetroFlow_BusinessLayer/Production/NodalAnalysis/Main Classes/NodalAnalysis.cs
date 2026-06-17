@@ -2,6 +2,7 @@
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Interfaces;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Main_Classes;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.Data;
@@ -28,7 +29,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis
 
         }
 
-        public List<InFlowDataRow> GenerateIPR(IPRInputData input, 
+        public List<FlowDataRow> GenerateIPR(IPRInputData input, 
             ref NodalAnalysisValidationResult validationResult)
         {
 
@@ -36,7 +37,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis
 
         }
 
-        public List<InFlowDataRow> GenerateFututreIPR(IPRInputData input, 
+        public List<FlowDataRow> GenerateFututreIPR(IPRInputData input, 
             ref NodalAnalysisValidationResult validationResult)
         {
 
@@ -45,7 +46,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis
         }
 
 
-        public List<InFlowDataRow> GenerateVLP(VLPInputData input,
+        public List<FlowDataRow> GenerateVLP(VLPInputData input,
             ref NodalAnalysisValidationResult validationResult)
         {
 
@@ -53,7 +54,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis
 
         }
 
-        public List<InFlowDataRow> GeneraterVLPFromIPR(VLPInputData input, List<InFlowDataRow> iprData,
+        public List<FlowDataRow> GeneraterVLPFromIPR(VLPInputData input, List<FlowDataRow> iprData,
             ref NodalAnalysisValidationResult validationResult)
         {
 
@@ -62,7 +63,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis
         }
 
 
-        public static InFlowDataRow GetOperatingPoint(List<InFlowDataRow> IPR, List<InFlowDataRow> VLP)
+        public static FlowDataRow GetOperatingPoint(List<FlowDataRow> IPR, List<FlowDataRow> VLP)
         {
 
             double previousDifference = IPR[0].BottomHolePressure - VLP[0].BottomHolePressure;
@@ -75,7 +76,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis
 
                 if (currentDifference == 0)
                 {
-                    return new InFlowDataRow(
+                    return new FlowDataRow(
                         IPR[index].BottomHolePressure,
                         IPR[index].FlowRate);
                 }
@@ -99,7 +100,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis
                         (IPR[index].BottomHolePressure -
                          IPR[index - 1].BottomHolePressure);
 
-                    return new InFlowDataRow(
+                    return new FlowDataRow(
                         operatingPressure,
                         operatingFlowRate);
                 }

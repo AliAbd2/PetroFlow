@@ -1,10 +1,8 @@
 ﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
-using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Methods;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using static PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPR_Utility.IPRData.IPRMetadata;
+
 
 namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Interfaces
 {
@@ -14,9 +12,11 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Int
 
         public abstract IPRMethodType MethodType { get; }
 
+        public abstract IPRMethodFeatures Features { get; }
+
         public abstract string DisplayName { get; }
 
-        public List<InFlowDataRow> GenerateIPR(IPRInputData inputData,
+        public List<FlowDataRow> GenerateIPR(IPRInputData inputData,
             ref NodalAnalysisValidationResult validationResult)
         {
 
@@ -29,7 +29,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Int
         protected abstract void ValidateRawData(IPRInputData inputData,
             ref NodalAnalysisValidationResult validationResult);
 
-        protected abstract List<InFlowDataRow> ComputeIPR(IPRInputData inputData);
+        protected abstract List<FlowDataRow> ComputeIPR(IPRInputData inputData);
 
 
     }

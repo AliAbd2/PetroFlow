@@ -527,7 +527,6 @@
                             
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="20"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
@@ -549,25 +548,9 @@
 
                             </StackPanel>
 
-                            <StackPanel Name="NewFlowEfficiencyStackPanel"
-                                        Orientation="Horizontal"
-                                        Grid.Row="1">
-
-                                <TextBlock Name="NewFlowEfficiencyLabel"
-                                           Text="New Flow Efficiency:"
-                                           Width="175"/>
-
-                                <TextBox Name="NewFlowEfficiencyInput"
-                                         Width="200"/>
-
-                                <ComboBox Name="NewFlowEfficincyUnit"
-                                          Width="200"/>
-
-                            </StackPanel>
-
                             <StackPanel Name="WellExponentStackPanel"
                                         Orientation="Horizontal"
-                                        Grid.Row="3">
+                                        Grid.Row="2">
 
                                 <TextBlock Name="WellExponentLabel"
                                            Text="Well Exponent (n):"
@@ -583,7 +566,7 @@
 
                             <StackPanel Name="FlowCoefficientStackPanel"
                                         Orientation="Horizontal"
-                                        Grid.Row="4">
+                                        Grid.Row="3">
 
                                 <TextBlock Name="FlowCoefficientLabel"
                                            Text="Flow Coefficient (C):"

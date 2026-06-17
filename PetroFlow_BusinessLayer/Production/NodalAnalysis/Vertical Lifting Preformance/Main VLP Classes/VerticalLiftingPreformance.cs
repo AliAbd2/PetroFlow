@@ -1,4 +1,4 @@
-﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
+﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.Data;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.Interfaces;
@@ -91,14 +91,14 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
 
         }
 
-        public List<InFlowDataRow> GenerateOutFlow(VLPInputData input,
+        public List<FlowDataRow> GenerateOutFlow(VLPInputData input,
             ref NodalAnalysisValidationResult validationResult)
         {
 
             if (input == null)
                 throw new InvalidOperationException("The VLP input data has not been provided.");
 
-            List<InFlowDataRow> outFlowData = new();
+            List<FlowDataRow> outFlowData = new();
 
             VLPWorkingData workingData = VLPRawDataProcessor.PrepareWorkingData(input);
 
@@ -115,7 +115,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
                 pressure = _determinePressureAtFlowRate(input, workingData, flowRate,
                     ref validationResult);
 
-                outFlowData.Add(new InFlowDataRow(pressure, flowRate));
+                outFlowData.Add(new FlowDataRow(pressure, flowRate));
 
             }
 
@@ -123,14 +123,14 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
 
         }
 
-        public List<InFlowDataRow> GenerateOutFlowForInFlow(VLPInputData input, List<InFlowDataRow> inFlowData,
+        public List<FlowDataRow> GenerateOutFlowForInFlow(VLPInputData input, List<FlowDataRow> inFlowData,
             ref NodalAnalysisValidationResult validationResult)
         {
 
             if (input == null)
                 throw new InvalidOperationException("The VLP input data has not been provided.");
 
-            List<InFlowDataRow> outFlowData = new();
+            List<FlowDataRow> outFlowData = new();
 
             VLPWorkingData workingData = VLPRawDataProcessor.PrepareWorkingData(input);
 
@@ -145,7 +145,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
                 pressure = _determinePressureAtFlowRate(input, workingData, flowRate,
                     ref validationResult);
 
-                outFlowData.Add(new InFlowDataRow(pressure, flowRate));
+                outFlowData.Add(new FlowDataRow(pressure, flowRate));
 
             }
 

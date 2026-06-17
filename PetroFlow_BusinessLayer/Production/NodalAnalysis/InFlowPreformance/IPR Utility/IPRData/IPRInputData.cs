@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -11,7 +12,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPR
 
         public double? BubblePointPressure { get; set; }
 
-        public List<InFlowDataRow>? TestsData { get; set; }
+        public List<FlowDataRow>? TestsData { get; set; }
 
         public double? TestFlowEfficiency { get; set; }
 

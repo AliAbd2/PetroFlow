@@ -1,60 +1,55 @@
 ﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Interfaces;
-using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
-using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Exceptions;
-using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation;
-using PetroFlow_BusinessLayer.General_Utility.Validation;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility;
+using System.Reflection;
+using static PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPR_Utility.IPRData.IPRMetadata;
 
 namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance
 {
 
-    public enum IPRMethodType
-    {
-        LinearProductivityIndex,
-        Vogel,
-        Standing,
-        Fetkovich,
-        Jones_Blount_Glaze
-    }
-
     public class InFlowPerformanceRelationship
     {
 
+        private List<IPRMethodBase> _methods;
 
-        private readonly IPRMethodBase _method;
-
-
-        public InFlowPerformanceRelationship(IPRMethodBase method)
+        public InFlowPerformanceRelationship()
         {
 
-            _method = method;
+            _methods = GetIPRMethods();
+
+        }
+
+        private List<IPRMethodBase> GetIPRMethods()
+        {
+
+            return Assembly.GetExecutingAssembly()
+                    .GetTypes()
+                    .Where(t =>
+                        !t.IsAbstract &&
+                        typeof(IPRMethodBase).IsAssignableFrom(t))
+                    .Select(t =>
+                        (IPRMethodBase)Activator.CreateInstance(t)!)
+                    .ToList();
+
+        }
+
+        public IReadOnlyList<IPRMethodBase> GetAvailableMethods(
+        IPRMethodFeatures requiredFeatures)
+        {
+
+            return _methods
+                .Where(method => (method.Features & requiredFeatures) == requiredFeatures)
+                .ToList();
+        }
+
+        public IReadOnlyList<string> GetAvailableMethodsName(IPRMethodFeatures requiredFeatures)
+        {
+
+            return GetAvailableMethods(requiredFeatures).Select(method => method.DisplayName).ToList();
 
         }
 
 
-        public List<InFlowDataRow> GenerateIPR(IPRInputData input,
-            ref NodalAnalysisValidationResult validationResult)
-        {
-
-            return _method.GenerateIPR(input, ref validationResult);
-
-        }
-
-        public List<InFlowDataRow> GenerateFutureIPR(IPRInputData input, 
-            ref NodalAnalysisValidationResult validationResult)
-        {
-
-            if (_method is IFuturePredictable futureMethod)
-            {
-
-                return futureMethod.GenerateFutureIPR(input,
-                    ref validationResult);
-
-            }
-
-            throw new UnsupportedIPROperationException(new ErrorMessage("Unsupported Scenario",
-                "The selected method does not support future IPR generation."));
-
-        }
 
     }
+
 }
