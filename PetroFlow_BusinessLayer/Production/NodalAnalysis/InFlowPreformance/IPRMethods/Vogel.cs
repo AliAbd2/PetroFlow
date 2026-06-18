@@ -204,9 +204,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
 
             // Indicates whether the reservoir is saturated (i.e., Pr ≤ Pb).
             // If the bubble point pressure is not provided, the reservoir is treated as saturated.
-            bool isSaturated =
-                !input.BubblePointPressure.HasValue ||
-                input.ReservoirPressure!.Value <= input.BubblePointPressure.Value;
+            bool isSaturated = IPRGeneralFunctions.IsSaturatedReservoir(input);
 
             if (isSaturated)
                 return GenerateIPR_SaturatedReservoir(input);

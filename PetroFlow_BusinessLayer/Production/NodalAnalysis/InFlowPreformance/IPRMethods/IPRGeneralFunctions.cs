@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -34,6 +35,15 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             return 1
                 - vogelLinearCoefficient * pressureRatio
                 - vogelQuadraticCoefficient * pressureRatio * pressureRatio;
+        }
+
+        public static bool IsSaturatedReservoir(IPRInputData input)
+        {
+
+            return
+                !input.BubblePointPressure.HasValue 
+                || input.ReservoirPressure!.Value <= input.BubblePointPressure.Value;
+
         }
 
     }

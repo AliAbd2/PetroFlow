@@ -100,7 +100,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
                 double logFriction1500 = Math.Log10(friction1500);
                 double logFriction2250 = Math.Log10(friction2250);
 
-                double y = GeneralMathFunctions.LinearInterpolate(GLR, 1500, logFriction1500, 2250, logFriction2250);
+                double y = MathUtilities.LinearInterpolate(GLR, 1500, logFriction1500, 2250, logFriction2250);
 
                 return Math.Pow(10, y);
 
@@ -115,7 +115,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
                 double logFriction2250 = Math.Log10(friction2250);
                 double logFriction3000 = Math.Log10(friction3000);
 
-                double y = GeneralMathFunctions.LinearInterpolate(GLR, 2250, logFriction2250, 3000, logFriction3000);
+                double y = MathUtilities.LinearInterpolate(GLR, 2250, logFriction2250, 3000, logFriction3000);
 
                 return Math.Pow(10, y);
 

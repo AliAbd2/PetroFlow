@@ -28,7 +28,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double liquidInSituFlowRate = _determineInSituLiquidFlowRate(liquidFlowRate,
                 oilFormationVolumeFactor);
 
-            double pipeArea = GeneralMathFunctions.CrircleArea(pipeDiameter);
+            double pipeArea = MathUtilities.CrircleArea(pipeDiameter);
 
             return liquidInSituFlowRate / pipeArea;
 
@@ -55,7 +55,7 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Pref
             double gasInSituFlowRate = _determineInSituGasFlowRate(gasFlowRate,
                 gasFormationVolumeFactor, gasLiquidRatio, solutionGasOilRatio);
 
-            double pipeArea = GeneralMathFunctions.CrircleArea(pipeDiameter);
+            double pipeArea = MathUtilities.CrircleArea(pipeDiameter);
 
             return gasInSituFlowRate / pipeArea;
 

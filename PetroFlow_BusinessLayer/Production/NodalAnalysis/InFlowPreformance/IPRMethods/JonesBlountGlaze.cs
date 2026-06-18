@@ -1,4 +1,5 @@
-﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Exceptions;
+﻿using PetroFlow_BusinessLayer.General_Utility.Validation;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Exceptions;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Interfaces;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPR_Utility;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
@@ -61,8 +62,8 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             if (input.TestsData == null)
                 throw new MissingRequiredInputException(IPRErrorMessages.MissingTestData);
 
-            if (input.TestsData.Count < 3 && input.WellExponent == null)
-                throw new InvalidParameterException(IPRErrorMessages.InvalidTestDataCount("Jones", 2));
+            if (input.TestsData.Count < 2)
+                throw new InvalidParameterException(IPRErrorMessages.InvalidTestDataCount(DisplayName, 2));
 
             if (input.TestsData.Any(x => x.FlowRate <= 0))
                 throw new InvalidParameterException(IPRErrorMessages.InvalidTestDataFlowRate);
@@ -81,28 +82,15 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
         {
 
             // A method to Determine Slope(B) and Intercept(A) using least squares method.
-            // Least Squares formulas:
-            // slope = (n * sum(x*y) - sum(x) * sum(y)) / (n * sum(x^2) - sum(x)^2)
-            // Intercept = (sum(y) - Slope * sum(x)) / n
-            // where n is the number of records.
 
-            List<FlowDataRow> TestsData = inputData.TestsData.ToList();
-            double ReservoirPressure = inputData.ReservoirPressure.Value;
+            List<FlowDataRow> testsData = inputData.TestsData!.ToList();
+            double pr = inputData.ReservoirPressure!.Value;
 
-            int n = TestsData.Count;
-            List<double> q = TestsData.Select(x => x.FlowRate).ToList();
-            List<double> piTerm = TestsData.Select(x =>
-            (ReservoirPressure - x.BottomHolePressure) / x.FlowRate).ToList();
+            double[] q = testsData.Select(x => x.FlowRate).ToArray();
+            double[] piTerm = testsData.Select(x =>
+            (pr - x.BottomHolePressure) / x.FlowRate).ToArray();
 
-            double Sumx = q.Sum();
-            double Sumy = piTerm.Sum();
-            double SumX2 = q.Sum(x => x * x);
-            double Sumxy = q.Zip(piTerm, (x, y) => x * y).Sum();
-
-
-            double slope = (n * Sumxy - Sumx * Sumy) / (n * SumX2 - Math.Pow(Sumx, 2));
-
-            double intercept = (Sumy - slope * Sumx) / n;
+            (double slope, double intercept) = MathUtilities.LeastSquaresLineFit(q, piTerm);
 
             return (slope, intercept);
 
@@ -125,37 +113,45 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Met
             // B  : Slope.
 
 
-            List<FlowDataRow> DataRows = new List<FlowDataRow>();
+            List<FlowDataRow> dataRows = new List<FlowDataRow>();
 
-            double flowRate = 0;
+            double flowRate;
 
-            (double slope, double intercept) jonesCoeff = DetermineSlopeIntercept(input);
+            (double slope, double intercept) = DetermineSlopeIntercept(input);
 
-            double Slope = jonesCoeff.slope;
-            double Intercept = jonesCoeff.intercept;
+            const double MinSlopeTolerance = 1e-10;
 
-            double ReservoirPressure = input.ReservoirPressure.Value;
+            if (Math.Abs(slope) < MinSlopeTolerance)
+            {
+                throw new InvalidParameterException(
+                    new ErrorMessage(
+                        "Invalid Jones-Blount-Glaze Parameters",
+                        "The calculated slope (B) is too close to zero. " +
+                        "This results in an undefined Jones-Blount-Glaze equation and " +
+                        "may indicate insufficient variation in the test data."
+                    ));
+            }
+
+            double pr = input.ReservoirPressure!.Value;
+
+            double minPressure = input.GenerationSettings!.MinimumPressure;
+            double pressureStepSize = input.GenerationSettings.PressureStepSize;
 
 
-            IPRGenerationSettings GenerationSettings = new IPRGenerationSettings(
-                input.GenerationSettings.PressureStepSize,
-                input.GenerationSettings.MinimumPressure);
-
-
-            for (double Pressure = GenerationSettings.MinimumPressure; Pressure <= ReservoirPressure;
-                Pressure += GenerationSettings.PressureStepSize)
+            for (double pressure = minPressure; pressure <= pr;
+                pressure += pressureStepSize)
             {
 
-                double x = -Intercept + 
-                    Math.Sqrt(Intercept * Intercept + 4 * Slope * (ReservoirPressure - Pressure));
+                double numerator = - intercept 
+                    + Math.Sqrt(intercept * intercept + 4 * slope * (pr - pressure));
 
-                flowRate = x / (2 * Slope);
+                flowRate = numerator / (2 * slope);
 
-                DataRows.Add(new FlowDataRow(Pressure, flowRate));
+                dataRows.Add(new FlowDataRow(pressure, flowRate));
 
             }
 
-            return DataRows;
+            return dataRows;
 
         }
 
