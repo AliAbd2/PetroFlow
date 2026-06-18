@@ -512,7 +512,7 @@
             <Setter Property="Foreground"
             Value="{StaticResource Brush.TextPrimary}"/>
         </Style>
-
+        
 
     </Application.Resources>
 </Application>

@@ -7,11 +7,19 @@ namespace PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPR
 
         public enum IPRMethodType
         {
+
             LinearProductivityIndex,
             Vogel,
             Standing,
             Fetkovich,
             Jones_Blount_Glaze
+
+        }
+
+        public enum IPRScenarioType
+        {
+            Present,
+            Future
         }
 
         [Flags]

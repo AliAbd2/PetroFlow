@@ -1,14 +1,4 @@
-﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis;
-using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Interfaces;
-using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
-using PetroFlow_BusinessLayer.Production.NodalAnalysis.Main_Classes;
-using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.Validation;
-using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.Data;
-using PetroFlow_BusinessLayer.Production.NodalAnalysis.Vertical_Lifting_Preformance.Interfaces;
-using System.Windows;
-using PetroFlow_BusinessLayer.General_Utility.Exceptions;
-using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility;
-
+﻿using System.Windows;
 
 namespace PetroFlow_Persentation
 {
@@ -17,9 +7,6 @@ namespace PetroFlow_Persentation
     /// </summary>
     public partial class MainWindow : Window
     {
-
-        private List<FlowDataRow> IPR;
-        private List<FlowDataRow> VLP;
 
         public MainWindow()
         {
@@ -31,142 +18,19 @@ namespace PetroFlow_Persentation
         private void GeneratIPR(object sender, EventArgs e)
         {
 
-            IPR = new();
-
-            IPRMethodBase iPR = IPRScreen.GetIPRMethod();
-            IPRInputData inputData;
-            bool IsFuture;
-
-            (inputData, IsFuture) = IPRScreen.ReadIPRData();
-
-            NodalAnalysisValidationResult validationResult = new();
-
-            NodalAnalysis nodalAnalysis = new(iPR, null);
-
-            try
-            {
-
-                if (!IsFuture)
-                {
-
-                    IPR = nodalAnalysis.GenerateIPR(inputData, ref validationResult);
-
-                }
-                else
-                {
-
-                    IPR = nodalAnalysis.GenerateFututreIPR(inputData, ref validationResult);
-
-                }
-
-            }
-            catch (ExceptionBase ex)
-            {
-
-                MessageBox.Show(ex.Message, ex.Title, MessageBoxButton.OK, MessageBoxImage.Error);
-
-                return;
-
-            }
-
-            ResultScreen.LoadNodalAnalysisResult(IPR, VLP);
-
-            ResultScreen.Plot(IPR, IPRScreen.IPRCurveLabelInput.Text, ScottPlot.Color.FromColor(System.Drawing.Color.Blue));
+            
 
         }
 
         private void GeneratVLP(object sender, EventArgs e)
         {
 
-            VLP = new();
-
-            IVLPModel vLP = VLPScreen.GetVLPMethod();
-            VLPInputData input = VLPScreen.ReadVLPInput();
-
-            NodalAnalysisValidationResult validationResult = new();
-
-            NodalAnalysis nodalAnalysis = new(null, vLP);
-
-            try
-            {
-
-                if (IPR == null)
-                {
-
-                    VLP = nodalAnalysis.GenerateVLP(input, ref validationResult);
-
-                }
-                else
-                {
-
-                    VLP = nodalAnalysis.GeneraterVLPFromIPR(input, IPR, ref validationResult);
-
-                }
-
-            }
-            catch (ExceptionBase ex)
-            {
-
-                MessageBox.Show(ex.Message, ex.Title, MessageBoxButton.OK, MessageBoxImage.Error);
-
-                return;
-
-            }
-
-            ResultScreen.LoadNodalAnalysisResult(IPR, VLP);
-
-            ResultScreen.Plot(VLP, VLPScreen.VLPCurveLabelInput.Text,
-                ScottPlot.Color.FromColor(System.Drawing.Color.Red));
 
         }
 
         private void GetOperatingPoint(object sender, EventArgs e)
         {
-            if (VLP == null || IPR == null)
-            {
-                MessageBox.Show(
-                    "Unable to determine the operating point because either the IPR curve or the VLP curve is missing." +
-                    " Please ensure that both analyses have been performed before calculating the operating point.",
-                    "Operating Point Calculation",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
 
-                return;
-            }
-
-            FlowDataRow OperatingPoint = new(0, 0);
-
-            try
-            {
-
-                OperatingPoint = NodalAnalysis.GetOperatingPoint(IPR, VLP);
-
-            }
-            catch (Exception ex)
-            {
-
-                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                return;
-
-            }
-
-
-            if (OperatingPoint.FlowRate == 0 && OperatingPoint.BottomHolePressure ==0)
-            {
-
-                ResultScreen.OperatingFlowRateValue.Text = "Not Found";
-                ResultScreen.OperatingPressureValue.Text = "Not Found";
-
-            }
-            else
-            {
-
-
-                ResultScreen.OperatingFlowRateValue.Text = Math.Round(OperatingPoint.FlowRate).ToString();
-                ResultScreen.OperatingPressureValue.Text = Math.Round(OperatingPoint.BottomHolePressure).ToString();
-
-            }
 
         }
 
@@ -186,8 +50,6 @@ namespace PetroFlow_Persentation
             }
 
         }
-
-
 
     }
 }

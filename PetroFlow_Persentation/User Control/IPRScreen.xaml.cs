@@ -29,12 +29,6 @@ namespace PetroFlow_Persentation.User_Control
 
         }
 
-        public IPRMethodBase GetIPRMethod()
-        {
-
-
-
-        }
 
         public (IPRInputData, bool) ReadIPRData()
         {
@@ -165,14 +159,6 @@ namespace PetroFlow_Persentation.User_Control
 
             }
 
-            NewFlowEfficiencyInput.Text = "";
-            if (NewFlowEfficincyUnit.Items.Count == 0)
-            {
-
-                NewFlowEfficincyUnit.Items.Add("dimensionless");
-                NewFlowEfficincyUnit.SelectedIndex = 0;
-
-            }
 
             WellExponentInput.Text = "";
             if (WellExponentUnit.Items.Count == 0)
@@ -228,7 +214,6 @@ namespace PetroFlow_Persentation.User_Control
             GeneralMethods.DisableControl(UseTestDataCheckBox);
 
             GeneralMethods.DisableControl(TestFlowEfficiencyStackPanel);
-            GeneralMethods.DisableControl(NewFlowEfficiencyStackPanel);
             GeneralMethods.DisableControl(WellExponentStackPanel);
             GeneralMethods.DisableControl(FlowCoefficientStackPanel);
 
@@ -260,7 +245,6 @@ namespace PetroFlow_Persentation.User_Control
 
                 GeneralMethods.EnableControl(TestFlowEfficiencyStackPanel);
                 TestFlowEfficiecyInput.Text = "1";
-                GeneralMethods.DisableControl(NewFlowEfficiencyStackPanel);
 
             }
             else
@@ -277,7 +261,6 @@ namespace PetroFlow_Persentation.User_Control
                 GeneralMethods.DisableControl(FutureOilFormationVolumeFactorStackPanel);
 
                 GeneralMethods.EnableControl(TestFlowEfficiencyStackPanel);
-                GeneralMethods.EnableControl(NewFlowEfficiencyStackPanel);
 
             }
 
@@ -322,7 +305,6 @@ namespace PetroFlow_Persentation.User_Control
             GeneralMethods.EnableControl(UseTestDataCheckBox);
 
             GeneralMethods.DisableControl(TestFlowEfficiencyStackPanel);
-            GeneralMethods.DisableControl(NewFlowEfficiencyStackPanel);
 
             GeneralMethods.DisableControl(PresentOilRelativePermeabilityStackPanel);
             GeneralMethods.DisableControl(PresentOilViscosityStackPanel);
@@ -363,7 +345,6 @@ namespace PetroFlow_Persentation.User_Control
             GeneralMethods.DisableControl(UseTestDataCheckBox);
 
             GeneralMethods.DisableControl(TestFlowEfficiencyStackPanel);
-            GeneralMethods.DisableControl(NewFlowEfficiencyStackPanel);
             GeneralMethods.DisableControl(WellExponentStackPanel);
             GeneralMethods.DisableControl(FlowCoefficientStackPanel);
 
