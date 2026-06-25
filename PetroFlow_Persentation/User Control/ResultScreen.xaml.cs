@@ -1,5 +1,4 @@
-﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.Main_Classes;
-using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility;
+﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility.ShearedData;
 using PetroFlow_PersentationLayer.Utility;
 using PetroFlow_PresentationLayer;
@@ -15,8 +14,6 @@ namespace PetroFlow_Persentation.User_Control
     /// </summary>
     public partial class ResultScreen : UserControl
     {
-
-        private ObservableCollection<NodalAnalysisDataRow> nodalAnalysisResult;
 
         private CurvePlotter curvePlotter;
 
@@ -36,15 +33,11 @@ namespace PetroFlow_Persentation.User_Control
 
             curvePlotter = new(ResultPlot.Plot);
 
-            nodalAnalysisResult = new();
 
         }
 
         public void ResetMenu()
         {
-
-            nodalAnalysisResult.Clear();
-
             SetPlotTheme();
 
             ResultPlot.Plot.Clear();
@@ -55,7 +48,7 @@ namespace PetroFlow_Persentation.User_Control
 
         }
 
-        public void Plot(List<FlowDataRow> data, string curveName, ScottPlot.Color color)
+        public void Plot(List<FlowDataRow> data, string curveName)
         {
 
             List<double> x = data.Select(x => x.FlowRate).ToList();
@@ -75,79 +68,7 @@ namespace PetroFlow_Persentation.User_Control
         public void LoadNodalAnalysisResult(List<FlowDataRow>? iPR, List<FlowDataRow>? vLP)
         {
 
-            nodalAnalysisResult.Clear();
 
-            if (iPR != null && vLP != null)
-            {
-
-                for (int i = 0; i < iPR.Count; i++)
-                {
-
-                    if (i < iPR.Count && i < vLP.Count)
-                    {
-
-                        nodalAnalysisResult.Add(new NodalAnalysisDataRow(Math.Round(iPR[i].FlowRate),
-                             Math.Round(iPR[i].BottomHolePressure), Math.Round(vLP[i].BottomHolePressure)));
-
-                        continue;
-
-                    }
-
-
-                    if (i < iPR.Count)
-                    {
-
-                        nodalAnalysisResult.Add(new NodalAnalysisDataRow(Math.Round(iPR[i].FlowRate),
-                            Math.Round(iPR[i].BottomHolePressure), 0));
-
-                        continue;
-
-                    }
-
-
-                    if (i < vLP.Count)
-                    {
-
-                        nodalAnalysisResult.Add(new NodalAnalysisDataRow(Math.Round(vLP[i].FlowRate),
-                            0, Math.Round(vLP[i].BottomHolePressure)));
-
-                        continue;
-
-                    }
-
-
-
-                }
-
-            }
-
-            if (iPR != null && vLP == null)
-            {
-
-                for (int i = 0; i < iPR.Count; i++)
-                {
-
-                    nodalAnalysisResult.Add(new NodalAnalysisDataRow(Math.Round(iPR[i].FlowRate),
-                        Math.Round(iPR[i].BottomHolePressure), 0));
-
-                }
-
-            }
-
-            if (iPR == null && vLP != null)
-            {
-
-                for (int i = 0; i < vLP.Count; i++)
-                {
-
-                    nodalAnalysisResult.Add(new NodalAnalysisDataRow(Math.Round(vLP[i].FlowRate),
-                        0, Math.Round(vLP[i].BottomHolePressure)));
-
-                }
-
-            }
-
-            ResultDataDataGrid.ItemsSource = nodalAnalysisResult;
 
         }
 

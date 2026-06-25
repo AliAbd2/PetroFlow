@@ -52,6 +52,27 @@ namespace PetroFlow_PersentationLayer.Utility
 
         }
 
+        public static void InitializeUnit(
+            ComboBox combo,
+            string unit)
+        {
+            if (combo.Items.Count == 0)
+            {
+                combo.Items.Add(unit);
+                combo.SelectedIndex = 0;
+            }
+        }
+
+        
+        public static void SetControlState(
+            bool condition,
+            FrameworkElement element)
+        {
+            if (condition)
+                EnableControl(element);
+            else
+                DisableControl(element);
+        }
 
     }
 }

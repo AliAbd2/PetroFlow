@@ -302,6 +302,57 @@
             </Setter>
         </Style>
 
+        <Style x:Key="IPRMethodTemplate" TargetType="ComboBox">
+            <Setter Property="Background" Value="{StaticResource Brush.InputBackground}"/>
+            <Setter Property="Foreground" Value="{StaticResource Brush.TextPrimary}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Brush.Border}"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="20,10,20,10"/>
+            <Setter Property="Width" Value="250"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid x:Name="templateRoot">
+                            <ToggleButton x:Name="toggleButton" 
+                                          Style="{StaticResource ImplicitComboBoxToggleButton}" 
+                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"/>
+
+                            <ContentPresenter
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              Margin="{TemplateBinding Padding}"
+                                              IsHitTestVisible="False">
+
+                                <ContentPresenter.Content>
+                                    <Binding Path="SelectedItem.DisplayName"
+                                             RelativeSource="{RelativeSource TemplatedParent}"/>
+                                </ContentPresenter.Content>
+
+                            </ContentPresenter>
+
+                            <Popup x:Name="PART_Popup" 
+                                   AllowsTransparency="true" 
+                                   IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}" 
+                                   Placement="Bottom">
+                                <Border x:Name="dropDownBorder" 
+                                        Background="{StaticResource Brush.InputBackground}" 
+                                        BorderBrush="{StaticResource Brush.Border}" 
+                                        BorderThickness="1" 
+                                        CornerRadius="0,0,4,4"
+                                        MinWidth="{Binding ActualWidth, ElementName=templateRoot}">
+                                    <ScrollViewer x:Name="DropDownScrollViewer">
+                                        <ItemsPresenter x:Name="ItemsPresenter" KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <Style TargetType="ComboBoxItem">
             <Setter Property="Foreground" Value="{StaticResource Brush.TextPrimary}"/>
             <Setter Property="Background" Value="Transparent"/>

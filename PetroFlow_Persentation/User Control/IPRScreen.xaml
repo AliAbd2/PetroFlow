@@ -79,7 +79,7 @@
                                            Width="220"
                                            Text="Bubble Point Pressure:"/>
 
-                                <TextBox Name="BubblePoitPressureInput"
+                                <TextBox Name="BubblePointPressureInput"
                                          PreviewTextInput="Numeric_PreviewTextInput"
                                          DataObject.Pasting="Numeric_Pasting"/>
                                 
@@ -272,13 +272,13 @@
                                                  IsChecked="True" 
                                                  Height="Auto"
                                                  Width="135"
-                                                 Click="AdjustUIBasedOnMethod"/>
+                                                 Click="LoadAvailableMethodsEvent"/>
 
                                     <RadioButton Name="ReservoirTypeGas"
                                                  Content="Gas" 
                                                  Height="Auto"
                                                  Width="135"
-                                                 Click="AdjustUIBasedOnMethod"/>
+                                                 Click="LoadAvailableMethodsEvent"/>
                                 </StackPanel>
 
                             </Border>
@@ -299,56 +299,38 @@
                                                  VerticalAlignment="Center"
                                                  Height="Auto"
                                                  Width="135"
-                                                 Click="AdjustUIBasedOnMethod"/>
+                                                 Click="LoadAvailableMethodsEvent"/>
 
                                     <RadioButton Name="IPRScenarioFuture"
                                                  Content="Future" 
                                                  VerticalAlignment="Center"
                                                  Height="Auto"
                                                  Width="135"
-                                                 Click="AdjustUIBasedOnMethod"/>
+                                                 Click="LoadAvailableMethodsEvent"/>
                                 </StackPanel>
 
                             </Border>
 
                             <Border Name="IPRMethodSelectionBorder"
-                            Grid.Row="2"
-                            Style="{StaticResource CardStyle}">
-                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0">
-                                    <TextBlock Name="IPRMEthhodSelectionTitle"
+                                    Grid.Row="2"
+                                    Style="{StaticResource CardStyle}"
+                                    VerticalAlignment="Center">
+                                
+                                <StackPanel Orientation="Horizontal" 
+                                            VerticalAlignment="Center" 
+                                            Margin="10,0">
+                                    
+                                    <TextBlock Name="IPRMEthhodsSelectionTitle"
                                                Text="IPR Method:" 
-                                               Width="160"
+                                               Width="145"
                                                FontSize="18"
                                                Style="{StaticResource TitleLabel}"/>
 
-                                    <RadioButton Name="IPRMethodSelectedVogel"
-                                                 Content="Vogel" 
-                                                 IsChecked="True"  
-                                                 VerticalAlignment="Center"
-                                                 Height="Auto"
-                                                 Width="135"
-                                                 Click="AdjustUIBasedOnMethod"/>
-
-                                    <RadioButton x:Name="IPRMethodSelectedStanding"
-                                                 Content="Standing" 
-                                                 VerticalAlignment="Center"
-                                                 Height="Auto"
-                                                 Width="135"
-                                                 Click="AdjustUIBasedOnMethod"/>
-
-                                    <RadioButton Name="IPRMethodSelectedFetkovich"
-                                                 Content="Fetkovich" 
-                                                 VerticalAlignment="Center"
-                                                 Height="Auto"
-                                                 Width="135"
-                                                 Click="AdjustUIBasedOnMethod"/>
-
-                                    <RadioButton Name="IPRMethodSelectedJones"
-                                                 Content="Jones-Blount-Glaze" 
-                                                 VerticalAlignment="Center"
-                                                 Height="Auto"
-                                                 Width="Auto"
-                                                 Click="AdjustUIBasedOnMethod"/>
+                                    <ComboBox Name="IPRMethodsComboBox"
+                                              VerticalAlignment="Center"
+                                              Width="500"
+                                              Style="{StaticResource IPRMethodTemplate}"
+                                              SelectionChanged="AdjustUIBasedOnMethod"/>
 
                                 </StackPanel>
 
@@ -509,12 +491,6 @@
                                     Click="AddNewTestDataRow">
                                 <Image Source="/Icons/plus.png" Margin="10"/>
                             </Button>
-
-                            <CheckBox Name="UseTestDataCheckBox"
-                                      Grid.Column="1" Grid.Row="1"
-                                      Content="Use Test Data"
-                                      Margin="25,5,5,5"
-                                      Click="UseTestData"/>
 
                         </Grid>
 

@@ -1,5 +1,9 @@
-﻿using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Interfaces;
+﻿using PetroFlow_BusinessLayer.General_Utility.Validation;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Exceptions;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Interfaces;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPRData;
+using PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.Main__IPR_Classes;
 using PetroFlow_BusinessLayer.Production.NodalAnalysis.Utility;
 using PetroFlow_PersentationLayer.Utility;
 using System.Collections.ObjectModel;
@@ -7,6 +11,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
+using static PetroFlow_BusinessLayer.Production.NodalAnalysis.InFlowPreformance.IPR_Utility.IPRData.IPRMetadata;
 
 
 namespace PetroFlow_Persentation.User_Control
@@ -17,28 +22,64 @@ namespace PetroFlow_Persentation.User_Control
     public partial class IPRScreen : System.Windows.Controls.UserControl
     {
 
-        private ObservableCollection<FlowDataRow> _testData;
+        private InFlowPerformanceRelationship _iPR = new();
+
+        private ObservableCollection<FlowDataRow> _testData = new();
 
         public IPRScreen()
         {
             InitializeComponent();
 
-            _testData = new();
-
             ResetMenu();
 
         }
 
+        public IPROutput Calculate()
+        {
 
-        public (IPRInputData, bool) ReadIPRData()
+            IPRRequest request = ReadRequest();
+
+            return _iPR.ProcessRequest(request);
+
+        }
+
+        private IPRRequest ReadRequest()
+        {
+
+            IPRMethodType methodType = (IPRMethodType)IPRMethodsComboBox.SelectedValue;
+            IPRScenarioType iPRScenario = 
+                IPRScenarioPresent.IsChecked.Value ? IPRScenarioType.Present : IPRScenarioType.Future;
+
+            IPRInputData inputData = ReadIPRInputData();
+
+            return new IPRRequest(methodType, iPRScenario, inputData);
+
+        }
+        
+        private List<FlowDataRow> ReadTestData()
+        {
+
+            if (_testData.Any(x => double.IsNaN(x.FlowRate)))
+                throw new InvalidParameterException(new ErrorMessage(
+                    "Invalid Test Data", "One or more test data flow rate has not been provided."));
+
+            if (_testData.Any(x => double.IsNaN(x.BottomHolePressure)))
+                throw new InvalidParameterException(new ErrorMessage(
+                    "Invalid Test Data", "One or more test data bottom hole pressure has not been provided."));
+
+            return _testData.ToList();
+
+        }
+
+        private IPRInputData ReadIPRInputData()
         {
 
             IPRInputData inputData = new();
 
             inputData.ReservoirPressure = GeneralMethods.ReadDouble(PresentReservoirPressureInput);
-            inputData.BubblePointPressure = GeneralMethods.ReadDouble(BubblePoitPressureInput);
+            inputData.BubblePointPressure = GeneralMethods.ReadDouble(BubblePointPressureInput);
 
-            inputData.TestsData = _testData.ToList();
+            inputData.TestsData = ReadTestData();
 
             inputData.PresentOilRelativePermeability = GeneralMethods.ReadDouble(PresentOilRelativePermeabilityInput);
             inputData.PresentOilViscosity = GeneralMethods.ReadDouble(PresentOilViscosityInput);
@@ -57,128 +98,65 @@ namespace PetroFlow_Persentation.User_Control
             inputData.GenerationSettings = new(GeneralMethods.ReadDouble(PressureStepSizeInput).Value,
             GeneralMethods.ReadDouble(MinimumPressureInput).Value);
 
-            return (inputData, IPRScenarioFuture.IsChecked.Value);
+            return inputData;
 
         }
 
-        public void ResetMenu()
+        private void ResetMenu()
         {
-
-            UseTestDataCheckBox.IsChecked = true;
 
             _testData.Clear();
             TestDataDataGrid.ItemsSource = _testData;
 
+            LoadAvailableMethods();
+
             PresentReservoirPressureInput.Text = "";
-            if (PresentReservoirPressureUnit.Items.Count == 0)
-            {
+            GeneralMethods.InitializeUnit(
+                PresentReservoirPressureUnit, "psig");
 
-                PresentReservoirPressureUnit.Items.Add("psig");
-                PresentReservoirPressureUnit.SelectedIndex = 0;
-
-            }
-
-            BubblePoitPressureInput.Text = "";
-            if (BubblePointPressureUnit.Items.Count == 0)
-            {
-
-                BubblePointPressureUnit.Items.Add("psig");
-                BubblePointPressureUnit.SelectedIndex = 0;
-
-            }
+            BubblePointPressureInput.Text = "";
+            GeneralMethods.InitializeUnit(
+                BubblePointPressureUnit, "psig");
 
             PresentOilRelativePermeabilityInput.Text = "";
-            if (PresentOilRelativePermeabilityUnit.Items.Count == 0)
-            {
-
-                PresentOilRelativePermeabilityUnit.Items.Add("fraction");
-                PresentOilRelativePermeabilityUnit.SelectedIndex = 0;
-
-            }
+            GeneralMethods.InitializeUnit(
+                PresentOilRelativePermeabilityUnit, "fraction");
 
             PresentOilViscosityInput.Text = "";
-            if (PresentOilViscosityUnit.Items.Count == 0)
-            {
-
-                PresentOilViscosityUnit.Items.Add("cp");
-                PresentOilViscosityUnit.SelectedIndex = 0;
-
-            }
+            GeneralMethods.InitializeUnit(
+                PresentOilViscosityUnit, "cp");
 
             PresentOilFormationVolumeFactorInput.Text = "";
-            if (PresentOilFormationVolumeFactorUnit.Items.Count == 0)
-            {
-
-                PresentOilFormationVolumeFactorUnit.Items.Add("bbl/STB");
-                PresentOilFormationVolumeFactorUnit.SelectedIndex = 0;
-
-            }
+            GeneralMethods.InitializeUnit(
+                PresentOilFormationVolumeFactorUnit, "bbl/STB");
 
             FutureReservoirPressureInput.Text = "";
-            if (FutureReservoirPressureUnit.Items.Count == 0)
-            {
-
-                FutureReservoirPressureUnit.Items.Add("psig");
-                FutureReservoirPressureUnit.SelectedIndex = 0;
-
-            }
+            GeneralMethods.InitializeUnit(
+                FutureReservoirPressureUnit, "psig");
 
             FutureOilRelativePermeabilityInput.Text = "";
-            if (FutureOilRelativePermeabilityUnit.Items.Count == 0)
-            {
-
-                FutureOilRelativePermeabilityUnit.Items.Add("fraction");
-                FutureOilRelativePermeabilityUnit.SelectedIndex = 0;
-
-            }
+            GeneralMethods.InitializeUnit(
+                FutureOilRelativePermeabilityUnit, "fraction");
 
             FutureOilViscosityInput.Text = "";
-            if (FutureOilViscosityUnit.Items.Count == 0)
-            {
-
-                FutureOilViscosityUnit.Items.Add("cp");
-                FutureOilViscosityUnit.SelectedIndex = 0;
-
-            }
+            GeneralMethods.InitializeUnit(
+                FutureOilViscosityUnit, "cp");
 
             FutureOilFormationVolumeFactorInput.Text = "";
-            if (FutureOilFormationVolumeFactorUnit.Items.Count == 0)
-            {
-
-                FutureOilFormationVolumeFactorUnit.Items.Add("bbl/STB");
-                FutureOilFormationVolumeFactorUnit.SelectedIndex = 0;
-
-            }
+            GeneralMethods.InitializeUnit(
+                FutureOilFormationVolumeFactorUnit, "bbl/STB");
 
             TestFlowEfficiecyInput.Text = "";
-            if (TestFlowEfficiencyUnit.Items.Count == 0)
-            {
-
-                TestFlowEfficiencyUnit.Items.Add("dimensionless");
-                TestFlowEfficiencyUnit.SelectedIndex = 0;
-
-            }
-
+            GeneralMethods.InitializeUnit(
+                TestFlowEfficiencyUnit, "dimensionless");
 
             WellExponentInput.Text = "";
-            if (WellExponentUnit.Items.Count == 0)
-            {
-
-                WellExponentUnit.Items.Add("dimensionless");
-                WellExponentUnit.SelectedIndex = 0;
-
-            }
-
+            GeneralMethods.InitializeUnit(
+                WellExponentUnit, "dimensionless");
 
             FlowCoefficientInput.Text = "";
-            if (FlowCoefficientUnit.Items.Count == 0)
-            {
-
-                FlowCoefficientUnit.Items.Add("STB/(day·psiaⁿ)");
-                FlowCoefficientUnit.SelectedIndex = 0;
-
-            }
-
+            GeneralMethods.InitializeUnit(
+                FlowCoefficientUnit, "STB/(day·psiaⁿ)");
 
 
             IPRCurveLabelInput.Text = "IPR";
@@ -188,7 +166,6 @@ namespace PetroFlow_Persentation.User_Control
 
             ReservoirTypeOil.IsChecked = true;
             IPRScenarioPresent.IsChecked = true;
-            IPRMethodSelectedVogel.IsChecked = true;
 
             ReservoirDataTabContorl.SelectedIndex = 0;
             GeneralIPRControlTabControl.SelectedIndex = 0;
@@ -197,262 +174,279 @@ namespace PetroFlow_Persentation.User_Control
 
         }
 
-        private void SetVogelScreen()
+        private IPRMethodFeatures GetRequiredFeatures()
         {
 
-            GeneralMethods.EnableControl(PresentReservoirPressureStackPanel);
-            GeneralMethods.EnableControl(BubblePointPressureStackPanel);
-            GeneralMethods.EnableControl(TestDataDataGrid);
+            IPRMethodFeatures features = IPRMethodFeatures.None;
 
-            GeneralMethods.DisableControl(PresentOilRelativePermeabilityStackPanel);
-            GeneralMethods.DisableControl(PresentOilViscosityStackPanel);
-            GeneralMethods.DisableControl(PresentOilFormationVolumeFactorStackPanel);
+            if (ReservoirTypeOil.IsChecked.Value)
+                features |= IPRMethodFeatures.Oil;
 
-            GeneralMethods.DisableControl(FutureReservoirDataTab);
+            if (IPRScenarioFuture.IsChecked.Value)
+                features |= IPRMethodFeatures.FuturePrediction;
 
-            GeneralMethods.DisableControl(AddNewTestDataRowButton);
-            GeneralMethods.DisableControl(UseTestDataCheckBox);
 
-            GeneralMethods.DisableControl(TestFlowEfficiencyStackPanel);
-            GeneralMethods.DisableControl(WellExponentStackPanel);
-            GeneralMethods.DisableControl(FlowCoefficientStackPanel);
-
-            _testData.Clear();
-
-            _testData.Add(new(0, 0));
+            return features;
 
         }
 
-        private void SetStandingScreent(bool IsFuture)
+        private void LoadAvailableMethods()
         {
 
-            GeneralMethods.EnableControl(PresentReservoirPressureStackPanel);
-            GeneralMethods.EnableControl(BubblePointPressureStackPanel);
-            GeneralMethods.EnableControl(TestDataDataGrid);
+            IPRMethodFeatures features = GetRequiredFeatures();
 
-            if (IsFuture)
-            {
+            IPRMethodsComboBox.ItemsSource =
+                _iPR.GetAvailableMethods(features);
 
-                GeneralMethods.EnableControl(PresentOilRelativePermeabilityStackPanel);
-                GeneralMethods.EnableControl(PresentOilViscosityStackPanel);
-                GeneralMethods.EnableControl(PresentOilFormationVolumeFactorStackPanel);
+            IPRMethodsComboBox.DisplayMemberPath = nameof(IPRMethodBase.DisplayName);
+            IPRMethodsComboBox.SelectedValuePath = nameof(IPRMethodBase.MethodType);
 
-                GeneralMethods.EnableControl(FutureReservoirDataTab);
+            IPRMethodsComboBox.SelectedIndex = 0;
 
-                GeneralMethods.EnableControl(FutureOilRelativePermeabilityStackPanel);
-                GeneralMethods.EnableControl(FutureOilViscosityStackPanel);
-                GeneralMethods.EnableControl(FutureOilFormationVolumeFactorStackPanel);
-
-                GeneralMethods.EnableControl(TestFlowEfficiencyStackPanel);
-                TestFlowEfficiecyInput.Text = "1";
-
-            }
-            else
-            {
-
-                GeneralMethods.DisableControl(PresentOilRelativePermeabilityStackPanel);
-                GeneralMethods.DisableControl(PresentOilViscosityStackPanel);
-                GeneralMethods.DisableControl(PresentOilFormationVolumeFactorStackPanel);
-
-                GeneralMethods.DisableControl(FutureReservoirDataTab);
-
-                GeneralMethods.DisableControl(FutureOilRelativePermeabilityStackPanel);
-                GeneralMethods.DisableControl(FutureOilViscosityStackPanel);
-                GeneralMethods.DisableControl(FutureOilFormationVolumeFactorStackPanel);
-
-                GeneralMethods.EnableControl(TestFlowEfficiencyStackPanel);
-
-            }
-
-
-            GeneralMethods.DisableControl(AddNewTestDataRowButton);
-            GeneralMethods.DisableControl(UseTestDataCheckBox);
-
-
-            GeneralMethods.DisableControl(WellExponentStackPanel);
-            GeneralMethods.DisableControl(FlowCoefficientStackPanel);
-
-            _testData.Clear();
-
-            _testData.Add(new(0, 0));
-
-        }
-
-        private void SetFetkovichScreen(bool IsFuture)
-        {
-
-            GeneralMethods.EnableControl(PresentReservoirPressureStackPanel);
-            GeneralMethods.EnableControl(BubblePointPressureStackPanel);
-            GeneralMethods.EnableControl(TestDataDataGrid);
-
-            if (IsFuture)
-            {
-
-                GeneralMethods.EnableControl(FutureReservoirDataTab);
-                GeneralMethods.EnableControl(FutureReservoirPressureStackPanel);
-
-            }
-            else
-            {
-
-                GeneralMethods.DisableControl(FutureReservoirDataTab);
-                GeneralMethods.EnableControl(FutureReservoirPressureStackPanel);
-
-            }
-
-
-            GeneralMethods.EnableControl(AddNewTestDataRowButton);
-            GeneralMethods.EnableControl(UseTestDataCheckBox);
-
-            GeneralMethods.DisableControl(TestFlowEfficiencyStackPanel);
-
-            GeneralMethods.DisableControl(PresentOilRelativePermeabilityStackPanel);
-            GeneralMethods.DisableControl(PresentOilViscosityStackPanel);
-            GeneralMethods.DisableControl(PresentOilFormationVolumeFactorStackPanel);
-
-            GeneralMethods.DisableControl(FutureOilRelativePermeabilityStackPanel);
-            GeneralMethods.DisableControl(FutureOilViscosityStackPanel);
-            GeneralMethods.DisableControl(FutureOilFormationVolumeFactorStackPanel);
-
-            GeneralMethods.DisableControl(WellExponentStackPanel);
-            GeneralMethods.DisableControl(FlowCoefficientStackPanel);
-
-            UseTestDataCheckBox.IsChecked = true;
-
-            _testData.Clear();
-
-            _testData.Add(new(0, 0));
-            _testData.Add(new(0, 0));
-            _testData.Add(new(0, 0));
-
-
-        }
-
-        private void SetJonesScreen()
-        {
-
-            GeneralMethods.EnableControl(PresentReservoirPressureStackPanel);
-            GeneralMethods.EnableControl(BubblePointPressureStackPanel);
-            GeneralMethods.EnableControl(TestDataDataGrid);
-
-            GeneralMethods.DisableControl(PresentOilRelativePermeabilityStackPanel);
-            GeneralMethods.DisableControl(PresentOilViscosityStackPanel);
-            GeneralMethods.DisableControl(PresentOilFormationVolumeFactorStackPanel);
-
-            GeneralMethods.DisableControl(FutureReservoirDataTab);
-
-            GeneralMethods.EnableControl(AddNewTestDataRowButton);
-            GeneralMethods.DisableControl(UseTestDataCheckBox);
-
-            GeneralMethods.DisableControl(TestFlowEfficiencyStackPanel);
-            GeneralMethods.DisableControl(WellExponentStackPanel);
-            GeneralMethods.DisableControl(FlowCoefficientStackPanel);
-
-            _testData.Clear();
-
-            _testData.Add(new(0, 0));
-            _testData.Add(new(0, 0));
-            _testData.Add(new(0, 0));
 
         }
 
         private void UpdateUIBasedOnMethod()
         {
 
-            bool IsVogel = IPRMethodSelectedVogel.IsChecked.Value;
-            bool IsStanding = IPRMethodSelectedStanding.IsChecked.Value;
-            bool IsFetkovich = IPRMethodSelectedFetkovich.IsChecked.Value;
-            bool IsJones = IPRMethodSelectedJones.IsChecked.Value;
-            bool IsFuture = IPRScenarioFuture.IsChecked.Value;
-            bool IsUseTestData = UseTestDataCheckBox.IsChecked.Value;
+            GeneralMethods.DisableControl(ReservoirTypeGas);
 
-            GeneralMethods.DisableControl(ReservoirTypeGas); // since gas is not supported yet.
+            if (IPRMethodsComboBox.SelectedValue == null)
+                IPRMethodsComboBox.SelectedIndex = 0;
 
-            if (IsFuture)
+            if (IPRMethodsComboBox.SelectedValue is not IPRMethodType methodType)
             {
-
-                if (IsVogel || IsJones)
-                {
-
-                    IPRMethodSelectedStanding.IsChecked = true;
-                    SetStandingScreent(IsFuture);
-
-                }
-
-
-                GeneralMethods.DisableControl(IPRMethodSelectedVogel);
-                GeneralMethods.DisableControl(IPRMethodSelectedJones);
-
-            }
-            else
-            {
-
-                GeneralMethods.EnableControl(IPRMethodSelectedVogel);
-                GeneralMethods.EnableControl(IPRMethodSelectedJones);
-
-                ReservoirDataTabContorl.SelectedIndex = 0;
-
+                throw new InvalidOperationException(
+                    "No IPR method selected.");
             }
 
-            if (IsVogel && !IsFuture)
-                SetVogelScreen();
+            methodType = (IPRMethodType)IPRMethodsComboBox.SelectedValue;
+            IPRMethodBase iPRMethod = _iPR.GetIPRMethod(methodType);
 
-            if (IsStanding)
-                SetStandingScreent(IsFuture);
+            SetPresentMenu(iPRMethod.InputRequirements.Present);
 
-            if (IsFetkovich)
-                SetFetkovichScreen(IsFuture);
+            SetFutureMenu(iPRMethod.InputRequirements.Future);
 
-            if (IsJones && !IsFuture)
-                SetJonesScreen();
+            SetTestData(iPRMethod.InputRequirements.TestData);
 
         }
 
-        private void AdjustUIBasedOnMethod(object sender, RoutedEventArgs e)
+        private void SetPresentMenu(IPRInputFields presentRequirements)
+        {
+
+
+            //============================
+            // --- Reservoir Pressure ---
+            //============================
+            bool prCondtion = presentRequirements
+                .HasFlag(IPRInputFields.ReservoirPressure);
+
+            GeneralMethods.SetControlState(prCondtion,
+                PresentReservoirPressureStackPanel);
+
+            //===============================
+            // --- Bubble Point Pressure ---
+            //===============================
+            bool pbCondition = presentRequirements
+                .HasFlag(IPRInputFields.BubblePointPressure);
+
+            GeneralMethods.SetControlState(pbCondition,
+                BubblePointPressureStackPanel);
+
+            //===============================
+            // --- Test Flow Efficiency ---
+            //===============================
+            bool feCondition = presentRequirements
+                .HasFlag(IPRInputFields.TestFlowEfficiency)
+                && !IPRScenarioFuture.IsChecked.Value;
+
+            GeneralMethods.SetControlState(feCondition,
+                TestFlowEfficiencyStackPanel);
+
+            //=======================
+            // --- Well Exponent ---
+            //=======================
+            bool nCondition = presentRequirements
+                .HasFlag(IPRInputFields.WellExponent);
+
+            GeneralMethods.SetControlState(nCondition,
+                WellExponentStackPanel);
+
+        }
+
+        private void SetFutureMenu(IPRFutureInputFields futureRequirements)
+        {
+
+
+            bool isFuture = IPRScenarioFuture.IsChecked.Value;
+
+            bool futureCondition = !(futureRequirements
+                .HasFlag(IPRFutureInputFields.None) || !isFuture);
+
+            GeneralMethods.SetControlState(futureCondition,
+                FutureReservoirDataTab);
+
+            //===================================
+            // --- Future Reservoir Pressure ---
+            //===================================
+            bool prfCondition = futureRequirements
+                .HasFlag(IPRFutureInputFields.FutureReservoirPressure) && isFuture;
+
+            GeneralMethods.SetControlState(prfCondition,
+                FutureReservoirPressureStackPanel);
+
+            //==========================
+            // --- Flow Coefficient ---
+            //==========================
+            bool cCondition = futureRequirements
+                .HasFlag(IPRFutureInputFields.FlowCoefficient) && isFuture;
+
+            GeneralMethods.SetControlState(cCondition,
+                FlowCoefficientStackPanel);
+
+            //===========================================
+            // --- Present Oil Relative Permeability ---
+            //===========================================
+            bool kropCondition = futureRequirements
+                .HasFlag(IPRFutureInputFields.PresentOilRelativePermeability)
+                && isFuture;
+
+            GeneralMethods.SetControlState(kropCondition,
+                PresentOilRelativePermeabilityStackPanel);
+
+            //===============================
+            // --- Present Oil Viscosity ---
+            //===============================
+            bool muopCondition = futureRequirements
+                .HasFlag(IPRFutureInputFields.PresentOilViscosity)
+                && isFuture;
+
+            GeneralMethods.SetControlState(muopCondition,
+                PresentOilViscosityStackPanel);
+
+            //=============================================
+            // --- Present Oil Formation Volume Factor ---
+            //=============================================
+            bool bopCondition = futureRequirements
+                .HasFlag(IPRFutureInputFields.PresentOilFormationVolumeFactor)
+                && isFuture;
+
+            GeneralMethods.SetControlState(bopCondition,
+                PresentOilFormationVolumeFactorStackPanel);
+
+            //===========================================
+            // --- Future Oil Relative Permeability ---
+            //===========================================
+            bool krofCondition = futureRequirements
+                .HasFlag(IPRFutureInputFields.FutureOilRelativePermeability)
+                && isFuture;
+
+            GeneralMethods.SetControlState(krofCondition,
+                FutureOilRelativePermeabilityStackPanel);
+
+            //===============================
+            // --- Future Oil Viscosity ---
+            //===============================
+            bool muofCondition = futureRequirements
+                .HasFlag(IPRFutureInputFields.FutureOilViscosity)
+                && isFuture;
+
+            GeneralMethods.SetControlState(muofCondition,
+                FutureOilViscosityStackPanel);
+
+            //=============================================
+            // --- Future Oil Formation Volume Factor ---
+            //=============================================
+            bool bofCondition = futureRequirements
+                .HasFlag(IPRFutureInputFields.FutureOilFormationVolumeFactor)
+                && isFuture;
+
+            GeneralMethods.SetControlState(bofCondition,
+                FutureOilFormationVolumeFactorStackPanel);
+
+        }
+
+        private void AddNewTestDataRow()
+        {
+            _testData.Add(new FlowDataRow(double.NaN, double.NaN));
+        }
+
+        private void SetTestGridToNumberRows(int numberOfRows)
+        {
+
+            while (_testData.Count < numberOfRows)
+            {
+                AddNewTestDataRow();
+            }
+
+            while (_testData.Count > numberOfRows)
+            {
+                _testData.RemoveAt(
+                    _testData.Count - 1);
+            }
+
+
+        }
+
+        private void SetTestData(IPRTestDataRequirement dataRequirement)
+        {
+
+            switch (dataRequirement)
+            {
+                case IPRTestDataRequirement.None:
+
+                    GeneralMethods.DisableControl(TestDataDataGrid);
+                    GeneralMethods.DisableControl(AddNewTestDataRowButton);
+                    break;
+
+                case IPRTestDataRequirement.SinglePoint:
+
+                    GeneralMethods.EnableControl(TestDataDataGrid);
+                    SetTestGridToNumberRows(1);
+                    GeneralMethods.DisableControl(AddNewTestDataRowButton);
+                    break;
+
+                case IPRTestDataRequirement.TwoPoints:
+
+                    GeneralMethods.EnableControl(TestDataDataGrid);
+                    SetTestGridToNumberRows(2);
+                    GeneralMethods.DisableControl(AddNewTestDataRowButton);
+                    break;
+
+                case IPRTestDataRequirement.MultiplePoints:
+
+                    GeneralMethods.EnableControl(TestDataDataGrid);
+                    SetTestGridToNumberRows(3);
+                    GeneralMethods.EnableControl(AddNewTestDataRowButton);
+                    break;
+
+                default:
+                    throw new InvalidParameterException(
+                        new ErrorMessage(
+                            "Test Data Requirement Error",
+                            "Unsupported test data requirement."));
+            }
+
+        }
+
+        private void LoadAvailableMethodsEvent(object sender, RoutedEventArgs e)
+        {
+
+            LoadAvailableMethods();
+
+        }
+
+        private void AdjustUIBasedOnMethod(object sender, SelectionChangedEventArgs e)
         {
 
             UpdateUIBasedOnMethod();
 
         }
 
-        private void UseTestData(object sender, RoutedEventArgs e)
-        {
-
-            if (UseTestDataCheckBox.IsChecked.Value)
-            {
-
-                GeneralMethods.EnableControl(TestDataDataGrid);
-                GeneralMethods.EnableControl(AddNewTestDataRowButton);
-
-                GeneralMethods.DisableControl(WellExponentStackPanel);
-                GeneralMethods.DisableControl(FlowCoefficientStackPanel);
-
-                _testData.Clear();
-                _testData.Add(new(0, 0));
-                _testData.Add(new(0, 0));
-                _testData.Add(new(0, 0));
-
-            }
-            else
-            {
-
-                GeneralMethods.DisableControl(AddNewTestDataRowButton);
-
-                GeneralMethods.EnableControl(WellExponentStackPanel);
-                GeneralMethods.EnableControl(FlowCoefficientStackPanel);
-
-                _testData.Clear();
-                _testData.Add(new(0, 0));
-
-
-            }
-
-        }
-
         private void AddNewTestDataRow(object sender, RoutedEventArgs e)
         {
 
-            _testData.Add(new FlowDataRow(0,0));
+            AddNewTestDataRow();
 
         }
 
